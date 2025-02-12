@@ -1,0 +1,41 @@
+body {
+    background-color: skyblue;
+}
+
+fieldset {
+    margin-top: 1em;
+    width: 50%;
+}
+
+fieldset button {
+    margin-top: 1em;
+}
+
+#settings {
+    display: flex;
+    flex-direction: row;
+    column-gap: 2em;
+    row-gap: 1em;
+    flex-wrap: wrap;
+}
+
+#rhythm,
+#tempo {
+    display: flex;
+    flex-direction: row;
+    column-gap: 1em;
+}
+
+#tempoSlider {
+    width: 20em;
+}
+
+#pattern {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    height: 400px;
+    width: 1000px;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}

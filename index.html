@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DR by Fred Bolder</title>
+  <link rel="stylesheet" href="./main.css" />
+</head>
+
+<body>
+  <header>
+    <h1>DR by Fred Bolder</h1>
+  </header>
+  <main>
+    <div id="settings">
+      <div id="rhythm">
+        <select name="rhythmSelector" id="rhythmSelector">
+          <option value="Disco1">Disco 1</option>
+          <option value="Metal1">Metal 1</option>
+          <option value="Rock1">Rock 1</option>
+          <option value="SlowWaltz1">Slow waltz 1</option>
+          <option value="Tsamikos1">Tsamikos 1</option>
+          <option value="Tsifteteli1">Tsifteteli 1</option>
+          <option value="Tsifteteli2">Tsifteteli 2</option>
+          <option value="Zeibekiko1">Zeibekiko 1</option>
+          <option value="Zeibekiko2">Zeibekiko 2</option>
+        </select>
+        <button type="button" id="loadRhythmButton">Load</button>
+      </div>
+      <div id="tempo">
+        <label for="tempoSlider">Tempo</label>
+        <input type="range" min="10" max="750" value="100" id="tempoSlider">
+        <div id="tempoValue"></div>
+      </div>
+    </div>
+    <div>
+      <canvas id="pattern"></canvas>
+    </div>
+    <div>
+      <button type="button" id="startStopButton">Start/Stop</button>
+    </div>
+
+    <fieldset>
+      <legend>Measure</legend>
+      <button type="button" id="previousMeasureButton">Previous</button>
+      <button type="button" id="nextMeasureButton">Next</button>
+      <button type="button" id="clearMeasureButton">Clear</button>
+      <button type="button" id="addMeasureButton">Add</button>
+      <button type="button" id="deleteMeasureButton">Delete</button>
+      <button type="button" id="addBeatButton">Add beat</button>
+      <button type="button" id="deleteBeatButton">Delete beat</button>
+      <button type="button" id="addDivisionButton">Add div</button>
+      <button type="button" id="deleteDivisionButton">Delete div</button>
+    </fieldset>
+  </main>
+  <script type="module" src="./modules/script.js"></script>
+</body>
+
+</html>
