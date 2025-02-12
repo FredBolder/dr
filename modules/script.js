@@ -121,17 +121,50 @@ function drawPattern(currentColumn = -1) {
             break;
         }
         radius = dx1 * 0.4 * factor;
-        patternContext.beginPath();
-        patternContext.ellipse(j * dx1 + labelWidth + (dx1 / 2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
-        patternContext.fill();
+        if (getCell(j, i) === 6) {
+          // Flam
+          patternContext.beginPath();
+          patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.65), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
+          patternContext.fill();
+          radius = dx1 * 0.4 * 0.35;
+          patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
+          patternContext.fill();
+        } else {
+          patternContext.beginPath();
+          patternContext.ellipse(j * dx1 + labelWidth + (dx1 / 2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
+          patternContext.fill();
+        }
       }
     }
   }
 }
 
+function playNoteWithOptionalFlam(source, sourceFlam, gainNode, gainNodeFlam, nextNoteTime, flamTime) {
+  source.connect(gainNode).connect(audioCtx.destination);
+  source.start(nextNoteTime);
+
+  source.onended = () => {
+    source.disconnect();
+    gainNode.disconnect();
+  };
+
+  if (sourceFlam) {
+    const startFlamTime = Math.max(audioCtx.currentTime, nextNoteTime - flamTime);
+    sourceFlam.connect(gainNodeFlam).connect(audioCtx.destination);
+    sourceFlam.start(startFlamTime);
+
+    sourceFlam.onended = () => {
+      sourceFlam.disconnect();
+      gainNodeFlam.disconnect();
+    };
+  }
+}
+
+
 async function playPattern() {
   let factor = 1;
   let openHiHat = [];
+  let startFlamTime = 0;
   let tempo = 100;
   let ok = true;
 
@@ -158,6 +191,7 @@ async function playPattern() {
         const divisionsPerMeasure = measure.bassDrum.length;
 
         tempo = Glob.settings.tempo;
+        let flamTime = Math.min(0.025, (60 / tempo) * 0.1);
         const secondsPerBeat = 60.0 / tempo;
         const timeBetweenDivisions = (secondsPerBeat * beatsPerMeasure) / divisionsPerMeasure;
 
@@ -165,6 +199,11 @@ async function playPattern() {
           drawPattern(j);
           // Create and configure BufferSource nodes for each audio buffer
           Instruments.fileNames.forEach((url, idx) => {
+            const cellValue = getCell(j, idx);
+            const audioBufferFlam = Audio.getCachedAudioBuffer(url);
+            const sourceFlam = audioCtx.createBufferSource();
+            sourceFlam.buffer = audioBufferFlam;
+            const gainNodeFlam = audioCtx.createGain();
             const audioBuffer = Audio.getCachedAudioBuffer(url);
             const source = audioCtx.createBufferSource();
             source.buffer = audioBuffer;
@@ -186,21 +225,36 @@ async function playPattern() {
               case 5:
                 factor = 1;
                 break;
+              case 6:
+                // Flam
+                factor = 0.6;
+                break;
               default:
                 factor = 0.6;
                 break;
             }
-            gainNode.gain.value = 0.6 * factor;
 
-            source.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            if ((idx === 7) && (getCell(j, idx) > 0)) {
-              source.started = false;  // Add a custom property to track if the source has started
-              openHiHat.push(source);
+            if (cellValue > 0) {
+              gainNode.gain.value = 0.6 * factor;
+              source.connect(gainNode);
+              gainNode.connect(audioCtx.destination);
+            }
+            if (cellValue === 6) {
+              gainNodeFlam.gain.value = 0.6 * 0.4; // First hit of flam
+              sourceFlam.connect(gainNodeFlam);
+              gainNodeFlam.connect(audioCtx.destination);
             }
 
-            if ((idx === 8 || idx === 15) && (getCell(j, idx) > 0)) { // Closed Hi-Hat or Pedal Hi-Hat
+            if ((idx === 7) && (cellValue > 0)) {
+              source.started = false;  // Add a custom property to track if the source has started
+              openHiHat.push(source);
+              if (cellValue === 6) {
+                sourceFlam.started = false;
+                openHiHat.push(sourceFlam);
+              }
+            }
+
+            if ((idx === 8 || idx === 15) && (cellValue > 0)) { // Closed Hi-Hat or Pedal Hi-Hat
               for (let k = 0; k < openHiHat.length; k++) {
                 const oh = openHiHat[k];
                 if (oh.started) { // Only stop if it has started
@@ -214,7 +268,7 @@ async function playPattern() {
               openHiHat = [];
             }
 
-            if (getCell(j, idx) > 0) {
+            if (cellValue > 0) {
               source.start(nextNoteTime);
               source.started = true;  // Mark as started
 
@@ -223,13 +277,23 @@ async function playPattern() {
                 source.disconnect();
                 gainNode.disconnect();
               };
-            } else {
-              source.disconnect();
-              gainNode.disconnect();
+            }
+            if (cellValue === 6) {
+              // Flam
+              startFlamTime = nextNoteTime - flamTime;
+              if (startFlamTime < audioCtx.currentTime) {
+                startFlamTime = audioCtx.currentTime;
+              }
+              sourceFlam.start(startFlamTime);
+              sourceFlam.started = true;
+
+              sourceFlam.onended = () => {
+                sourceFlam.disconnect();
+                gainNodeFlam.disconnect();
+              };
             }
           });
 
-          // Advance to the time for the next note
           nextNoteTime += timeBetweenDivisions;
 
           // Schedule a small lookahead to keep things running smoothly
@@ -348,6 +412,7 @@ function patternClicked(event) {
   }
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
+  const hit = Glob.tryParseInt(document.getElementById("inputSelector").value, 1);
   if ((x > labelWidth) && (y > dy1)) {
     c = Math.trunc((x - labelWidth) / dx1);
     r = Math.trunc((y - dy1) / dy1);
@@ -355,7 +420,7 @@ function patternClicked(event) {
       if (getCell(c, r) > 0) {
         setCell(c, r, 0);
       } else {
-        setCell(c, r, 1);
+        setCell(c, r, hit);
       }
       drawPattern();
     }

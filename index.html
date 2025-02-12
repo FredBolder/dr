@@ -14,7 +14,7 @@
     <h1>DR by Fred Bolder</h1>
   </header>
   <main>
-    <div id="settings">
+    <div class="flex">
       <div id="rhythm">
         <select name="rhythmSelector" id="rhythmSelector">
           <option value="Disco1">Disco 1</option>
@@ -38,7 +38,18 @@
     <div>
       <canvas id="pattern"></canvas>
     </div>
-    <div>
+    <div class="flex">
+      <div id="input">
+        <label for="inputSelector">Input</label>
+        <select name="inputSelector" id="inputSelector">
+          <option value="1">Normal hit</option>
+          <option value="2">Soft hit</option>
+          <option value="3">Hard hit</option>
+          <option value="4">Very soft hit</option>
+          <option value="5">Very hard hit</option>
+          <option value="6">Flam</option>
+        </select>
+      </div>
       <button type="button" id="startStopButton">Start/Stop</button>
     </div>
 

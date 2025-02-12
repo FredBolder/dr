@@ -11,7 +11,7 @@ fieldset button {
     margin-top: 1em;
 }
 
-#settings {
+.flex {
     display: flex;
     flex-direction: row;
     column-gap: 2em;
