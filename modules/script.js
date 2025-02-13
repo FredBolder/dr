@@ -139,28 +139,6 @@ function drawPattern(currentColumn = -1) {
   }
 }
 
-function playNoteWithOptionalFlam(source, sourceFlam, gainNode, gainNodeFlam, nextNoteTime, flamTime) {
-  source.connect(gainNode).connect(audioCtx.destination);
-  source.start(nextNoteTime);
-
-  source.onended = () => {
-    source.disconnect();
-    gainNode.disconnect();
-  };
-
-  if (sourceFlam) {
-    const startFlamTime = Math.max(audioCtx.currentTime, nextNoteTime - flamTime);
-    sourceFlam.connect(gainNodeFlam).connect(audioCtx.destination);
-    sourceFlam.start(startFlamTime);
-
-    sourceFlam.onended = () => {
-      sourceFlam.disconnect();
-      gainNodeFlam.disconnect();
-    };
-  }
-}
-
-
 async function playPattern() {
   let factor = 1;
   let openHiHat = [];
@@ -200,16 +178,16 @@ async function playPattern() {
           // Create and configure BufferSource nodes for each audio buffer
           Instruments.fileNames.forEach((url, idx) => {
             const cellValue = getCell(j, idx);
-            const audioBufferFlam = Audio.getCachedAudioBuffer(url);
-            const sourceFlam = audioCtx.createBufferSource();
-            sourceFlam.buffer = audioBufferFlam;
-            const gainNodeFlam = audioCtx.createGain();
+            if (cellValue === 0) return;
             const audioBuffer = Audio.getCachedAudioBuffer(url);
             const source = audioCtx.createBufferSource();
             source.buffer = audioBuffer;
             const gainNode = audioCtx.createGain();
+            const sourceFlam = audioCtx.createBufferSource();
+            sourceFlam.buffer = audioBuffer;
+            let gainNodeFlam;
 
-            switch (getCell(j, idx)) {
+            switch (cellValue) {
               case 1:
                 factor = 0.6;
                 break;
@@ -240,6 +218,7 @@ async function playPattern() {
               gainNode.connect(audioCtx.destination);
             }
             if (cellValue === 6) {
+              gainNodeFlam = audioCtx.createGain();
               gainNodeFlam.gain.value = 0.6 * 0.4; // First hit of flam
               sourceFlam.connect(gainNodeFlam);
               gainNodeFlam.connect(audioCtx.destination);
