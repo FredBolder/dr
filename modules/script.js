@@ -557,6 +557,21 @@ try {
     }
   });
 
+  document.getElementById("copyMeasureButton").addEventListener("click", (e) => {
+    let copyFrom = 1;
+    let copyTo = 1;
+
+    if (!Glob.playing && Measures.measures.length > 1) {
+      copyFrom = Glob.tryParseInt(document.getElementById("copyMeasureFrom").value, -1);
+      copyTo = Glob.tryParseInt(document.getElementById("copyMeasureTo").value, -1);
+      if ((copyFrom >= 1) && (copyTo >= 1) && (copyFrom !== copyTo) && 
+      (copyFrom <= Measures.measures.length) && (copyTo <= Measures.measures.length)) {
+        Measures.copyMeasure(copyFrom, copyTo);
+        drawPattern();
+      }
+    }
+  });
+
   document.getElementById("pattern").addEventListener("mousedown", (e) => {
     patternClicked(e)
   });

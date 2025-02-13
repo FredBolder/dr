@@ -21,11 +21,15 @@
           <option value="Metal1">Metal 1</option>
           <option value="Rock1">Rock 1</option>
           <option value="SlowWaltz1">Slow waltz 1</option>
-          <option value="Tsamikos1">Tsamikos 1</option>
-          <option value="Tsifteteli1">Tsifteteli 1</option>
-          <option value="Tsifteteli2">Tsifteteli 2</option>
-          <option value="Zeibekiko1">Zeibekiko 1</option>
-          <option value="Zeibekiko2">Zeibekiko 2</option>
+          <optgroup label="Greek">
+            <option value="Kalamatianos1">Kalamatianos 1</option>
+            <option value="Roumba1">Roumba 1</option>
+            <option value="Tsamikos1">Tsamikos 1</option>
+            <option value="Tsifteteli1">Tsifteteli 1</option>
+            <option value="Tsifteteli2">Tsifteteli 2</option>
+            <option value="Zeibekiko1">Zeibekiko 1</option>
+            <option value="Zeibekiko2">Zeibekiko 2</option>
+          </optgroup>
         </select>
         <button type="button" id="loadRhythmButton">Load</button>
       </div>
@@ -64,6 +68,12 @@
       <button type="button" id="deleteBeatButton">Delete beat</button>
       <button type="button" id="addDivisionButton">Add div</button>
       <button type="button" id="deleteDivisionButton">Delete div</button>
+      <div id="copyMeasure">
+        <button type="button" id="copyMeasureButton">Copy</button>
+        <input type="text" id="copyMeasureFrom" name="copyMeasureFrom" value="1"></input>
+        <label for="copyMeasureTo">to</label>
+        <input type="text" id="copyMeasureTo" name="copyMeasureTo" value="1"></input>
+      </div>
     </fieldset>
   </main>
   <script type="module" src="./modules/script.js"></script>

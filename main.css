@@ -4,7 +4,7 @@ body {
 
 fieldset {
     margin-top: 1em;
-    width: 50%;
+    width: fit-content;
 }
 
 fieldset button {
@@ -39,3 +39,8 @@ fieldset button {
     margin-top: 1em;
     margin-bottom: 1em;
 }
+
+#copyMeasureFrom, #copyMeasureTo {
+    width: 3em;
+}
+
