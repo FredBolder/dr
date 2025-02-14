@@ -183,6 +183,17 @@ class Measures {
                 Measure.fixMeasure(measure2);
                 this.measures.push(measure2);
                 break;
+            case "RandomZeibekiko":
+                Glob.settings.tempoSlider.value = 63;
+                measure1 = new Measure();
+                measure1.beats = 9;
+                measure1.divisions = 4;
+                measure1.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0];
+                measure1.snareDrum =   [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 8, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7, 7];
+                measure1.bassDrum =    [1, 0, 1, 0, 0, 0, 0, 0, 1, 7, 0, 7, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 7, 0, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
             default:
                 break;
         }
