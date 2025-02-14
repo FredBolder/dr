@@ -83,6 +83,8 @@ function drawPattern(currentColumn = -1) {
   // Pattern
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < columns; j++) {
+      const cellValue = getCell(j, i);
+
       patternContext.lineWidth = 2;
       if (currentColumn === j) {
         patternContext.fillStyle = "black";
@@ -99,8 +101,32 @@ function drawPattern(currentColumn = -1) {
       } else {
         patternContext.fillStyle = "black";
       }
-      if (getCell(j, i) > 0) {
-        switch (getCell(j, i)) {
+
+      if ((cellValue >= 7) && (cellValue <= 9)) {
+        // Additional hit
+        switch (cellValue) {
+          case 7:
+            factor = 0.2;
+            break;
+          case 8:
+            factor = 0.3;
+            break;
+          case 9:
+            factor = 0.1;
+            break;
+          default:
+            factor = 0.2;
+            break;
+        }
+        patternContext.lineWidth = 4;
+        patternContext.beginPath();
+        patternContext.moveTo(j * dx1 + labelWidth + (dx1 * factor), i * dy1 + (1.5 * dy1));
+        patternContext.lineTo(j * dx1 + labelWidth + (dx1 * (1 - factor)), i * dy1 + (1.5 * dy1));
+        patternContext.moveTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + factor) * dy1));
+        patternContext.lineTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + (1 - factor)) * dy1));
+        patternContext.stroke();
+      } else if (cellValue > 0) {
+        switch (cellValue) {
           case 1:
             factor = 0.6;
             break;
@@ -121,7 +147,7 @@ function drawPattern(currentColumn = -1) {
             break;
         }
         radius = dx1 * 0.4 * factor;
-        if (getCell(j, i) === 6) {
+        if (cellValue === 6) {
           // Flam
           patternContext.beginPath();
           patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.65), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
@@ -141,10 +167,10 @@ function drawPattern(currentColumn = -1) {
 
 async function playPattern() {
   let factor = 1;
+  let ok = true;
   let openHiHat = [];
   let startFlamTime = 0;
-  let tempo = 100;
-  let ok = true;
+  let volume = 0.75;
 
   if (Glob.playing || (Measures.measures.length === 0)) {
     ok = false;
@@ -168,16 +194,28 @@ async function playPattern() {
         const beatsPerMeasure = measure.beats;
         const divisionsPerMeasure = measure.bassDrum.length;
 
-        tempo = Glob.settings.tempo;
-        let flamTime = Math.min(0.025, (60 / tempo) * 0.1);
-        const secondsPerBeat = 60.0 / tempo;
+        let flamTime = Math.min(0.025, (60 / Glob.settings.tempo) * 0.1);
+        const secondsPerBeat = 60.0 / Glob.settings.tempo;
         const timeBetweenDivisions = (secondsPerBeat * beatsPerMeasure) / divisionsPerMeasure;
 
         for (let j = 0; j < divisionsPerMeasure && !Glob.stop; j++) {
           drawPattern(j);
           // Create and configure BufferSource nodes for each audio buffer
           Instruments.fileNames.forEach((url, idx) => {
-            const cellValue = getCell(j, idx);
+            let cellValue = getCell(j, idx);
+
+            if ((cellValue >= 7) && (cellValue <= 9)) {
+              // Additional hit
+              if (Glob.settings.additional === 0) {
+                cellValue = 0;
+              }
+              if (Glob.settings.additional === 2) {
+                if (Math.random() > 0.5) {
+                  cellValue = 0;
+                }
+              }
+            }
+
             if (cellValue === 0) return;
             const audioBuffer = Audio.getCachedAudioBuffer(url);
             const source = audioCtx.createBufferSource();
@@ -189,12 +227,15 @@ async function playPattern() {
 
             switch (cellValue) {
               case 1:
+              case 7:
                 factor = 0.6;
                 break;
               case 2:
+              case 8:
                 factor = 0.4;
                 break;
               case 3:
+              case 9:
                 factor = 0.8;
                 break;
               case 4:
@@ -212,14 +253,15 @@ async function playPattern() {
                 break;
             }
 
+            volume = Glob.settings.volume / 100;
             if (cellValue > 0) {
-              gainNode.gain.value = 0.6 * factor;
+              gainNode.gain.value = 0.9 * factor * volume;
               source.connect(gainNode);
               gainNode.connect(audioCtx.destination);
             }
             if (cellValue === 6) {
               gainNodeFlam = audioCtx.createGain();
-              gainNodeFlam.gain.value = 0.6 * 0.4; // First hit of flam
+              gainNodeFlam.gain.value = 0.9 * 0.4 * volume; // First hit of flam
               sourceFlam.connect(gainNodeFlam);
               gainNodeFlam.connect(audioCtx.destination);
             }
@@ -411,6 +453,10 @@ function tempoChanged() {
   document.getElementById("tempoValue").innerText = Glob.settings.tempo.toString();
 }
 
+function volumeChanged() {
+  Glob.settings.volume = Glob.settings.volumeSlider.value;
+  document.getElementById("volumeValue").innerText = Glob.settings.volume.toString();
+}
 
 // To prevent error when using node
 try {
@@ -421,7 +467,9 @@ try {
       document.getElementById("rhythmSelector").value = "Rock1";
       Measures.load("Rock1");
       tempoChanged();
+      volumeChanged();
       drawPattern();
+      Glob.settings.additional = Glob.tryParseInt(document.getElementById("additionalSelector").value, 0);
     }
   });
 
@@ -432,14 +480,17 @@ try {
       rhythm = document.getElementById("rhythmSelector").value;
       Measures.load(rhythm);
       tempoChanged();
+      volumeChanged();
       drawPattern();
     }
   });
 
-  document.getElementById("tempoSlider")
-
   document.getElementById("tempoSlider").addEventListener("input", (e) => {
     tempoChanged();
+  });
+
+  document.getElementById("volumeSlider").addEventListener("input", (e) => {
+    volumeChanged();
   });
 
   document.getElementById("startStopButton").addEventListener("click", (e) => {
@@ -543,8 +594,8 @@ try {
     if (!Glob.playing && Measures.measures.length > 1) {
       copyFrom = Glob.tryParseInt(document.getElementById("copyMeasureFrom").value, -1);
       copyTo = Glob.tryParseInt(document.getElementById("copyMeasureTo").value, -1);
-      if ((copyFrom >= 1) && (copyTo >= 1) && (copyFrom !== copyTo) && 
-      (copyFrom <= Measures.measures.length) && (copyTo <= Measures.measures.length)) {
+      if ((copyFrom >= 1) && (copyTo >= 1) && (copyFrom !== copyTo) &&
+        (copyFrom <= Measures.measures.length) && (copyTo <= Measures.measures.length)) {
         Measures.copyMeasure(copyFrom, copyTo);
         drawPattern();
       }
@@ -553,6 +604,10 @@ try {
 
   document.getElementById("pattern").addEventListener("mousedown", (e) => {
     patternClicked(e)
+  });
+
+  document.getElementById("additionalSelector").addEventListener("change", (e) => {
+    Glob.settings.additional = Glob.tryParseInt(document.getElementById("additionalSelector").value, 0);
   });
 
   Instruments.init();

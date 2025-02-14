@@ -20,7 +20,8 @@ fieldset button {
 }
 
 #rhythm,
-#tempo {
+#tempo,
+#volume {
     display: flex;
     flex-direction: row;
     column-gap: 1em;
@@ -28,6 +29,10 @@ fieldset button {
 
 #tempoSlider {
     width: 20em;
+}
+
+#volumeSlider {
+    width: 15em;
 }
 
 #pattern {

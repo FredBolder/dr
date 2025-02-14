@@ -44,6 +44,11 @@
         <input type="range" min="10" max="750" value="100" id="tempoSlider">
         <div id="tempoValue"></div>
       </div>
+      <div id="volume">
+        <label for="volumeSlider">Volume</label>
+        <input type="range" min="0" max="100" value="75" id="volumeSlider">
+        <div id="volumeValue"></div>
+      </div>
     </div>
     <div>
       <canvas id="pattern"></canvas>
@@ -58,6 +63,9 @@
           <option value="4">Very soft hit</option>
           <option value="5">Very hard hit</option>
           <option value="6">Flam</option>
+          <option value="7">Additional normal hit</option>
+          <option value="8">Additional soft hit</option>
+          <option value="9">Additional hard hit</option>
         </select>
       </div>
       <button type="button" id="startStopButton">Start/Stop</button>
@@ -79,6 +87,17 @@
         <input type="text" id="copyMeasureFrom" name="copyMeasureFrom" value="1"></input>
         <label for="copyMeasureTo">to</label>
         <input type="text" id="copyMeasureTo" name="copyMeasureTo" value="1"></input>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Options</legend>
+      <div id="additional">
+        <select name="additionalSelector" id="additionalSelector">
+          <option value="0">Never</option>
+          <option value="1">Always</option>
+          <option value="2" selected="selected">Random</option>
+        </select>
+        <label for="additionalSelector">play additional hits</label>
       </div>
     </fieldset>
   </main>
