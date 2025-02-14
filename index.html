@@ -75,6 +75,8 @@
           <option value="7">Additional normal hit</option>
           <option value="8">Additional soft hit</option>
           <option value="9">Additional hard hit</option>
+          <option value="10">Only odd measures</option>
+          <option value="11">Only even measures</option>
         </select>
       </div>
       <button type="button" id="startStopButton">Start/Stop</button>
@@ -98,7 +100,7 @@
         <input type="text" id="copyMeasureTo" name="copyMeasureTo" value="1"></input>
       </div>
     </fieldset>
-    <fieldset>
+    <fieldset  class="flex">
       <legend>Options</legend>
       <div id="additional">
         <select name="additionalSelector" id="additionalSelector">
@@ -107,6 +109,32 @@
           <option value="2" selected="selected">Random</option>
         </select>
         <label for="additionalSelector">play additional hits</label>
+      </div>
+      <div id="humanizeVolumes">
+        <label for="humanizeVolumesSelector">Humanize volumes</label>
+        <select name="humanizeVolumesSelector" id="humanizeVolumesSelector">
+          <option value="0">No</option>
+          <option value="1">1</option>
+          <option value="2" selected="selected">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+        </select>
+      </div>
+      <div id="humanizeTiming">
+        <label for="humanizeTimingSelector">Humanize timing</label>
+        <select name="humanizeTimingSelector" id="humanizeTimingSelector">
+          <option value="0">No</option>
+          <option value="1" selected="selected">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+        </select>
       </div>
     </fieldset>
   </main>

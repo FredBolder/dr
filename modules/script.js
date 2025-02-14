@@ -22,6 +22,7 @@ function drawPattern(currentColumn = -1) {
   let measureStatus = "";
   let radius = 0;
   let rows = 0;
+  let text = "";
 
   const pattern = Glob.settings.pattern;
   pattern.height = pattern.clientHeight * 2;
@@ -125,6 +126,20 @@ function drawPattern(currentColumn = -1) {
         patternContext.moveTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + factor) * dy1));
         patternContext.lineTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + (1 - factor)) * dy1));
         patternContext.stroke();
+      } else if ((cellValue >= 10) && (cellValue <= 11)) {
+        // Odd/even measures
+        switch (cellValue) {
+          case 10:
+            text = "O";
+            break;
+          case 11:
+            text = "E";
+            break;
+          default:
+            text = "-";
+            break;
+        }
+        patternContext.fillText(text, j * dx1 + labelWidth + (dx1 / 2), i * dy1 + dy1 * 1.75, dx1 * 0.9);
       } else if (cellValue > 0) {
         switch (cellValue) {
           case 1:
@@ -167,6 +182,11 @@ function drawPattern(currentColumn = -1) {
 
 async function playPattern() {
   let factor = 1;
+  let humanizeDeltaTime = 0;
+  let humanizeTiming = 0;
+  let humanizeVolumeFactor = 1;
+  let humanizeVolumes = 0;
+  let odd = false;
   let ok = true;
   let openHiHat = [];
   let startFlamTime = 0;
@@ -177,6 +197,7 @@ async function playPattern() {
   }
   if (ok) {
     Glob.playing = true;
+    odd = false;
 
     // Check if all URLs are cached
     if (!Instruments.fileNames.every(url => Audio.audioCache.has(url))) {
@@ -188,6 +209,7 @@ async function playPattern() {
 
     while (!Glob.stop) {
       for (let i = 0; i < Measures.measures.length && !Glob.stop; i++) {
+        odd = !odd;
         Glob.currentMeasure = i;
         drawPattern();
         const measure = Measures.measures[i];
@@ -215,8 +237,12 @@ async function playPattern() {
                 }
               }
             }
+            if (((cellValue === 10) && !odd) || ((cellValue === 11) && odd)) {
+              cellValue = 0;
+            }
 
             if (cellValue === 0) return;
+
             const audioBuffer = Audio.getCachedAudioBuffer(url);
             const source = audioCtx.createBufferSource();
             source.buffer = audioBuffer;
@@ -228,6 +254,8 @@ async function playPattern() {
             switch (cellValue) {
               case 1:
               case 7:
+              case 10:
+              case 11:
                 factor = 0.6;
                 break;
               case 2:
@@ -252,60 +280,68 @@ async function playPattern() {
                 factor = 0.6;
                 break;
             }
-
             volume = Glob.settings.volume / 100;
-            if (cellValue > 0) {
-              gainNode.gain.value = 0.9 * factor * volume;
-              source.connect(gainNode);
-              gainNode.connect(audioCtx.destination);
+
+            // Humanize
+            humanizeVolumes = Glob.settings.humanizeVolumes / 10;
+            if (humanizeVolumes > 0) {
+              humanizeVolumeFactor = 1 + (0.5 * humanizeVolumes) - (Math.random() * humanizeVolumes);
+            } else {
+              humanizeVolumeFactor = 1;
             }
+            humanizeTiming = Glob.settings.humanizeTiming / 35;
+            if (humanizeTiming > 0) {
+              humanizeDeltaTime = timeBetweenDivisions * ((0.5 * humanizeTiming) - (Math.random() * humanizeTiming));
+            } else {
+              humanizeDeltaTime = 0;
+            }
+
+            gainNode.gain.value = 0.9 * factor * humanizeVolumeFactor * volume;
+            source.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
             if (cellValue === 6) {
               gainNodeFlam = audioCtx.createGain();
-              gainNodeFlam.gain.value = 0.9 * 0.4 * volume; // First hit of flam
+              gainNodeFlam.gain.value = 0.9 * 0.4 * humanizeVolumeFactor * volume; // First hit of flam
               sourceFlam.connect(gainNodeFlam);
               gainNodeFlam.connect(audioCtx.destination);
             }
 
-            if ((idx === 7) && (cellValue > 0)) {
+            if (idx === 7) {
               source.started = false;  // Add a custom property to track if the source has started
-              openHiHat.push(source);
+              setTimeout(() => {
+                openHiHat.push(source);
+              }, (nextNoteTime + humanizeDeltaTime - audioCtx.currentTime) * 1000); // Add at actual play time
+              source.onended = () => {
+                openHiHat = openHiHat.filter(oh => oh !== source); // Remove from list when it naturally ends
+              };
+
               if (cellValue === 6) {
                 sourceFlam.started = false;
                 openHiHat.push(sourceFlam);
+                setTimeout(() => {
+                  openHiHat.push(sourceFlam);
+                }, (nextNoteTime + humanizeDeltaTime - flamTime - audioCtx.currentTime) * 1000);
+                source.onended = () => {
+                  openHiHat = openHiHat.filter(oh => oh !== sourceFlam);
+                };
               }
             }
 
-            if ((idx === 8 || idx === 15) && (cellValue > 0)) { // Closed Hi-Hat or Pedal Hi-Hat
-              for (let k = 0; k < openHiHat.length; k++) {
-                const oh = openHiHat[k];
-                if (oh.started) { // Only stop if it has started
-                  try {
-                    oh.stop(nextNoteTime);
-                  } catch (e) {
-                    console.error('Error stopping open hi-hat:', e);
-                  }
-                }
-              }
-              openHiHat = [];
-            }
+            source.start(nextNoteTime + humanizeDeltaTime);
+            source.started = true;  // Mark as started
 
-            if (cellValue > 0) {
-              source.start(nextNoteTime);
-              source.started = true;  // Mark as started
-
-              // Memory cleanup after the note ends
-              source.onended = () => {
-                source.disconnect();
-                gainNode.disconnect();
-              };
-            }
+            // Memory cleanup after the note ends
+            source.onended = () => {
+              source.disconnect();
+              gainNode.disconnect();
+            };
             if (cellValue === 6) {
               // Flam
               startFlamTime = nextNoteTime - flamTime;
               if (startFlamTime < audioCtx.currentTime) {
                 startFlamTime = audioCtx.currentTime;
               }
-              sourceFlam.start(startFlamTime);
+              sourceFlam.start(startFlamTime + humanizeDeltaTime);
               sourceFlam.started = true;
 
               sourceFlam.onended = () => {
@@ -313,16 +349,36 @@ async function playPattern() {
                 gainNodeFlam.disconnect();
               };
             }
+
+            if (idx === 8 || idx === 15) { // Closed Hi-Hat or Pedal Hi-Hat
+              setTimeout(() => {
+                openHiHat.forEach(oh => {
+                  if (oh.started) {
+                    try {
+                      oh.stop();
+                    } catch (e) {
+                      console.error("Error stopping open hi-hat:", e);
+                    }
+                  }
+                });
+                openHiHat = openHiHat.filter(oh => oh.started); // Keep only started ones
+              }, (nextNoteTime + humanizeDeltaTime - audioCtx.currentTime) * 1000);
+            }
+
           });
 
           nextNoteTime += timeBetweenDivisions;
 
           // Schedule a small lookahead to keep things running smoothly
-          const currentTime = audioCtx.currentTime;
           const lookahead = 0.1; // 100ms lookahead
 
-          if (nextNoteTime > currentTime + lookahead) {
-            await new Promise(resolve => setTimeout(resolve, (nextNoteTime - currentTime - lookahead) * 1000));
+          //const currentTime = audioCtx.currentTime;
+          // if (nextNoteTime > currentTime + lookahead) {
+          //   await new Promise(resolve => setTimeout(resolve, (nextNoteTime - currentTime - lookahead) * 1000));
+          // }
+
+          while (audioCtx.currentTime < nextNoteTime - lookahead) {
+            await new Promise(resolve => setTimeout(resolve, 5)); // Check every 5ms
           }
         }
       }
@@ -470,6 +526,8 @@ try {
       volumeChanged();
       drawPattern();
       Glob.settings.additional = Glob.tryParseInt(document.getElementById("additionalSelector").value, 0);
+      Glob.settings.humanizeVolumes = Glob.tryParseInt(document.getElementById("humanizeVolumesSelector").value, 0);
+      Glob.settings.humanizeTiming = Glob.tryParseInt(document.getElementById("humanizeTimingSelector").value, 0);
     }
   });
 
@@ -608,6 +666,14 @@ try {
 
   document.getElementById("additionalSelector").addEventListener("change", (e) => {
     Glob.settings.additional = Glob.tryParseInt(document.getElementById("additionalSelector").value, 0);
+  });
+
+  document.getElementById("humanizeVolumesSelector").addEventListener("change", (e) => {
+    Glob.settings.humanizeVolumes = Glob.tryParseInt(document.getElementById("humanizeVolumesSelector").value, 0);
+  });
+
+  document.getElementById("humanizeTimingSelector").addEventListener("change", (e) => {
+    Glob.settings.humanizeTiming = Glob.tryParseInt(document.getElementById("humanizeTimingSelector").value, 0);
   });
 
   Instruments.init();

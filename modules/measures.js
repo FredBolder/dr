@@ -171,7 +171,7 @@ class Measures {
                 measure1.divisions = 3;
                 measure1.rideCymbal = [1, 0, 0, 1, 0, 2, 1, 0, 0];
                 measure1.crossStick = [0, 0, 0, 0, 0, 0, 1, 0, 0];
-                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 2];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 10];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
@@ -246,7 +246,7 @@ class Measures {
                 measure1.beats = 3;
                 measure1.divisions = 4;
                 measure1.rideCymbal = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
-                measure1.snareDrum = [0, 0, 0, 2, 1, 0, 1, 0, 0, 0, 1, 0];
+                measure1.snareDrum = [0, 0, 0, 2, 1, 0, 1, 0, 0, 0, 1, 11];
                 measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
@@ -287,7 +287,8 @@ class Measures {
                 measure1.beats = 9;
                 measure1.divisions = 2;
                 measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-                measure1.snareDrum = [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0];
+                measure1.lowTom = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
+                measure1.snareDrum = [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0];
                 measure1.bassDrum = [1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
