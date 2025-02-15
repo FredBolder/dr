@@ -668,36 +668,48 @@ try {
   document.getElementById("addBeatButton").addEventListener("click", (e) => {
     const measure = Measures.measures[Glob.currentMeasure];
     if (!Glob.playing) {
-      measure.beats++;
-      Measure.fixMeasure(measure);
-      drawPattern();
+      const userChoice = window.confirm(`Add a beat to the current measure?`);
+      if (userChoice) {
+        measure.beats++;
+        Measure.fixMeasure(measure);
+        drawPattern();
+      }
     }
   });
 
   document.getElementById("deleteBeatButton").addEventListener("click", (e) => {
     const measure = Measures.measures[Glob.currentMeasure];
     if (!Glob.playing && (measure.beats > 1)) {
-      measure.beats--;
-      Measure.fixMeasure(measure);
-      drawPattern();
+      const userChoice = window.confirm(`Delete the last beat of the current measure?`);
+      if (userChoice) {
+        measure.beats--;
+        Measure.fixMeasure(measure);
+        drawPattern();
+      }
     }
   });
 
-  document.getElementById("addDivisionButton").addEventListener("click", (e) => {
+  document.getElementById("incDivisionButton").addEventListener("click", (e) => {
     const measure = Measures.measures[Glob.currentMeasure];
     if (!Glob.playing) {
-      measure.divisions++;
-      Measure.fixMeasure(measure);
-      drawPattern();
+      const userChoice = window.confirm(`Increase the beat division of the current measure?`);
+      if (userChoice) {
+        measure.divisions++;
+        Measure.fixMeasure(measure);
+        drawPattern();
+      }
     }
   });
 
-  document.getElementById("deleteDivisionButton").addEventListener("click", (e) => {
+  document.getElementById("decDivisionButton").addEventListener("click", (e) => {
     const measure = Measures.measures[Glob.currentMeasure];
     if (!Glob.playing && (measure.divisions > 1)) {
-      measure.divisions--;
-      Measure.fixMeasure(measure);
-      drawPattern();
+      const userChoice = window.confirm(`Decrease the beat division of the current measure?`);
+      if (userChoice) {
+        measure.divisions--;
+        Measure.fixMeasure(measure);
+        drawPattern();
+      }
     }
   });
 
@@ -710,8 +722,11 @@ try {
       copyTo = Glob.tryParseInt(document.getElementById("copyMeasureTo").value, -1);
       if ((copyFrom >= 1) && (copyTo >= 1) && (copyFrom !== copyTo) &&
         (copyFrom <= Measures.measures.length) && (copyTo <= Measures.measures.length)) {
-        Measures.copyMeasure(copyFrom, copyTo);
-        drawPattern();
+        const userChoice = window.confirm(`Copy measure ${copyFrom} to measure ${copyTo}?`);
+        if (userChoice) {
+          Measures.copyMeasure(copyFrom, copyTo);
+          drawPattern();
+        }
       }
     }
   });
