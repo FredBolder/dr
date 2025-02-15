@@ -1,27 +1,25 @@
 #confirmOverlay {
-    position: absolute;
-    /* Moves with scrolling */
+    position: fixed;
+    /* Ensure it stays in place */
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     display: none;
-    /* Initially hidden */
+    /* Hidden by default */
     z-index: 9999;
-    /* Ensures it's on top */
 }
 
 #confirmBox {
     position: absolute;
-    /* Allows dynamic positioning */
+    /* Allows dynamic centering */
     background: white;
     padding: 20px;
     border-radius: 8px;
     text-align: center;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 10000;
-    /* Ensures it's above the overlay */
 }
 
 .confirm button {
@@ -38,4 +36,10 @@
 #confirmNo {
     background-color: #dc3545;
     color: white;
+}
+
+/* Prevent scrolling when confirm dialog is open */
+body.no-scroll {
+    overflow: hidden;
+    height: 100vh;
 }

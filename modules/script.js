@@ -12,19 +12,17 @@ let confirmCallback = null;
 function updateDialogPosition() {
   const dialog = document.getElementById("confirmBox");
 
-  const scrollY = window.scrollY || document.documentElement.scrollTop;
-  const scrollX = window.scrollX || document.documentElement.scrollLeft;
   const viewportHeight = window.innerHeight;
   const viewportWidth = window.innerWidth;
   const dialogHeight = dialog.offsetHeight;
   const dialogWidth = dialog.offsetWidth;
 
   // Centering logic
-  const topPosition = scrollY + (viewportHeight - dialogHeight) / 2;
-  const leftPosition = scrollX + (viewportWidth - dialogWidth) / 2;
+  const topPosition = (viewportHeight - dialogHeight) / 2;
+  const leftPosition = (viewportWidth - dialogWidth) / 2;
 
-  dialog.style.top = `${Math.max(topPosition, scrollY + 20)}px`; // Prevents going too high
-  dialog.style.left = `${Math.max(leftPosition, scrollX + 20)}px`; // Prevents going too far left
+  dialog.style.top = `${Math.max(topPosition, 20)}px`; // Prevents it from going too high
+  dialog.style.left = `${Math.max(leftPosition, 20)}px`; // Prevents it from going too far left
 }
 
 function showConfirmDialog(message, callback) {
@@ -34,22 +32,25 @@ function showConfirmDialog(message, callback) {
   messageBox.textContent = message;
   overlay.style.display = "block";
 
-  updateDialogPosition(); // Set position initially
-  window.addEventListener("scroll", updateDialogPosition); // Update on scroll
-  window.addEventListener("resize", updateDialogPosition); // Update on resize
+  // Prevent scrolling
+  document.body.classList.add("no-scroll");
+
+  updateDialogPosition(); // Center the dialog
+  window.addEventListener("resize", updateDialogPosition); // Keep centered on resize
 
   confirmCallback = callback;
 }
 
 function handleConfirm(choice) {
   document.getElementById("confirmOverlay").style.display = "none";
-  window.removeEventListener("scroll", updateDialogPosition);
+
+  // Allow scrolling again
+  document.body.classList.remove("no-scroll");
+
   window.removeEventListener("resize", updateDialogPosition);
 
   if (confirmCallback) confirmCallback(choice);
 }
-
-
 
 
 
