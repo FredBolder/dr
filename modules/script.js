@@ -7,34 +7,50 @@ import { Measures } from "./measures.js";
 
 Glob.init();
 
-let confirmCallback = null; // This will store the callback to be executed when the user selects Yes/No
+let confirmCallback = null;
 
-// Adjust position dynamically based on scroll
-function updatePosition() {
-  const dialog = document.getElementById("confirm");
+function updateDialogPosition() {
+  const dialog = document.getElementById("confirmBox");
+
   const scrollY = window.scrollY || document.documentElement.scrollTop;
-  dialog.style.top = `${scrollY + window.innerHeight / 2}px`;
+  const scrollX = window.scrollX || document.documentElement.scrollLeft;
+  const viewportHeight = window.innerHeight;
+  const viewportWidth = window.innerWidth;
+  const dialogHeight = dialog.offsetHeight;
+  const dialogWidth = dialog.offsetWidth;
+
+  // Centering logic
+  const topPosition = scrollY + (viewportHeight - dialogHeight) / 2;
+  const leftPosition = scrollX + (viewportWidth - dialogWidth) / 2;
+
+  dialog.style.top = `${Math.max(topPosition, scrollY + 20)}px`; // Prevents going too high
+  dialog.style.left = `${Math.max(leftPosition, scrollX + 20)}px`; // Prevents going too far left
 }
 
-function customConfirm(message, callback) {
-  const dialog = document.getElementById("confirm");
+function showConfirmDialog(message, callback) {
+  const overlay = document.getElementById("confirmOverlay");
   const messageBox = document.getElementById("confirmMessage");
 
   messageBox.textContent = message;
-  dialog.style.display = "block";
+  overlay.style.display = "block";
 
-  updatePosition(); // Set position immediately
-  window.addEventListener("scroll", updatePosition); // Update on scroll
+  updateDialogPosition(); // Set position initially
+  window.addEventListener("scroll", updateDialogPosition); // Update on scroll
+  window.addEventListener("resize", updateDialogPosition); // Update on resize
 
-  // Save the callback
   confirmCallback = callback;
 }
 
 function handleConfirm(choice) {
-  document.getElementById("confirm").style.display = "none";
-  window.removeEventListener("scroll", updatePosition); // Remove scroll listener
-  confirmCallback(choice);
+  document.getElementById("confirmOverlay").style.display = "none";
+  window.removeEventListener("scroll", updateDialogPosition);
+  window.removeEventListener("resize", updateDialogPosition);
+
+  if (confirmCallback) confirmCallback(choice);
 }
+
+
+
 
 
 
@@ -656,7 +672,7 @@ try {
 
   document.getElementById("clearMeasureButton").addEventListener("click", (e) => {
     if (!Glob.playing) {
-      customConfirm(`Clear measure ${Glob.currentMeasure + 1}?`, function (choice) {
+      showConfirmDialog(`Clear measure ${Glob.currentMeasure + 1}?`, function (choice) {
         if (choice) {
           const measure = Measures.measures[Glob.currentMeasure];
           for (let r = 0; r < Instruments.names.length; r++) {
@@ -685,7 +701,7 @@ try {
 
   document.getElementById("deleteMeasureButton").addEventListener("click", (e) => {
     if (!Glob.playing && Measures.measures.length > 1) {
-      customConfirm(`Delete measure ${Glob.currentMeasure + 1}?`, function (choice) {
+      showConfirmDialog(`Delete measure ${Glob.currentMeasure + 1}?`, function (choice) {
         if (choice) {
           Measures.measures.splice(Glob.currentMeasure, 1);
           Glob.currentMeasure--;

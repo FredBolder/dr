@@ -1,24 +1,40 @@
-.confirm {
-    display: none;
+#confirmOverlay {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Moves with scrolling */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    /* Initially hidden */
     z-index: 9999;
+    /* Ensures it's on top */
 }
+
+#confirmBox {
+    position: absolute;
+    /* Allows dynamic positioning */
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    /* Ensures it's above the overlay */
+}
+
 .confirm button {
     padding: 8px 16px;
     margin: 5px;
     cursor: pointer;
 }
+
 #confirmYes {
     background-color: #28a745;
     color: white;
 }
+
 #confirmNo {
     background-color: #dc3545;
     color: white;
