@@ -640,13 +640,17 @@ try {
 
   document.getElementById("clearMeasureButton").addEventListener("click", (e) => {
     if (!Glob.playing) {
-      const measure = Measures.measures[Glob.currentMeasure];
-      for (let r = 0; r < Instruments.names.length; r++) {
-        for (let c = 0; c < measure.bassDrum.length; c++) {
-          setCell(c, r, 0);
+      customConfirm(`Clear measure ${Glob.currentMeasure + 1}?`, function (choice) {
+        if (choice) {
+          const measure = Measures.measures[Glob.currentMeasure];
+          for (let r = 0; r < Instruments.names.length; r++) {
+            for (let c = 0; c < measure.bassDrum.length; c++) {
+              setCell(c, r, 0);
+            }
+          }
+          drawPattern();
         }
-      }
-      drawPattern();
+      });
     }
   });
 
@@ -665,7 +669,7 @@ try {
 
   document.getElementById("deleteMeasureButton").addEventListener("click", (e) => {
     if (!Glob.playing && Measures.measures.length > 1) {
-      customConfirm("Delete measure?", function (choice) {
+      customConfirm(`Delete measure ${Glob.currentMeasure + 1}?`, function (choice) {
         if (choice) {
           Measures.measures.splice(Glob.currentMeasure, 1);
           Glob.currentMeasure--;
