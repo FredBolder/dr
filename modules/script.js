@@ -211,7 +211,7 @@ async function playPattern() {
     }
 
     const audioCtx = Audio.audioContext;
-    showMessage(audioCtx.state);
+    //showMessage(audioCtx.state);
     if (audioCtx.state === "suspended") {
       await audioCtx.resume();
     }
@@ -345,9 +345,9 @@ async function playPattern() {
             }
 
             let sourceStart = nextNoteTime + humanizeDeltaTime;
-            if (sourceStart < audioCtx.currentTime) {
-              sourceStart = audioCtx.currentTime;
-              showMessage("sourceStart was too small");
+            if (sourceStart < audioCtx.currentTime + 0.001) {
+              sourceStart = audioCtx.currentTime + 0.001;
+              //showMessage("sourceStart was too small");
             }
             source.start(sourceStart);
             source.started = true;  // Mark as started
@@ -360,9 +360,9 @@ async function playPattern() {
             if (cellValue === 6) {
               // Flam
               let sourceFlamStart = nextNoteTime - flamTime + humanizeDeltaTime;
-              if (sourceFlamStart < audioCtx.currentTime) {
-                sourceFlamStart = audioCtx.currentTime;
-                showMessage("sourceFlamStart was too small");
+              if (sourceFlamStart < audioCtx.currentTime + 0.001) {
+                sourceFlamStart = audioCtx.currentTime + 0.001;
+                //showMessage("sourceFlamStart was too small");
               }
                 sourceFlam.start(sourceFlamStart);
               sourceFlam.started = true;
