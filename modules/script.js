@@ -7,6 +7,21 @@ import { Measures } from "./measures.js";
 
 Glob.init();
 
+let confirmCallback = null; // This will store the callback to be executed when the user selects Yes/No
+
+function customConfirm(message, callback) {
+  confirmCallback = callback;
+  document.getElementById("confirmMessage").textContent = message;
+  document.getElementById("confirm").style.display = "block";
+}
+
+function handleConfirm(choice) {
+  confirmCallback(choice);
+  document.getElementById("confirm").style.display = "none";
+}
+
+
+
 function drawPattern(currentColumn = -1) {
   let ch = 0;
   let columns = 0;
@@ -364,7 +379,7 @@ async function playPattern() {
                 sourceFlamStart = audioCtx.currentTime + 0.001;
                 //showMessage("sourceFlamStart was too small");
               }
-                sourceFlam.start(sourceFlamStart);
+              sourceFlam.start(sourceFlamStart);
               sourceFlam.started = true;
 
               sourceFlam.onended = () => {
@@ -650,12 +665,16 @@ try {
 
   document.getElementById("deleteMeasureButton").addEventListener("click", (e) => {
     if (!Glob.playing && Measures.measures.length > 1) {
-      Measures.measures.splice(Glob.currentMeasure, 1);
-      Glob.currentMeasure--;
-      if (Glob.currentMeasure < 0) {
-        Glob.currentMeasure = 0;
-      }
-      drawPattern();
+      customConfirm("Delete measure?", function (choice) {
+        if (choice) {
+          Measures.measures.splice(Glob.currentMeasure, 1);
+          Glob.currentMeasure--;
+          if (Glob.currentMeasure < 0) {
+            Glob.currentMeasure = 0;
+          }
+          drawPattern();
+        }
+      });
     }
   });
 
@@ -732,6 +751,14 @@ try {
 
   document.getElementById("message").addEventListener("click", (e) => {
     document.getElementById("message").style.visibility = "hidden";
+  });
+
+  document.getElementById("confirmYes").addEventListener("click", (e) => {
+    handleConfirm(true);
+  });
+
+  document.getElementById("confirmNo").addEventListener("click", (e) => {
+    handleConfirm(false);
   });
 
   Instruments.init();
