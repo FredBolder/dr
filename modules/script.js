@@ -126,14 +126,19 @@ function drawPattern(currentColumn = -1) {
         patternContext.moveTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + factor) * dy1));
         patternContext.lineTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + (1 - factor)) * dy1));
         patternContext.stroke();
-      } else if ((cellValue >= 10) && (cellValue <= 11)) {
-        // Odd/even measures
+      } else if ((cellValue >= 10) && (cellValue <= 13)) {
         switch (cellValue) {
           case 10:
-            text = "O";
+            text = "E";
             break;
           case 11:
-            text = "E";
+            text = "e";
+            break;
+          case 12:
+            text = "F";
+            break;
+          case 13:
+            text = "f";
             break;
           default:
             text = "-";
@@ -178,6 +183,7 @@ function drawPattern(currentColumn = -1) {
       }
     }
   }
+  updateEndsWithFill();
 }
 
 async function playPattern() {
@@ -189,6 +195,7 @@ async function playPattern() {
   let odd = false;
   let ok = true;
   let openHiHat = [];
+  let prevEndsWithFill = false;
   let startFlamTime = 0;
   let volume = 0.75;
 
@@ -207,6 +214,7 @@ async function playPattern() {
     const audioCtx = Audio.audioContext;
     let nextNoteTime = audioCtx.currentTime;  // Start at current time
 
+    prevEndsWithFill = false;
     while (!Glob.stop) {
       for (let i = 0; i < Measures.measures.length && !Glob.stop; i++) {
         odd = !odd;
@@ -237,7 +245,10 @@ async function playPattern() {
                 }
               }
             }
-            if (((cellValue === 10) && !odd) || ((cellValue === 11) && odd)) {
+            if (((cellValue === 10) && odd) || ((cellValue === 11) && !odd)) {
+              cellValue = 0;
+            }
+            if (((cellValue === 12) && !prevEndsWithFill) || ((cellValue === 13) && prevEndsWithFill)) {
               cellValue = 0;
             }
 
@@ -256,6 +267,8 @@ async function playPattern() {
               case 7:
               case 10:
               case 11:
+              case 12:
+              case 13:
                 factor = 0.6;
                 break;
               case 2:
@@ -381,12 +394,17 @@ async function playPattern() {
             await new Promise(resolve => setTimeout(resolve, 5)); // Check every 5ms
           }
         }
+        prevEndsWithFill = measure.endsWithFill;
       }
     }
   }
   Glob.playing = false;
   Glob.stop = false;
   drawPattern();
+}
+
+function updateEndsWithFill() {
+  document.getElementById("endsWithFill").checked = Measures.measures[Glob.currentMeasure].endsWithFill;
 }
 
 function getCell(c, r) {
@@ -468,6 +486,22 @@ function setCell(c, r, value) {
   }
 }
 
+function additionalChanged() {
+  Glob.settings.additional = Glob.tryParseInt(document.getElementById("additionalSelector").value, 0);
+}
+
+function endsWithFillClicked() {
+  Measures.measures[Glob.currentMeasure].endsWithFill = document.getElementById("endsWithFill").checked;
+}
+
+function humanizeTimingChanged() {
+  Glob.settings.humanizeTiming = Glob.tryParseInt(document.getElementById("humanizeTimingSelector").value, 0);
+}
+
+function humanizeVolumesChanged() {
+  Glob.settings.humanizeVolumes = Glob.tryParseInt(document.getElementById("humanizeVolumesSelector").value, 0);
+}
+
 function patternClicked(event) {
   const columns = Measures.measures[Glob.currentMeasure].bassDrum.length;
   const rows = 16;
@@ -520,19 +554,19 @@ try {
     if (Glob.settings === null) {
       Glob.settings = new Settings();
       //console.log("Settings loaded");
-      document.getElementById("rhythmSelector").value = "Rock1";
-      Measures.load("Rock1");
+      document.getElementById("rhythmSelector").value = "Rock2";
+      Measures.load("Rock2");
       tempoChanged();
       volumeChanged();
       drawPattern();
-      Glob.settings.additional = Glob.tryParseInt(document.getElementById("additionalSelector").value, 0);
-      Glob.settings.humanizeVolumes = Glob.tryParseInt(document.getElementById("humanizeVolumesSelector").value, 0);
-      Glob.settings.humanizeTiming = Glob.tryParseInt(document.getElementById("humanizeTimingSelector").value, 0);
+      additionalChanged();
+      humanizeVolumesChanged();
+      humanizeTimingChanged();
     }
   });
 
   document.getElementById("loadRhythmButton").addEventListener("click", (e) => {
-    let rhythm = "Rock1";
+    let rhythm = "Rock2";
 
     if (!Glob.playing) {
       rhythm = document.getElementById("rhythmSelector").value;
@@ -665,15 +699,19 @@ try {
   });
 
   document.getElementById("additionalSelector").addEventListener("change", (e) => {
-    Glob.settings.additional = Glob.tryParseInt(document.getElementById("additionalSelector").value, 0);
+    additionalChanged();
   });
 
   document.getElementById("humanizeVolumesSelector").addEventListener("change", (e) => {
-    Glob.settings.humanizeVolumes = Glob.tryParseInt(document.getElementById("humanizeVolumesSelector").value, 0);
+    humanizeVolumesChanged();
   });
 
   document.getElementById("humanizeTimingSelector").addEventListener("change", (e) => {
-    Glob.settings.humanizeTiming = Glob.tryParseInt(document.getElementById("humanizeTimingSelector").value, 0);
+    humanizeTimingChanged();
+  });
+
+  document.getElementById("endsWithFill").addEventListener("click", (e) => {
+    endsWithFillClicked();
   });
 
   Instruments.init();

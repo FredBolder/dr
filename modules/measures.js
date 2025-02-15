@@ -7,6 +7,8 @@ class Measures {
     static load(rhythm) {
         let measure1 = [];
         let measure2 = [];
+        let measure3 = [];
+        let measure4 = [];
         this.measures = [];
         Glob.currentMeasure = 0;
         switch (rhythm) {
@@ -53,6 +55,46 @@ class Measures {
                 measure1.bassDrum = [1, 0, 0, 0, 1, 1, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
+                break;
+            case "Rock2":
+                Glob.settings.tempoSlider.value = 120;
+                measure1 = new Measure();
+                measure1.beats = 4;
+                measure1.divisions = 2;
+                measure1.crashCymbal1 = [12, 0, 0, 0, 0, 0, 0, 0];
+                measure1.closedHiHat = [13, 1, 1, 1, 1, 1, 1, 1];
+                measure1.snareDrum = [0, 0, 1, 0, 0, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 1, 1, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                measure2 = new Measure();
+                measure2.beats = 4;
+                measure2.divisions = 2;
+                measure2.openHiHat = [0, 0, 0, 0, 0, 0, 0, 1];
+                measure2.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 0];
+                measure2.snareDrum = [0, 0, 1, 0, 0, 0, 1, 0];
+                measure2.bassDrum = [1, 0, 0, 1, 1, 0, 0, 0];
+                Measure.fixMeasure(measure2);
+                this.measures.push(measure2);
+                measure3 = new Measure();
+                measure3.beats = 4;
+                measure3.divisions = 2;
+                measure3.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1];
+                measure3.snareDrum = [0, 0, 1, 0, 0, 0, 1, 0];
+                measure3.bassDrum = [1, 0, 0, 1, 1, 0, 0, 0];
+                Measure.fixMeasure(measure3);
+                this.measures.push(measure3);
+                measure4 = new Measure();
+                measure4.beats = 4;
+                measure4.divisions = 4;
+                measure4.endsWithFill = true;
+                measure4.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                measure4.midTom = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0];
+                measure4.lowTom = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
+                measure4.snareDrum = [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0];
+                measure4.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                Measure.fixMeasure(measure4);
+                this.measures.push(measure4);
                 break;
             case "ChaChaCha1":
                 Glob.settings.tempoSlider.value = 120;
@@ -171,7 +213,7 @@ class Measures {
                 measure1.divisions = 3;
                 measure1.rideCymbal = [1, 0, 0, 1, 0, 2, 1, 0, 0];
                 measure1.crossStick = [0, 0, 0, 0, 0, 0, 1, 0, 0];
-                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 10];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 11];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
@@ -229,6 +271,28 @@ class Measures {
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
+            case "Karsilamas1":
+                Glob.settings.tempoSlider.value = 243;
+                measure1 = new Measure();
+                measure1.beats = 9;
+                measure1.divisions = 1;
+                measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1];
+                measure1.snareDrum = [0, 1, 0, 1, 0, 1, 0, 1, 1];
+                measure1.bassDrum = [1, 0, 1, 0, 1, 0, 1, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
+            case "Karsilamas2":
+                Glob.settings.tempoSlider.value = 243;
+                measure1 = new Measure();
+                measure1.beats = 9;
+                measure1.divisions = 1;
+                measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1];
+                measure1.snareDrum = [0, 0, 1, 0, 0, 0, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 1, 0, 1, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
             case "Roumba1":
                 Glob.settings.tempoSlider.value = 100;
                 measure1 = new Measure();
@@ -246,7 +310,7 @@ class Measures {
                 measure1.beats = 3;
                 measure1.divisions = 4;
                 measure1.rideCymbal = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
-                measure1.snareDrum = [0, 0, 0, 2, 1, 0, 1, 0, 0, 0, 1, 11];
+                measure1.snareDrum = [0, 0, 0, 2, 1, 0, 1, 0, 0, 0, 1, 10];
                 measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
@@ -333,6 +397,7 @@ class Measures {
         if ((from >= 1) && (to >= 1) && (from !== to) && (from <= Measures.measures.length) && (to <= Measures.measures.length)) {
             this.measures[to - 1].beats = this.measures[from - 1].beats;
             this.measures[to - 1].divisions = this.measures[from - 1].divisions;
+            this.measures[to - 1].endsWithFill = this.measures[from - 1].endsWithFill;
             Measure.fixMeasure(this.measures[to - 1]);
             for (let i = 0; i < this.measures[from - 1].bassDrum.length; i++) {
                 this.measures[to - 1].cowbell[i] = this.measures[from - 1].cowbell[i];

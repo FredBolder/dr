@@ -2,6 +2,7 @@ class Measure {
     constructor() {
         this.beats = 0;
         this.divisions = 0;
+        this.endsWithFill = false;
         this.cowbell = [];
         this.crashCymbal1 = [];
         this.crashCymbal2 = [];
