@@ -196,7 +196,6 @@ async function playPattern() {
   let ok = true;
   let openHiHat = [];
   let prevEndsWithFill = false;
-  let startFlamTime = 0;
   let volume = 0.75;
 
   if (Glob.playing || (Measures.measures.length === 0)) {
@@ -212,6 +211,11 @@ async function playPattern() {
     }
 
     const audioCtx = Audio.audioContext;
+    showMessage(audioCtx.state);
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
+
     let nextNoteTime = audioCtx.currentTime;  // Start at current time
 
     prevEndsWithFill = false;
@@ -340,7 +344,12 @@ async function playPattern() {
               }
             }
 
-            source.start(nextNoteTime + humanizeDeltaTime);
+            let sourceStart = nextNoteTime + humanizeDeltaTime;
+            if (sourceStart < audioCtx.currentTime) {
+              sourceStart = audioCtx.currentTime;
+              showMessage("sourceStart was too small");
+            }
+            source.start(sourceStart);
             source.started = true;  // Mark as started
 
             // Memory cleanup after the note ends
@@ -350,11 +359,12 @@ async function playPattern() {
             };
             if (cellValue === 6) {
               // Flam
-              startFlamTime = nextNoteTime - flamTime;
-              if (startFlamTime < audioCtx.currentTime) {
-                startFlamTime = audioCtx.currentTime;
+              let sourceFlamStart = nextNoteTime - flamTime + humanizeDeltaTime;
+              if (sourceFlamStart < audioCtx.currentTime) {
+                sourceFlamStart = audioCtx.currentTime;
+                showMessage("sourceFlamStart was too small");
               }
-              sourceFlam.start(startFlamTime + humanizeDeltaTime);
+                sourceFlam.start(sourceFlamStart);
               sourceFlam.started = true;
 
               sourceFlam.onended = () => {
@@ -401,6 +411,11 @@ async function playPattern() {
   Glob.playing = false;
   Glob.stop = false;
   drawPattern();
+}
+
+function showMessage(msg) {
+  document.getElementById("message").innerText = msg;
+  document.getElementById("message").style.visibility = "visible";
 }
 
 function updateEndsWithFill() {
@@ -556,6 +571,7 @@ try {
       //console.log("Settings loaded");
       document.getElementById("rhythmSelector").value = "Rock2";
       Measures.load("Rock2");
+      document.getElementById("message").style.visibility = "hidden";
       tempoChanged();
       volumeChanged();
       drawPattern();
@@ -712,6 +728,10 @@ try {
 
   document.getElementById("endsWithFill").addEventListener("click", (e) => {
     endsWithFillClicked();
+  });
+
+  document.getElementById("message").addEventListener("click", (e) => {
+    document.getElementById("message").style.visibility = "hidden";
   });
 
   Instruments.init();
