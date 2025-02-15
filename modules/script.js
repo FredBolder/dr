@@ -7,54 +7,6 @@ import { Measures } from "./measures.js";
 
 Glob.init();
 
-let confirmCallback = null;
-
-function updateDialogPosition() {
-  const dialog = document.getElementById("confirmBox");
-
-  const viewportHeight = window.innerHeight;
-  const viewportWidth = window.innerWidth;
-  const dialogHeight = dialog.offsetHeight;
-  const dialogWidth = dialog.offsetWidth;
-
-  // Centering logic
-  const topPosition = (viewportHeight - dialogHeight) / 2;
-  const leftPosition = (viewportWidth - dialogWidth) / 2;
-
-  dialog.style.top = `${Math.max(topPosition, 20)}px`; // Prevents it from going too high
-  dialog.style.left = `${Math.max(leftPosition, 20)}px`; // Prevents it from going too far left
-}
-
-function showConfirmDialog(message, callback) {
-  const overlay = document.getElementById("confirmOverlay");
-  const messageBox = document.getElementById("confirmMessage");
-
-  messageBox.textContent = message;
-  overlay.style.display = "block";
-
-  // Prevent scrolling
-  document.body.classList.add("no-scroll");
-
-  updateDialogPosition(); // Center the dialog
-  window.addEventListener("resize", updateDialogPosition); // Keep centered on resize
-
-  confirmCallback = callback;
-}
-
-function handleConfirm(choice) {
-  document.getElementById("confirmOverlay").style.display = "none";
-
-  // Allow scrolling again
-  document.body.classList.remove("no-scroll");
-
-  window.removeEventListener("resize", updateDialogPosition);
-
-  if (confirmCallback) confirmCallback(choice);
-}
-
-
-
-
 function drawPattern(currentColumn = -1) {
   let ch = 0;
   let columns = 0;
@@ -673,17 +625,16 @@ try {
 
   document.getElementById("clearMeasureButton").addEventListener("click", (e) => {
     if (!Glob.playing) {
-      showConfirmDialog(`Clear measure ${Glob.currentMeasure + 1}?`, function (choice) {
-        if (choice) {
-          const measure = Measures.measures[Glob.currentMeasure];
-          for (let r = 0; r < Instruments.names.length; r++) {
-            for (let c = 0; c < measure.bassDrum.length; c++) {
-              setCell(c, r, 0);
-            }
+      const userChoice = window.confirm(`Clear measure ${Glob.currentMeasure + 1}?`);
+      if (userChoice) {
+        const measure = Measures.measures[Glob.currentMeasure];
+        for (let r = 0; r < Instruments.names.length; r++) {
+          for (let c = 0; c < measure.bassDrum.length; c++) {
+            setCell(c, r, 0);
           }
-          drawPattern();
         }
-      });
+        drawPattern();
+      }
     }
   });
 
@@ -702,16 +653,15 @@ try {
 
   document.getElementById("deleteMeasureButton").addEventListener("click", (e) => {
     if (!Glob.playing && Measures.measures.length > 1) {
-      showConfirmDialog(`Delete measure ${Glob.currentMeasure + 1}?`, function (choice) {
-        if (choice) {
-          Measures.measures.splice(Glob.currentMeasure, 1);
-          Glob.currentMeasure--;
-          if (Glob.currentMeasure < 0) {
-            Glob.currentMeasure = 0;
-          }
-          drawPattern();
+      const userChoice = window.confirm(`Delete measure ${Glob.currentMeasure + 1}?`);
+      if (userChoice) {
+        Measures.measures.splice(Glob.currentMeasure, 1);
+        Glob.currentMeasure--;
+        if (Glob.currentMeasure < 0) {
+          Glob.currentMeasure = 0;
         }
-      });
+        drawPattern();
+      }
     }
   });
 
@@ -788,14 +738,6 @@ try {
 
   document.getElementById("message").addEventListener("click", (e) => {
     document.getElementById("message").style.visibility = "hidden";
-  });
-
-  document.getElementById("confirmYes").addEventListener("click", (e) => {
-    handleConfirm(true);
-  });
-
-  document.getElementById("confirmNo").addEventListener("click", (e) => {
-    handleConfirm(false);
   });
 
   Instruments.init();
