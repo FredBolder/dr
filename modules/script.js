@@ -9,15 +9,31 @@ Glob.init();
 
 let confirmCallback = null; // This will store the callback to be executed when the user selects Yes/No
 
+// Adjust position dynamically based on scroll
+function updatePosition() {
+  const dialog = document.getElementById("confirm");
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
+  dialog.style.top = `${scrollY + window.innerHeight / 2}px`;
+}
+
 function customConfirm(message, callback) {
+  const dialog = document.getElementById("confirm");
+  const messageBox = document.getElementById("confirmMessage");
+
+  messageBox.textContent = message;
+  dialog.style.display = "block";
+
+  updatePosition(); // Set position immediately
+  window.addEventListener("scroll", updatePosition); // Update on scroll
+
+  // Save the callback
   confirmCallback = callback;
-  document.getElementById("confirmMessage").textContent = message;
-  document.getElementById("confirm").style.display = "block";
 }
 
 function handleConfirm(choice) {
-  confirmCallback(choice);
   document.getElementById("confirm").style.display = "none";
+  window.removeEventListener("scroll", updatePosition); // Remove scroll listener
+  confirmCallback(choice);
 }
 
 
