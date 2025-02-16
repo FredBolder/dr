@@ -7,6 +7,50 @@ import { Measures } from "./measures.js";
 
 Glob.init();
 
+function applyHiHatPattern() {
+  let column = 0;
+  let odd = false;
+  const pattern = Glob.tryParseInt(document.getElementById("hiHatPatternSelector").value, 0);
+  const measure = Measures.measures[Glob.currentMeasure];
+  for (let i = 0; i < measure.beats; i++) {
+    for (let j = 0; j < measure.divisions; j++) {
+      odd = !odd;
+      column = (i * measure.divisions) + j;
+      measure.closedHiHat[column] = 0;
+      switch (pattern) {
+        case 0:
+          // Every beat
+          if (j === 0) {
+            measure.closedHiHat[column] = 1;
+          }
+          break;
+        case 1:
+          // Every column
+          measure.closedHiHat[column] = 1;
+          break;
+        case 2:
+          // Odd columns
+          if (odd) {
+            measure.closedHiHat[column] = 1;
+          }
+          break;
+        case 3:
+          // Even column
+          if (!odd) {
+            measure.closedHiHat[column] = 1;
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+  }
+
+  drawPattern();
+}
+
+
 function drawPattern(currentColumn = -1) {
   let ch = 0;
   let columns = 0;
@@ -641,7 +685,6 @@ try {
       const userChoice = window.confirm(`Load rhythm?`);
       if (userChoice) {
         Measures.load(rhythm);
-        document.getElementById("tempoSlider").value = Glob.settings.tempo;
         tempoChanged();
         volumeChanged();
         drawPattern();
@@ -820,6 +863,15 @@ try {
   document.getElementById("openButton").addEventListener("click", (e) => {
     if (!Glob.playing) {
       openTextFile();
+    }
+  });
+
+  document.getElementById("applyHiHatPatternButton").addEventListener("click", (e) => {
+    if (!Glob.playing) {
+      const userChoice = window.confirm(`Apply the hi-hat pattern for the current measure?`);
+      if (userChoice) {
+        applyHiHatPattern();
+      }
     }
   });
 

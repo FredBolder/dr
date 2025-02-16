@@ -15,18 +15,28 @@
   </header>
   <main>
     <div id="message"></div>
+    <p>
+      This is the online version of <a href="https://www.dansblad.nl/dr/" target="_blank">DR for windows</a>.
+      Keep in mind that there are many differences including the file format. If you are interested in Greek rhythms, make sure to 
+      check out my ebook <a href="https://www.dansblad.nl/grdrums/" target="_blank">Greek Dance Rhythms for Drums</a> with
+      more than 1080 patterns.
+      Send an e-mail to <a href="mailto:fgh.bolder@gmail.com">fgh.bolder@gmail.com</a> for
+      questions.
+    </p>
     <div class="flex">
       <div id="rhythm">
         <select name="rhythmSelector" id="rhythmSelector">
           <optgroup label="Pop/Rock">
             <option value="Disco1">Disco 1</option>
             <option value="Metal1">Metal 1</option>
+            <option value="Metal2">Metal 2</option>
             <option value="Rock1">Rock 1</option>
             <option value="Rock2">Rock 2</option>
           </optgroup>
           <optgroup label="Ballroom/Latin">
             <option value="ChaChaCha1">Cha Cha Cha 1</option>
             <option value="Jive1">Jive 1</option>
+            <option value="Merengue1">Merengue 1</option>
             <option value="PasoDoble1">Paso doble 1</option>
             <option value="PasoDoble2">Paso doble 2</option>
             <option value="Quickstep1">Quickstep 1</option>
@@ -35,6 +45,7 @@
             <option value="SlowWaltz1">Slow waltz 1</option>
             <option value="Slowfox1">Slowfox 1</option>
             <option value="Tango1">Tango 1</option>
+            <option value="Tango2">Tango 2</option>
             <option value="VienneseWaltz1">Viennese waltz 1</option>
           </optgroup>
           <optgroup label="Greek">
@@ -164,6 +175,19 @@
           <option value="6">6</option>
           <option value="7">7</option>
         </select>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Tools</legend>
+      <div id="hiHatPattern">
+        <label for="hiHatPatternSelector">Hi-hat pattern</label>
+        <select name="hiHatPatternSelector" id="hiHatPatternSelector">
+          <option value="0">Every beat</option>
+          <option value="1">Every column</option>
+          <option value="2">Odd columns</option>
+          <option value="3">Even columns</option>
+        </select>
+        <button type="button" id="applyHiHatPatternButton">Apply</button>
       </div>
     </fieldset>
   </main>
