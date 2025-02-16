@@ -293,6 +293,17 @@ class Measures {
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
+            case "PalioZeibekiko1":
+                Glob.settings.tempoSlider.value = 63;
+                measure1 = new Measure();
+                measure1.beats = 9;
+                measure1.divisions = 2;
+                measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+                measure1.snareDrum = [0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
             case "Roumba1":
                 Glob.settings.tempoSlider.value = 100;
                 measure1 = new Measure();
@@ -301,6 +312,41 @@ class Measures {
                 measure1.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0];
                 measure1.snareDrum = [0, 0, 0, 1, 0, 0, 1, 0];
                 measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
+            case "Tik1":
+                Glob.settings.tempoSlider.value = 250;
+                measure1 = new Measure();
+                measure1.beats = 5;
+                measure1.divisions = 2;
+                measure1.closedHiHat = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                measure1.lowTom = [1, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                measure1.snareDrum = [0, 0, 0, 2, 1, 0, 0, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
+            case "Tsakonikos1":
+                Glob.settings.tempoSlider.value = 100;
+                measure1 = new Measure();
+                measure1.beats = 5;
+                measure1.divisions = 4;
+                measure1.lowTom = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
+                measure1.snareDrum = [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 2, 1, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
+            case "Tsakonikos2":
+                Glob.settings.tempoSlider.value = 100;
+                measure1 = new Measure();
+                measure1.beats = 5;
+                measure1.divisions = 4;
+                measure1.closedHiHat = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                measure1.lowTom = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
+                measure1.snareDrum = [0, 0, 0, 2, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 2, 1, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;

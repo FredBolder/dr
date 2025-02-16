@@ -24,7 +24,6 @@ class Audio {
         const audioBuffers = await Promise.all(urls.map(url => loadAudioData(url)));
         urls.forEach((url, index) => this.audioCache.set(url, audioBuffers[index]));
     }
-
 }
 
 export { Audio };

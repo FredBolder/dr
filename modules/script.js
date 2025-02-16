@@ -326,20 +326,19 @@ async function playPattern() {
             if (idx === 7) {
               source.started = false;  // Add a custom property to track if the source has started
               setTimeout(() => {
-                openHiHat.push(source);
+                openHiHat.push({source, gainNode});
               }, (nextNoteTime + humanizeDeltaTime - audioCtx.currentTime) * 1000); // Add at actual play time
               source.onended = () => {
-                openHiHat = openHiHat.filter(oh => oh !== source); // Remove from list when it naturally ends
+                openHiHat = openHiHat.filter(oh => oh.source !== source); // Remove from list when it naturally ends
               };
 
               if (cellValue === 6) {
                 sourceFlam.started = false;
-                openHiHat.push(sourceFlam);
                 setTimeout(() => {
-                  openHiHat.push(sourceFlam);
+                  openHiHat.push({sourceFlam, gainNodeFlam});
                 }, (nextNoteTime + humanizeDeltaTime - flamTime - audioCtx.currentTime) * 1000);
                 source.onended = () => {
-                  openHiHat = openHiHat.filter(oh => oh !== sourceFlam);
+                  openHiHat = openHiHat.filter(oh => oh.source !== sourceFlam);
                 };
               }
             }
@@ -376,15 +375,19 @@ async function playPattern() {
             if (idx === 8 || idx === 15) { // Closed Hi-Hat or Pedal Hi-Hat
               setTimeout(() => {
                 openHiHat.forEach(oh => {
-                  if (oh.started) {
+                  if (oh.source.started) {
                     try {
-                      oh.stop();
+                      const fadeOutTime = Math.min(0.2, timeBetweenDivisions); // Time in seconds
+                      oh.gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeOutTime);
+                      setTimeout(() => {
+                        oh.source.stop();
+                      }, fadeOutTime * 1000);
                     } catch (e) {
                       console.error("Error stopping open hi-hat:", e);
                     }
                   }
                 });
-                openHiHat = openHiHat.filter(oh => oh.started); // Keep only started ones
+                openHiHat = openHiHat.filter(oh => oh.source.started); // Keep only started ones
               }, (nextNoteTime + humanizeDeltaTime - audioCtx.currentTime) * 1000);
             }
 
@@ -586,10 +589,13 @@ try {
 
     if (!Glob.playing) {
       rhythm = document.getElementById("rhythmSelector").value;
-      Measures.load(rhythm);
-      tempoChanged();
-      volumeChanged();
-      drawPattern();
+      const userChoice = window.confirm(`Load rhythm?`);
+      if (userChoice) {
+        Measures.load(rhythm);
+        tempoChanged();
+        volumeChanged();
+        drawPattern();
+      }
     }
   });
 
@@ -753,6 +759,38 @@ try {
 
   document.getElementById("message").addEventListener("click", (e) => {
     document.getElementById("message").style.visibility = "hidden";
+  });
+
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  document.getElementById("testButton").addEventListener("click", async () => {
+    try {
+      const response = await fetch("./wav/Crash_cymbal_1.wav");
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer); // Await needed
+
+      const source = audioCtx.createBufferSource();
+      source.buffer = audioBuffer;
+
+      const gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0.9;
+
+      source.connect(gainNode);
+      gainNode.connect(audioCtx.destination); // Connect to output
+
+      source.start(0);
+
+      // **Fast fade-out effect (linear decrease over 0.3 seconds)**
+      const fadeOutTime = 0.1; // Time in seconds
+      gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeOutTime);
+
+      // **Stop sound when volume reaches 0**
+      setTimeout(() => {
+        source.stop();
+      }, fadeOutTime * 1000); // Convert seconds to milliseconds
+    } catch (error) {
+      console.error("Error playing sound:", error);
+    }
   });
 
   Instruments.init();
