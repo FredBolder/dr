@@ -437,7 +437,7 @@ async function saveTextFile() {
       console.log(`File "${fileName}" saved successfully!`);
   } catch (err) {
       console.error("Error saving file:", err);
-      alert("ERROR");
+      alert(err);
   }
 }
 
