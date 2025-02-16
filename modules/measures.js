@@ -260,6 +260,17 @@ class Measures {
                 Measure.fixMeasure(measure2);
                 this.measures.push(measure2);
                 break;
+            case "Aptaliko1":
+                Glob.settings.tempoSlider.value = 63;
+                measure1 = new Measure();
+                measure1.beats = 9;
+                measure1.divisions = 2;
+                measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+                measure1.snareDrum = [0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
             case "Kalamatianos1":
                 Glob.settings.tempoSlider.value = 240;
                 measure1 = new Measure();
