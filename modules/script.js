@@ -416,6 +416,29 @@ async function playPattern() {
   drawPattern();
 }
 
+async function saveTextFile() {
+  try {
+      // Prompt the user to select a folder
+      const dirHandle = await window.showDirectoryPicker();
+
+      // Ask the user for a filename
+      const fileName = prompt("Enter the filename (including .txt extension):", "myFile.txt");
+      if (!fileName) return; // Exit if the user cancels
+
+      // Create or get the file handle
+      const fileHandle = await dirHandle.getFileHandle(fileName, { create: true });
+
+      // Write to the file
+      const writable = await fileHandle.createWritable();
+      await writable.write("Hello, this is a saved file!");
+      await writable.close();
+
+      console.log(`File "${fileName}" saved successfully!`);
+  } catch (err) {
+      console.error("Error saving file:", err);
+  }
+}
+
 function showMessage(msg) {
   document.getElementById("message").innerText = msg;
   document.getElementById("message").style.visibility = "visible";
@@ -759,6 +782,12 @@ try {
 
   document.getElementById("message").addEventListener("click", (e) => {
     document.getElementById("message").style.visibility = "hidden";
+  });
+
+  document.getElementById("saveButton").addEventListener("click", (e) => {
+    if (!Glob.playing) {
+      saveTextFile();
+    }
   });
 
   Instruments.init();

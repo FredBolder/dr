@@ -271,6 +271,29 @@ class Measures {
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
+            case "Kamilierikos1":
+                Glob.settings.tempoSlider.value = 126;
+                measure1 = new Measure();
+                measure1.beats = 9;
+                measure1.divisions = 2;
+                measure1.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0];
+                measure1.snareDrum = [0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
+            case "Kamilierikos2":
+                Glob.settings.tempoSlider.value = 126;
+                measure1 = new Measure();
+                measure1.beats = 9;
+                measure1.divisions = 2;
+                measure1.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 11, 0, 11, 0];
+                measure1.midTom = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0];
+                measure1.snareDrum = [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 10, 11, 0];
+                measure1.bassDrum = [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
             case "Karsilamas1":
                 Glob.settings.tempoSlider.value = 243;
                 measure1 = new Measure();
