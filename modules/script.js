@@ -761,38 +761,6 @@ try {
     document.getElementById("message").style.visibility = "hidden";
   });
 
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-  document.getElementById("testButton").addEventListener("click", async () => {
-    try {
-      const response = await fetch("./wav/Crash_cymbal_1.wav");
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer); // Await needed
-
-      const source = audioCtx.createBufferSource();
-      source.buffer = audioBuffer;
-
-      const gainNode = audioCtx.createGain();
-      gainNode.gain.value = 0.9;
-
-      source.connect(gainNode);
-      gainNode.connect(audioCtx.destination); // Connect to output
-
-      source.start(0);
-
-      // **Fast fade-out effect (linear decrease over 0.3 seconds)**
-      const fadeOutTime = 0.1; // Time in seconds
-      gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeOutTime);
-
-      // **Stop sound when volume reaches 0**
-      setTimeout(() => {
-        source.stop();
-      }, fadeOutTime * 1000); // Convert seconds to milliseconds
-    } catch (error) {
-      console.error("Error playing sound:", error);
-    }
-  });
-
   Instruments.init();
   Audio.init();
 } catch (e) {
