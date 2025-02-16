@@ -186,6 +186,32 @@ function drawPattern(currentColumn = -1) {
   updateEndsWithFill();
 }
 
+async function openTextFile() {
+  let fileVersion = 0;
+  try {
+    const [fileHandle] = await window.showOpenFilePicker({
+      types: [
+        {
+          description: "Text Files",
+          accept: { "text/plain": [".txt"] },
+        },
+      ],
+      multiple: false,
+    });
+    const file = await fileHandle.getFile();
+    const text = await file.text();
+    const lines = text.split("\n");
+    fileVersion = Glob.tryParseInt(lines[0], 0);
+    Glob.settings.tempo = Glob.tryParseInt(lines[1], 0);
+    Measures.measures = JSON.parse(lines[2]);
+    drawPattern();
+    document.getElementById("tempoSlider").value = Glob.settings.tempo;
+    tempoChanged();
+  } catch (err) {
+    console.error("Error opening file:", err);
+  }
+}
+
 async function playPattern() {
   let factor = 1;
   let humanizeDeltaTime = 0;
@@ -417,10 +443,10 @@ async function playPattern() {
 }
 
 async function saveTextFile() {
+  const fileVersion = 1;
   try {
-    // Open a native save dialog where the user selects the folder and filename
     const fileHandle = await window.showSaveFilePicker({
-      suggestedName: "test.txt", // Default filename
+      suggestedName: "myPattern.txt", // Default filename
       types: [
         {
           description: "Text Files",
@@ -428,13 +454,11 @@ async function saveTextFile() {
         },
       ],
     });
-
-    // Write to the file
     const writable = await fileHandle.createWritable();
-    await writable.write("Hello, this is a saved file!");
+    await writable.write(fileVersion.toString() + "\n");
+    await writable.write(Glob.settings.tempo.toString() + "\n");
+    await writable.write(JSON.stringify(Measures.measures) + "\n");
     await writable.close();
-
-    console.log(`File saved successfully: ${fileHandle.name}`);
   } catch (err) {
     console.error("Error saving file:", err);
   }
@@ -599,6 +623,7 @@ try {
       document.getElementById("rhythmSelector").value = "Rock2";
       Measures.load("Rock2");
       document.getElementById("message").style.visibility = "hidden";
+      document.getElementById("tempoSlider").value = Glob.settings.tempo;
       tempoChanged();
       volumeChanged();
       drawPattern();
@@ -616,6 +641,7 @@ try {
       const userChoice = window.confirm(`Load rhythm?`);
       if (userChoice) {
         Measures.load(rhythm);
+        document.getElementById("tempoSlider").value = Glob.settings.tempo;
         tempoChanged();
         volumeChanged();
         drawPattern();
@@ -788,6 +814,12 @@ try {
   document.getElementById("saveButton").addEventListener("click", (e) => {
     if (!Glob.playing) {
       saveTextFile();
+    }
+  });
+
+  document.getElementById("openButton").addEventListener("click", (e) => {
+    if (!Glob.playing) {
+      openTextFile();
     }
   });
 
