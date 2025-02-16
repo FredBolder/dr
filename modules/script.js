@@ -326,7 +326,7 @@ async function playPattern() {
             if (idx === 7) {
               source.started = false;  // Add a custom property to track if the source has started
               setTimeout(() => {
-                openHiHat.push({source, gainNode});
+                openHiHat.push({ source, gainNode });
               }, (nextNoteTime + humanizeDeltaTime - audioCtx.currentTime) * 1000); // Add at actual play time
               source.onended = () => {
                 openHiHat = openHiHat.filter(oh => oh.source !== source); // Remove from list when it naturally ends
@@ -335,7 +335,7 @@ async function playPattern() {
               if (cellValue === 6) {
                 sourceFlam.started = false;
                 setTimeout(() => {
-                  openHiHat.push({sourceFlam, gainNodeFlam});
+                  openHiHat.push({ sourceFlam, gainNodeFlam });
                 }, (nextNoteTime + humanizeDeltaTime - flamTime - audioCtx.currentTime) * 1000);
                 source.onended = () => {
                   openHiHat = openHiHat.filter(oh => oh.source !== sourceFlam);
@@ -418,26 +418,25 @@ async function playPattern() {
 
 async function saveTextFile() {
   try {
-      // Prompt the user to select a folder
-      const dirHandle = await window.showDirectoryPicker();
+    // Open a native save dialog where the user selects the folder and filename
+    const fileHandle = await window.showSaveFilePicker({
+      suggestedName: "test.txt", // Default filename
+      types: [
+        {
+          description: "Text Files",
+          accept: { "text/plain": [".txt"] },
+        },
+      ],
+    });
 
-      // Ask the user for a filename
-      const fileName = prompt("Enter the filename (including .txt extension):", "myFile.txt");
-      if (!fileName) return; // Exit if the user cancels
+    // Write to the file
+    const writable = await fileHandle.createWritable();
+    await writable.write("Hello, this is a saved file!");
+    await writable.close();
 
-      // Create or get the file handle
-      const fileHandle = await dirHandle.getFileHandle(fileName, { create: true });
-
-      // Write to the file
-      const writable = await fileHandle.createWritable();
-      await writable.write("Hello, this is a saved file!");
-      await writable.close();
-      alert("OK");
-
-      console.log(`File "${fileName}" saved successfully!`);
+    console.log(`File saved successfully: ${fileHandle.name}`);
   } catch (err) {
-      console.error("Error saving file:", err);
-      alert(err);
+    console.error("Error saving file:", err);
   }
 }
 
