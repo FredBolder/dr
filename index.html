@@ -74,6 +74,7 @@
         <button type="button" id="loadRhythmButton">Load</button>
       </div>
       <div>
+        <button type="button" id="newButton">New</button>
         <button type="button" id="openButton">Open</button>
         <button type="button" id="saveButton">Save</button>
       </div>
@@ -121,7 +122,7 @@
           </optgroup>
         </select>
       </div>
-      <div>
+      <div class="checkboxGroup">
         <label for="loop">Loop</label>
         <input type="checkbox" id="loop" name="loop" checked>
       </div>
@@ -130,7 +131,7 @@
 
     <fieldset>
       <legend>Measure</legend>
-      <div class="buttonGroup">
+      <div class="group">
         <button type="button" id="previousMeasureButton">Previous</button>
         <button type="button" id="nextMeasureButton">Next</button>
         <button type="button" id="clearMeasureButton">Clear</button>
@@ -147,7 +148,7 @@
         <label for="copyMeasureTo">to</label>
         <input type="text" id="copyMeasureTo" name="copyMeasureTo" value="1">
       </div>
-      <div id="measureEndsWithFill">
+      <div id="measureEndsWithFill" class="checkboxGroup">
         <label for="endsWithFill">Ends with fill</label>
         <input type="checkbox" id="endsWithFill" name="endsWithFill">
       </div>
@@ -188,18 +189,36 @@
           <option value="7">7</option>
         </select>
       </div>
+      <div class="checkboxGroup">
+        <label for="expert">Expert</label>
+        <input type="checkbox" id="expert" name="expert">
+      </div>
     </fieldset>
     <fieldset>
       <legend>Tools</legend>
-      <div id="hiHatPattern">
-        <label for="hiHatPatternSelector">Hi-hat pattern</label>
-        <select name="hiHatPatternSelector" id="hiHatPatternSelector">
-          <option value="0">Every beat</option>
-          <option value="1">Every column</option>
-          <option value="2">Odd columns</option>
-          <option value="3">Even columns</option>
+      <div id="presetPattern" class="group">
+        <select name="presetPatternInstrument" id="presetPatternInstrument">
+          <option value="0">Closed hi-hat</option>
         </select>
-        <button type="button" id="applyHiHatPatternButton">Apply</button>
+        <select name="presetPatternSelector" id="presetPatternSelector">
+          <option value="0">Never</option>
+          <option value="1" selected="selected">Every beat</option>
+          <option value="2">Every column</option>
+          <option value="3">Odd columns</option>
+          <option value="4">Even columns</option>
+          <option value="5">Random</option>
+          <option value="6">Every column of last beat</option>
+          <option value="7">Every column of last beat (soft to hard)</option>
+        </select>
+        <div class="checkboxGroup">
+          <label for="presetPatternClear">Clear other columns</label>
+          <input type="checkbox" id="presetPatternClear" name="presetPatternClear" checked>
+        </div>
+        <div class="checkboxGroup">
+          <label for="presetPatternAllMeasures">All measures</label>
+          <input type="checkbox" id="presetPatternAllMeasures" name="presetPatternAllMeasures">
+        </div>
+        <button type="button" id="applyPresetPatternButton">Apply</button>
       </div>
     </fieldset>
   </main>

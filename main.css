@@ -7,6 +7,7 @@ fieldset {
     width: fit-content;
     display: flex;
     flex-direction: row;
+    align-items: center;
     column-gap: 2em;
     row-gap: 1em;
     flex-wrap: wrap;
@@ -15,15 +16,26 @@ fieldset {
 .flex {
     display: flex;
     flex-direction: row;
+    align-items: center;
     column-gap: 2em;
     row-gap: 1em;
     flex-wrap: wrap;
 }
 
-.buttonGroup {
+.group {
     display: flex;
     flex-direction: row;
+    align-items: center;
     column-gap: 0.5em;
+    row-gap: 0.5em;
+    flex-wrap: wrap;
+}
+
+.checkboxGroup {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 0.2em;
     row-gap: 0.5em;
     flex-wrap: wrap;
 }

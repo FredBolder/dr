@@ -7,46 +7,125 @@ import { Measures } from "./measures.js";
 
 Glob.init();
 
-function applyHiHatPattern() {
+function applyPresetPattern() {
   let column = 0;
+  let hit = 0;
+  let hits = [];
+  let nStart = 0;
+  let nStop = 0;
   let odd = false;
-  const pattern = Glob.tryParseInt(document.getElementById("hiHatPatternSelector").value, 0);
-  const measure = Measures.measures[Glob.currentMeasure];
-  for (let i = 0; i < measure.beats; i++) {
-    for (let j = 0; j < measure.divisions; j++) {
-      odd = !odd;
-      column = (i * measure.divisions) + j;
-      measure.closedHiHat[column] = 0;
-      switch (pattern) {
-        case 0:
-          // Every beat
-          if (j === 0) {
-            measure.closedHiHat[column] = 1;
-          }
-          break;
-        case 1:
-          // Every column
-          measure.closedHiHat[column] = 1;
-          break;
-        case 2:
-          // Odd columns
-          if (odd) {
-            measure.closedHiHat[column] = 1;
-          }
-          break;
-        case 3:
-          // Even column
-          if (!odd) {
-            measure.closedHiHat[column] = 1;
-          }
-          break;
-        default:
-          break;
+  const row = Glob.tryParseInt(document.getElementById("presetPatternInstrument").value, 0);
+  const pattern = Glob.tryParseInt(document.getElementById("presetPatternSelector").value, 0);
+  const clearOtherColumns = document.getElementById("presetPatternClear").checked;
+  const allMeasures = document.getElementById("presetPatternAllMeasures").checked;
+  if (allMeasures) {
+    nStart = 0;
+    nStop = Measures.measures.length - 1;
+  } else {
+    nStart = Glob.currentMeasure;
+    nStop = nStart;
+  }
+  for (let m = nStart; m <= nStop; m++) {
+    odd = false;
+    const measure = Measures.measures[m];
+    Glob.currentMeasure = m;
+    for (let i = 0; i < measure.beats; i++) {
+      for (let j = 0; j < measure.divisions; j++) {
+        odd = !odd;
+        column = (i * measure.divisions) + j;
+        if (clearOtherColumns) {
+          setCell(column, row, 0);
+        }
+        switch (pattern) {
+          case 0:
+            // Never
+            setCell(column, row, 0);
+            break;
+          case 1:
+            // Every beat
+            if (j === 0) {
+              setCell(column, row, 1);
+            }
+            break;
+          case 2:
+            // Every column
+            setCell(column, row, 1);
+            break;
+          case 3:
+            // Odd columns
+            if (odd) {
+              setCell(column, row, 1);
+            }
+            break;
+          case 4:
+            // Even column
+            if (!odd) {
+              setCell(column, row, 1);
+            }
+            break;
+          case 5:
+            // Random
+            if (Math.random() > 0.5) {
+              setCell(column, row, 1);
+            }
+            break;
+          case 6:
+            // Every column of last beat
+            if (i === measure.beats - 1) {
+              setCell(column, row, 1);
+            }
+            break;
+          case 7:
+            // Every column of last beat (soft to hard)
+            if (i === measure.beats - 1) {
+              switch (measure.divisions) {
+                case 1:
+                  hits = [1];
+                  break;
+                case 2:
+                  hits = [2, 1];
+                  break;
+                case 3:
+                  hits = [2, 1, 3];
+                  break;
+                case 4:
+                  hits = [4, 2, 1, 3];
+                  break;
+                case 5:
+                  hits = [4, 2, 1, 3, 5];
+                  break;
+                case 6:
+                  hits = [4, 4, 2, 1, 3, 5];
+                  break;
+                case 7:
+                  hits = [4, 4, 2, 2, 1, 3, 5];
+                  break;
+                case 8:
+                  hits = [4, 4, 2, 2, 1, 1, 3, 5];
+                  break;
+                case 9:
+                  hits = [4, 4, 2, 2, 1, 1, 3, 3, 5];
+                  break;
+                case 10:
+                  hits = [4, 4, 2, 2, 1, 1, 3, 3, 5, 5];
+                  break;
+                default:
+                  hits = [4, 4, 4, 2, 2, 2, 1, 1, 1, 3, 3, 3, 5, 5, 5];
+                  break;
+              }
+              hit = j;
+              if (hit >= hits.length) {
+                hit = hits.length - 1;
+              }
+              setCell(column, row, hits[hit]);
+            }
+            break;
+          default:
+            break;
+        }
       }
     }
-
   }
-
   drawPattern();
 }
 
@@ -230,6 +309,25 @@ function drawPattern(currentColumn = -1) {
   updateEndsWithFill();
 }
 
+function expertClicked() {
+  Glob.settings.expert = document.getElementById("expert").checked;
+  if (Glob.settings.expert) {
+    alert("Be careful, you are now in Expert mode!!");
+  }
+}
+
+function fillPatternInstruments() {
+  let selector = document.getElementById("presetPatternInstrument");
+  selector.innerHTML = ""; // Remove all options
+  Instruments.names.forEach((name, index) => {
+    let option = document.createElement("option");
+    option.textContent = name;
+    option.value = index;
+    selector.appendChild(option);
+  });
+  selector.selectedIndex = 8;
+}
+
 function loopClicked() {
   Glob.settings.loop = document.getElementById("loop").checked;
 }
@@ -241,13 +339,17 @@ async function openTextFile() {
       types: [
         {
           description: "Text Files",
-          accept: { "text/plain": [".txt"] },
+          accept: { "text/plain": [".dr"] },
         },
       ],
       multiple: false,
     });
     Glob.currentMeasure = 0;
     const file = await fileHandle.getFile();
+    if (!file.name.toLowerCase().endsWith(".dr")) {
+      alert("Invalid file type. Please select a .dr file.");
+      return;
+    }
     const text = await file.text();
     const lines = text.split("\n");
     fileVersion = Glob.tryParseInt(lines[0], 0);
@@ -516,11 +618,11 @@ async function saveTextFile() {
   const fileVersion = 1;
   try {
     const fileHandle = await window.showSaveFilePicker({
-      suggestedName: "myPattern.txt", // Default filename
+      suggestedName: "myPattern.dr", // Default filename
       types: [
         {
           description: "Text Files",
-          accept: { "text/plain": [".txt"] },
+          accept: { "text/plain": [".dr"] },
         },
       ],
     });
@@ -696,6 +798,7 @@ try {
       document.getElementById("message").style.visibility = "hidden";
       document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
       document.getElementById("tempoSlider").value = Glob.settings.tempo;
+      fillPatternInstruments();
       tempoChanged();
       volumeChanged();
       drawPattern();
@@ -707,17 +810,55 @@ try {
 
   document.getElementById("loadRhythmButton").addEventListener("click", (e) => {
     let rhythm = "Rock2";
+    let userChoice = false;
 
     if (!Glob.playing) {
       rhythm = document.getElementById("rhythmSelector").value;
-      const userChoice = window.confirm(`Load rhythm?`);
-      if (userChoice) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Load rhythm?`);
+      }
+      if (userChoice || Glob.settings.expert) {
         Measures.load(rhythm);
         tempoChanged();
         document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
         volumeChanged();
         drawPattern();
       }
+    }
+  });
+
+  document.getElementById("newButton").addEventListener("click", (e) => {
+    let userChoice = false;
+    if (!Glob.playing) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Do you want to create a new rhythm?`);
+      }
+      if (userChoice || Glob.settings.expert) {
+        Glob.currentMeasure = 0;
+        Glob.settings.measuresToPlay = "";
+        Glob.settings.tempoSlider.value = 120;
+        const measure1 = new Measure();
+        measure1.beats = 4;
+        measure1.divisions = 4;
+        Measure.fixMeasure(measure1);
+        Measures.measures = [];
+        Measures.measures.push(measure1);
+        tempoChanged();
+        document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
+        drawPattern();
+      }
+    }
+  });
+
+  document.getElementById("openButton").addEventListener("click", (e) => {
+    if (!Glob.playing) {
+      openTextFile();
+    }
+  });
+
+  document.getElementById("saveButton").addEventListener("click", (e) => {
+    if (!Glob.playing) {
+      saveTextFile();
     }
   });
 
@@ -745,6 +886,10 @@ try {
     }
   });
 
+  document.getElementById("pattern").addEventListener("mousedown", (e) => {
+    patternClicked(e)
+  });
+
   document.getElementById("previousMeasureButton").addEventListener("click", (e) => {
     if (!Glob.playing && (Glob.currentMeasure > 0)) {
       Glob.currentMeasure--;
@@ -760,9 +905,12 @@ try {
   });
 
   document.getElementById("clearMeasureButton").addEventListener("click", (e) => {
+    let userChoice = false;
     if (!Glob.playing) {
-      const userChoice = window.confirm(`Clear measure ${Glob.currentMeasure + 1}?`);
-      if (userChoice) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Clear measure ${Glob.currentMeasure + 1}?`);
+      }
+      if (userChoice || Glob.settings.expert) {
         const measure = Measures.measures[Glob.currentMeasure];
         for (let r = 0; r < Instruments.names.length; r++) {
           for (let c = 0; c < measure.bassDrum.length; c++) {
@@ -788,9 +936,12 @@ try {
   });
 
   document.getElementById("deleteMeasureButton").addEventListener("click", (e) => {
+    let userChoice = false;
     if (!Glob.playing && Measures.measures.length > 1) {
-      const userChoice = window.confirm(`Delete measure ${Glob.currentMeasure + 1}?`);
-      if (userChoice) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Delete measure ${Glob.currentMeasure + 1}?`);
+      }
+      if (userChoice || Glob.settings.expert) {
         Measures.measures.splice(Glob.currentMeasure, 1);
         Glob.currentMeasure--;
         if (Glob.currentMeasure < 0) {
@@ -802,10 +953,13 @@ try {
   });
 
   document.getElementById("addBeatButton").addEventListener("click", (e) => {
+    let userChoice = false;
     const measure = Measures.measures[Glob.currentMeasure];
     if (!Glob.playing) {
-      const userChoice = window.confirm(`Add a beat to the current measure?`);
-      if (userChoice) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Add a beat to the current measure?`);
+      }
+      if (userChoice || Glob.settings.expert) {
         measure.beats++;
         Measure.fixMeasure(measure);
         drawPattern();
@@ -814,10 +968,13 @@ try {
   });
 
   document.getElementById("deleteBeatButton").addEventListener("click", (e) => {
+    let userChoice = false;
     const measure = Measures.measures[Glob.currentMeasure];
     if (!Glob.playing && (measure.beats > 1)) {
-      const userChoice = window.confirm(`Delete the last beat of the current measure?`);
-      if (userChoice) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Delete the last beat of the current measure?`);
+      }
+      if (userChoice || Glob.settings.expert) {
         measure.beats--;
         Measure.fixMeasure(measure);
         drawPattern();
@@ -826,10 +983,13 @@ try {
   });
 
   document.getElementById("incDivisionButton").addEventListener("click", (e) => {
+    let userChoice = false;
     const measure = Measures.measures[Glob.currentMeasure];
     if (!Glob.playing) {
-      const userChoice = window.confirm(`Increase the beat division of the current measure?`);
-      if (userChoice) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Increase the beat division of the current measure?`);
+      }
+      if (userChoice || Glob.settings.expert) {
         measure.divisions++;
         Measure.fixMeasure(measure);
         drawPattern();
@@ -838,10 +998,13 @@ try {
   });
 
   document.getElementById("decDivisionButton").addEventListener("click", (e) => {
+    let userChoice = false;
     const measure = Measures.measures[Glob.currentMeasure];
     if (!Glob.playing && (measure.divisions > 1)) {
-      const userChoice = window.confirm(`Decrease the beat division of the current measure?`);
-      if (userChoice) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Decrease the beat division of the current measure?`);
+      }
+      if (userChoice || Glob.settings.expert) {
         measure.divisions--;
         Measure.fixMeasure(measure);
         drawPattern();
@@ -852,23 +1015,22 @@ try {
   document.getElementById("copyMeasureButton").addEventListener("click", (e) => {
     let copyFrom = 1;
     let copyTo = 1;
+    let userChoice = false;
 
     if (!Glob.playing && Measures.measures.length > 1) {
       copyFrom = Glob.tryParseInt(document.getElementById("copyMeasureFrom").value, -1);
       copyTo = Glob.tryParseInt(document.getElementById("copyMeasureTo").value, -1);
       if ((copyFrom >= 1) && (copyTo >= 1) && (copyFrom !== copyTo) &&
         (copyFrom <= Measures.measures.length) && (copyTo <= Measures.measures.length)) {
-        const userChoice = window.confirm(`Copy measure ${copyFrom} to measure ${copyTo}?`);
-        if (userChoice) {
+        if (!Glob.settings.expert) {
+          userChoice = window.confirm(`Copy measure ${copyFrom} to measure ${copyTo}?`);
+        }
+        if (userChoice || Glob.settings.expert) {
           Measures.copyMeasure(copyFrom, copyTo);
           drawPattern();
         }
       }
     }
-  });
-
-  document.getElementById("pattern").addEventListener("mousedown", (e) => {
-    patternClicked(e)
   });
 
   document.getElementById("additionalSelector").addEventListener("change", (e) => {
@@ -883,6 +1045,10 @@ try {
     humanizeTimingChanged();
   });
 
+  document.getElementById("expert").addEventListener("click", (e) => {
+    expertClicked();
+  });
+
   document.getElementById("endsWithFill").addEventListener("click", (e) => {
     endsWithFillClicked();
   });
@@ -891,23 +1057,14 @@ try {
     document.getElementById("message").style.visibility = "hidden";
   });
 
-  document.getElementById("saveButton").addEventListener("click", (e) => {
+  document.getElementById("applyPresetPatternButton").addEventListener("click", (e) => {
+    let userChoice = false;
     if (!Glob.playing) {
-      saveTextFile();
-    }
-  });
-
-  document.getElementById("openButton").addEventListener("click", (e) => {
-    if (!Glob.playing) {
-      openTextFile();
-    }
-  });
-
-  document.getElementById("applyHiHatPatternButton").addEventListener("click", (e) => {
-    if (!Glob.playing) {
-      const userChoice = window.confirm(`Apply the hi-hat pattern for the current measure?`);
-      if (userChoice) {
-        applyHiHatPattern();
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Apply the preset pattern?`);
+      }
+      if (userChoice || Glob.settings.expert) {
+        applyPresetPattern();
       }
     }
   });
