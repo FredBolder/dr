@@ -230,6 +230,10 @@ function drawPattern(currentColumn = -1) {
   updateEndsWithFill();
 }
 
+function loopClicked() {
+  Glob.settings.loop = document.getElementById("loop").checked;
+}
+
 async function openTextFile() {
   let fileVersion = 0;
   try {
@@ -242,13 +246,16 @@ async function openTextFile() {
       ],
       multiple: false,
     });
+    Glob.currentMeasure = 0;
     const file = await fileHandle.getFile();
     const text = await file.text();
     const lines = text.split("\n");
     fileVersion = Glob.tryParseInt(lines[0], 0);
-    Glob.settings.tempo = Glob.tryParseInt(lines[1], 0);
-    Measures.measures = JSON.parse(lines[2]);
+    Glob.settings.measuresToPlay = lines[1];
+    Glob.settings.tempo = Glob.tryParseInt(lines[2], 0);
+    Measures.measures = JSON.parse(lines[3]);
     drawPattern();
+    document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
     document.getElementById("tempoSlider").value = Glob.settings.tempo;
     tempoChanged();
   } catch (err) {
@@ -258,6 +265,7 @@ async function openTextFile() {
 
 async function playPattern() {
   let factor = 1;
+  let first = true;
   let humanizeDeltaTime = 0;
   let humanizeTiming = 0;
   let humanizeVolumeFactor = 1;
@@ -265,6 +273,7 @@ async function playPattern() {
   let odd = false;
   let ok = true;
   let openHiHat = [];
+  let playMeasures = [];
   let prevEndsWithFill = false;
   let volume = 0.75;
 
@@ -288,13 +297,29 @@ async function playPattern() {
 
     let nextNoteTime = audioCtx.currentTime;  // Start at current time
 
+    playMeasures = [];
+    if (Glob.settings.measuresToPlay.trim() === "") {
+      for (let i = 0; i < Measures.measures.length; i++) {
+        playMeasures.push(i);
+      }
+    } else {
+      const measureList = Glob.settings.measuresToPlay.split(",");
+      for (let i = 0; i < measureList.length; i++) {
+        const m = Glob.tryParseInt(measureList[i], -1);
+        if ((m >= 1) && (m <= Measures.measures.length)) {
+          playMeasures.push(m - 1);
+        }
+      }
+    }
+
+    first = true;
     prevEndsWithFill = false;
-    while (!Glob.stop) {
-      for (let i = 0; i < Measures.measures.length && !Glob.stop; i++) {
+    while (!Glob.stop && (Glob.settings.loop || first)) {
+      for (let i = 0; i < playMeasures.length && !Glob.stop; i++) {
         odd = !odd;
-        Glob.currentMeasure = i;
+        Glob.currentMeasure = playMeasures[i];
         drawPattern();
-        const measure = Measures.measures[i];
+        const measure = Measures.measures[Glob.currentMeasure];
         const beatsPerMeasure = measure.beats;
         const divisionsPerMeasure = measure.bassDrum.length;
 
@@ -479,6 +504,7 @@ async function playPattern() {
         }
         prevEndsWithFill = measure.endsWithFill;
       }
+      first = false;
     }
   }
   Glob.playing = false;
@@ -500,6 +526,7 @@ async function saveTextFile() {
     });
     const writable = await fileHandle.createWritable();
     await writable.write(fileVersion.toString() + "\n");
+    await writable.write(Glob.settings.measuresToPlay + "\n");
     await writable.write(Glob.settings.tempo.toString() + "\n");
     await writable.write(JSON.stringify(Measures.measures) + "\n");
     await writable.close();
@@ -667,6 +694,7 @@ try {
       document.getElementById("rhythmSelector").value = "Rock2";
       Measures.load("Rock2");
       document.getElementById("message").style.visibility = "hidden";
+      document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
       document.getElementById("tempoSlider").value = Glob.settings.tempo;
       tempoChanged();
       volumeChanged();
@@ -686,6 +714,7 @@ try {
       if (userChoice) {
         Measures.load(rhythm);
         tempoChanged();
+        document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
         volumeChanged();
         drawPattern();
       }
@@ -698,6 +727,14 @@ try {
 
   document.getElementById("volumeSlider").addEventListener("input", (e) => {
     volumeChanged();
+  });
+
+  document.getElementById('measuresToPlayInput').addEventListener('input', function () {
+    Glob.settings.measuresToPlay = document.getElementById('measuresToPlayInput').value;
+  });
+
+  document.getElementById("loop").addEventListener("click", (e) => {
+    loopClicked();
   });
 
   document.getElementById("startStopButton").addEventListener("click", (e) => {

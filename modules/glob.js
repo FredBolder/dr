@@ -11,6 +11,18 @@ class Glob {
     this.stop = false;
   }
 
+  static boolToInt(b) {
+    if (b) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+  static intToBool(i) {
+    return (i === 1);
+  }
+
   static minMax(value, min, max) {
     let result = value;
     if (max >= min) {

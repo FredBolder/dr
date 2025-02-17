@@ -12,14 +12,28 @@ fieldset {
     flex-wrap: wrap;
 }
 
-fieldset button {
-    margin-bottom: 1em;
-}
-
 .flex {
     display: flex;
     flex-direction: row;
     column-gap: 2em;
+    row-gap: 1em;
+    flex-wrap: wrap;
+}
+
+.buttonGroup {
+    display: flex;
+    flex-direction: row;
+    column-gap: 0.5em;
+    row-gap: 0.5em;
+    flex-wrap: wrap;
+}
+
+#measuresToPlay {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    display: flex;
+    flex-direction: row;
+    column-gap: 1em;
     row-gap: 1em;
     flex-wrap: wrap;
 }

@@ -11,6 +11,7 @@ class Measures {
         let measure4 = [];
         this.measures = [];
         Glob.currentMeasure = 0;
+        Glob.settings.measuresToPlay = "";
         switch (rhythm) {
             case "Disco1":
                 Glob.settings.tempoSlider.value = 120;
@@ -106,6 +107,30 @@ class Measures {
                 measure4.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 Measure.fixMeasure(measure4);
                 this.measures.push(measure4);
+                break;
+            case "RockBallad1":
+                Glob.settings.measuresToPlay = "1, 1, 1, 2";
+                Glob.settings.tempoSlider.value = 70;
+                measure1 = new Measure();
+                measure1.beats = 4;
+                measure1.divisions = 4;
+                measure1.splashCymbal = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                measure1.closedHiHat = [13, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0];
+                measure1.snareDrum = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 10, 0, 0, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                measure2 = new Measure();
+                measure2.beats = 4;
+                measure2.divisions = 4;
+                measure2.endsWithFill = true;
+                measure2.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0];
+                measure2.highTom = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0];
+                measure2.midTom = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
+                measure2.snareDrum = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0];
+                measure2.bassDrum = [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0];
+                Measure.fixMeasure(measure2);
+                this.measures.push(measure2);
                 break;
             case "ChaChaCha1":
                 Glob.settings.tempoSlider.value = 120;
