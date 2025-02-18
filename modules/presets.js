@@ -20,13 +20,13 @@ class Presets {
                 break;
             case "BallroomLatin":
                 options = ["Cha Cha Cha 1", "Jive 1", "Merengue 1", "Paso doble 1", "Paso doble 2", "Quickstep 1", "Rumba 1", "Samba 1",
-                    "Samba 2", "Slow waltz 1", "Slowfox 1", "Tango 1", "Tango 2", "Viennese waltz 1"
+                    "Samba 2", "Slow waltz 1", "Slowfox 1", "Tango 1", "Tango 2", "Viennese waltz 1", "Zouk 1"
                 ];
                 break;
             case "Greek":
-                options = ["Aptaliko 1", "Kalamatianos 1", "Kamilierikos 1", "Kamilierikos 2", "Karsilamas 1", "Karsilamas 2",
-                    "Palio Zeibekiko 1", "Roumba 1", "Tik 1", "Tsakonikos 1", "Tsakonikos 2", "Tsamikos 1", "Tsifteteli 1",
-                    "Tsifteteli 2", "Zeibekiko 1", "Zeibekiko 2", "Random Zeibekiko"
+                options = ["Aptaliko 1", "Hasapiko1", "Kalamatianos 1", "Kalamatianos 2", "Kalamatianos 3", "Kamilierikos 1", "Kamilierikos 2", 
+                    "Karsilamas 1", "Karsilamas 2", "Palio Zeibekiko 1", "Roumba 1", "Tik 1", "Tsakonikos 1", "Tsakonikos 2", "Tsamikos 1", 
+                    "Tsifteteli 1", "Tsifteteli 2", "Zeibekiko 1", "Zeibekiko 2", "Random Zeibekiko"
                 ];
                 break;
             default:
