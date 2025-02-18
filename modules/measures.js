@@ -14,7 +14,7 @@ class Measures {
         Glob.settings.measuresToPlay = "";
         switch (rhythm) {
             case "Disco1":
-                Glob.settings.tempoSlider.value = 120;
+                Glob.settings.tempoSlider.value = 130;
                 measure1 = new Measure();
                 measure1.beats = 4;
                 measure1.divisions = 2;
@@ -22,6 +22,17 @@ class Measures {
                 measure1.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0];
                 measure1.snareDrum = [0, 0, 1, 0, 0, 0, 1, 0];
                 measure1.bassDrum = [1, 0, 1, 0, 1, 0, 1, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
+            case "Disco2":
+                Glob.settings.tempoSlider.value = 130;
+                measure1 = new Measure();
+                measure1.beats = 4;
+                measure1.divisions = 4;
+                measure1.closedHiHat = [1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1];
+                measure1.snareDrum = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
@@ -108,7 +119,7 @@ class Measures {
                 Measure.fixMeasure(measure4);
                 this.measures.push(measure4);
                 break;
-            case "RockBallad1":
+            case "Rockballad1":
                 Glob.settings.measuresToPlay = "1, 1, 1, 2";
                 Glob.settings.tempoSlider.value = 70;
                 measure1 = new Measure();
@@ -176,7 +187,7 @@ class Measures {
                 Measure.fixMeasure(measure2);
                 this.measures.push(measure2);
                 break;
-            case "PasoDoble1":
+            case "Pasodoble1":
                 Glob.settings.tempoSlider.value = 124;
                 measure1 = new Measure();
                 measure1.beats = 2;
@@ -193,7 +204,7 @@ class Measures {
                 Measure.fixMeasure(measure2);
                 this.measures.push(measure2);
                 break;
-            case "PasoDoble2":
+            case "Pasodoble2":
                 Glob.settings.tempoSlider.value = 124;
                 measure1 = new Measure();
                 measure1.beats = 2;
@@ -263,7 +274,30 @@ class Measures {
                 Measure.fixMeasure(measure2);
                 this.measures.push(measure2);
                 break;
-            case "SlowWaltz1":
+            case "Samba2":
+                Glob.settings.tempoSlider.value = 100;
+                measure1 = new Measure();
+                measure1.beats = 2;
+                measure1.divisions = 4;
+                measure1.highTom = [1, 0, 0, 0, 0, 0, 0, 0];
+                measure1.lowTom = [0, 0, 0, 0, 1, 0, 1, 0];
+                measure1.snareDrum = [1, 4, 4, 1, 4, 4, 1, 4];
+                measure1.bassDrum = [1, 0, 0, 1, 1, 0, 0, 1];
+                measure1.pedalHiHat = [0, 0, 1, 0, 0, 0, 1, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                measure2 = new Measure();
+                measure2.beats = 2;
+                measure2.divisions = 4;
+                measure2.highTom = [1, 0, 0, 0, 0, 0, 0, 0];
+                measure2.lowTom = [0, 0, 0, 0, 1, 1, 0, 1];
+                measure2.snareDrum = [4, 4, 1, 4, 4, 1, 4, 4];
+                measure2.bassDrum = [1, 0, 0, 1, 1, 0, 0, 1];
+                measure2.pedalHiHat = [0, 0, 1, 0, 0, 0, 1, 0];
+                Measure.fixMeasure(measure2);
+                this.measures.push(measure2);
+                break;
+            case "Slowwaltz1":
                 Glob.settings.tempoSlider.value = 90;
                 measure1 = new Measure();
                 measure1.beats = 3;
@@ -309,7 +343,7 @@ class Measures {
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
-            case "VienneseWaltz1":
+            case "Viennesewaltz1":
                 Glob.settings.tempoSlider.value = 180;
                 measure1 = new Measure();
                 measure1.beats = 3;

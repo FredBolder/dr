@@ -27,49 +27,13 @@
     </p>
     <div class="flex">
       <div id="rhythm">
+        <select name="categorySelector" id="categorySelector">
+          <option value="PopRock">Pop/Rock</option>
+          <option value="BallroomLatin">Ballroom/Latin</option>
+          <option value="Greek">Greek</option>
+        </select>
         <select name="rhythmSelector" id="rhythmSelector">
-          <optgroup label="Pop/Rock">
-            <option value="Disco1">Disco 1</option>
-            <option value="Metal1">Metal 1</option>
-            <option value="Metal2">Metal 2</option>
-            <option value="Rock1">Rock 1</option>
-            <option value="Rock2">Rock 2</option>
-            <option value="RockBallad1">Rock ballad 1</option>
-          </optgroup>
-          <optgroup label="Ballroom/Latin">
-            <option value="ChaChaCha1">Cha Cha Cha 1</option>
-            <option value="Jive1">Jive 1</option>
-            <option value="Merengue1">Merengue 1</option>
-            <option value="PasoDoble1">Paso doble 1</option>
-            <option value="PasoDoble2">Paso doble 2</option>
-            <option value="Quickstep1">Quickstep 1</option>
-            <option value="Rumba1">Rumba 1</option>
-            <option value="Samba1">Samba 1</option>
-            <option value="SlowWaltz1">Slow waltz 1</option>
-            <option value="Slowfox1">Slowfox 1</option>
-            <option value="Tango1">Tango 1</option>
-            <option value="Tango2">Tango 2</option>
-            <option value="VienneseWaltz1">Viennese waltz 1</option>
-          </optgroup>
-          <optgroup label="Greek">
-            <option value="Aptaliko1">Aptaliko 1</option>
-            <option value="Kalamatianos1">Kalamatianos 1</option>
-            <option value="Kamilierikos1">Kamilierikos 1</option>
-            <option value="Kamilierikos2">Kamilierikos 2</option>
-            <option value="Karsilamas1">Karsilamas 1</option>
-            <option value="Karsilamas2">Karsilamas 2</option>
-            <option value="PalioZeibekiko1">Palio Zeibekiko 1</option>
-            <option value="Roumba1">Roumba 1</option>
-            <option value="Tik1">Tik 1</option>
-            <option value="Tsakonikos1">Tsakonikos 1</option>
-            <option value="Tsakonikos2">Tsakonikos 2</option>
-            <option value="Tsamikos1">Tsamikos 1</option>
-            <option value="Tsifteteli1">Tsifteteli 1</option>
-            <option value="Tsifteteli2">Tsifteteli 2</option>
-            <option value="Zeibekiko1">Zeibekiko 1</option>
-            <option value="Zeibekiko2">Zeibekiko 2</option>
-            <option value="RandomZeibekiko">Random Zeibekiko</option>
-          </optgroup>
+          <option value="init">init</option>
         </select>
         <button type="button" id="loadRhythmButton">Load</button>
       </div>
@@ -201,7 +165,7 @@
           <option value="0">Closed hi-hat</option>
         </select>
         <select name="presetPatternSelector" id="presetPatternSelector">
-          <option value="0">Never</option>
+          <option value="0">Never (clear row)</option>
           <option value="1" selected="selected">Every beat</option>
           <option value="2">Every column</option>
           <option value="3">Odd columns</option>
@@ -209,6 +173,7 @@
           <option value="5">Random</option>
           <option value="6">Every column of last beat</option>
           <option value="7">Every column of last beat (soft to hard)</option>
+          <option value="8">Every column of last beat (hard to soft)</option>
         </select>
         <div class="checkboxGroup">
           <label for="presetPatternClear">Clear other columns</label>

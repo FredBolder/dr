@@ -4,6 +4,7 @@ import { Audio } from "./audio.js";
 import { Instruments } from "./instruments.js";
 import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
+import { Presets } from "./presets.js";
 
 Glob.init();
 
@@ -38,7 +39,7 @@ function applyPresetPattern() {
         }
         switch (pattern) {
           case 0:
-            // Never
+            // Never (clear row)
             setCell(column, row, 0);
             break;
           case 1:
@@ -76,6 +77,7 @@ function applyPresetPattern() {
             }
             break;
           case 7:
+          case 8:
             // Every column of last beat (soft to hard)
             if (i === measure.beats - 1) {
               switch (measure.divisions) {
@@ -112,6 +114,9 @@ function applyPresetPattern() {
                 default:
                   hits = [4, 4, 4, 2, 2, 2, 1, 1, 1, 3, 3, 3, 5, 5, 5];
                   break;
+              }
+              if (pattern === 8) {
+                hits.reverse();
               }
               hit = j;
               if (hit >= hits.length) {
@@ -793,6 +798,7 @@ try {
     if (Glob.settings === null) {
       Glob.settings = new Settings();
       //console.log("Settings loaded");
+      Presets.fillRhythmSelect();
       document.getElementById("rhythmSelector").value = "Rock2";
       Measures.load("Rock2");
       document.getElementById("message").style.visibility = "hidden";
@@ -806,6 +812,10 @@ try {
       humanizeVolumesChanged();
       humanizeTimingChanged();
     }
+  });
+
+  document.getElementById("categorySelector").addEventListener("change", (e) => {
+    Presets.fillRhythmSelect();
   });
 
   document.getElementById("loadRhythmButton").addEventListener("click", (e) => {
