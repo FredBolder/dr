@@ -24,9 +24,10 @@ class Presets {
                 ];
                 break;
             case "Greek":
-                options = ["Aptaliko 1", "Hasapiko1", "Kalamatianos 1", "Kalamatianos 2", "Kalamatianos 3", "Kamilierikos 1", "Kamilierikos 2", 
-                    "Karsilamas 1", "Karsilamas 2", "Palio Zeibekiko 1", "Roumba 1", "Tik 1", "Tsakonikos 1", "Tsakonikos 2", "Tsamikos 1", 
-                    "Tsifteteli 1", "Tsifteteli 2", "Zeibekiko 1", "Zeibekiko 2", "Random Zeibekiko"
+                options = ["Aptaliko 1", "Dipat 1", "Hasapiko1", "Hasaposerviko 1", "Kalamatianos 1", "Kalamatianos 2", "Kalamatianos 3",  
+                    "Kamilierikos 1", "Kamilierikos 2", "Karsilamas 1", "Karsilamas 2", "Palio Zeibekiko 1", "Roumba 1", "Syrtos 1", 
+                    "Tik 1", "Tik tromachton 1", "Tik tromachton 2","Tsakonikos 1", "Tsakonikos 2", "Tsamikos 1", "Tsifteteli 1",   
+                    "Tsifteteli 2", "Zeibekiko 1", "Zeibekiko 2","Random Zeibekiko", "Zonaradiko 1"
                 ];
                 break;
             default:

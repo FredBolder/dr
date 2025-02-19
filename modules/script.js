@@ -430,7 +430,7 @@ async function playPattern() {
         const beatsPerMeasure = measure.beats;
         const divisionsPerMeasure = measure.bassDrum.length;
 
-        let flamTime = Math.min(0.025, (60 / Glob.settings.tempo) * 0.1);
+        let flamTime = Math.min(0.025, (60 / Glob.settings.tempo) * 0.2);
         const secondsPerBeat = 60.0 / Glob.settings.tempo;
         const timeBetweenDivisions = (secondsPerBeat * beatsPerMeasure) / divisionsPerMeasure;
 
