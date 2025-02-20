@@ -184,7 +184,6 @@ function drawPattern(currentColumn = -1) {
   resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1);
 
   if (currentColumn !== -1) {
-    //overlayContext = overlay.getContext('2d');
     overlayContext.clearRect(0, 0, overlay.width, overlay.height);
 
     overlayContext.fillStyle = 'rgba(255, 0, 0, 0.3)';
@@ -676,7 +675,7 @@ function scheduleDraw(currentColumn = -1) {
 }
 
 function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
-  const ratio = window.devicePixelRatio || 1;
+  const ratio = (window.devicePixelRatio || 1) * 2;
 
   // Desired display size based on updated column/row values
   const displayWidth = labelWidth + (columns * dx1);
@@ -702,7 +701,7 @@ function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
     patternContext = pattern.getContext('2d');
     patternContext.scale(ratio, ratio);
 
-    // If you have an overlay, update it too
+    // Update the overlay
     overlay.width = desiredCanvasWidth;
     overlay.height = desiredCanvasHeight;
     overlay.style.width = pattern.style.width;
