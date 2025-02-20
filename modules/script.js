@@ -465,7 +465,7 @@ async function playPattern() {
       for (let i = 0; i < playMeasures.length && !Glob.stop; i++) {
         odd = !odd;
         Glob.currentMeasure = playMeasures[i];
-        drawPattern();
+        scheduleDraw();
         const measure = Measures.measures[Glob.currentMeasure];
         const beatsPerMeasure = measure.beats;
         const divisionsPerMeasure = measure.bassDrum.length;
@@ -475,7 +475,7 @@ async function playPattern() {
         const timeBetweenDivisions = (secondsPerBeat * beatsPerMeasure) / divisionsPerMeasure;
 
         for (let j = 0; j < divisionsPerMeasure && !Glob.stop; j++) {
-          drawPattern(j);
+          scheduleDraw(j);
           // Create and configure BufferSource nodes for each audio buffer
           Instruments.sets[set].forEach((instrument, idx) => {
             let url = instrument.fileName;
@@ -661,6 +661,10 @@ async function playPattern() {
   drawPattern();
 }
 
+function scheduleDraw(currentColumn = -1) {
+  requestAnimationFrame(() => drawPattern(currentColumn));
+}
+
 function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
   const ratio = (window.devicePixelRatio || 1) * 2;
   const desiredWidth = `${labelWidth + (columns * dx1)}px`;
@@ -774,7 +778,7 @@ function patternClicked(event) {
       } else {
         Instruments.setCell(c, r, hit);
       }
-      drawPattern();
+      scheduleDraw();
     }
   }
 }
