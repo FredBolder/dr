@@ -186,12 +186,12 @@ function drawPattern(currentColumn = -1) {
   if (currentColumn !== -1) {
     overlayContext = overlay.getContext('2d');
     overlayContext.clearRect(0, 0, overlay.width, overlay.height);
-  
+
     overlayContext.fillStyle = 'rgba(255, 0, 0, 0.3)';
     overlayContext.fillRect(currentColumn * dx1 + labelWidth, 0, dx1, overlay.height);
     return;
   }
-  
+
   patternContext.clearRect(0, 0, pattern.width, pattern.height);
 
   // console.log(
@@ -676,7 +676,7 @@ function scheduleDraw(currentColumn = -1) {
 }
 
 function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
-  const ratio = (window.devicePixelRatio || 1) * 2;
+  const ratio = window.devicePixelRatio || 1; // No extra *2 scaling
   const desiredWidth = `${labelWidth + (columns * dx1)}px`;
   const desiredHeight = `${(rows + 1) * dy1}px`;
   const desiredCanvasWidth = (labelWidth + (columns * dx1)) * ratio;
@@ -684,7 +684,6 @@ function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
 
   let resized = false;
 
-  // Only update style width/height if changed
   if (pattern.style.width !== desiredWidth) {
     pattern.style.width = desiredWidth;
     resized = true;
@@ -694,25 +693,23 @@ function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
     resized = true;
   }
 
-  // Only update canvas width/height if changed
   if (pattern.width !== desiredCanvasWidth || pattern.height !== desiredCanvasHeight) {
     pattern.width = desiredCanvasWidth;
     pattern.height = desiredCanvasHeight;
     resized = true;
   }
 
-  // If resized, re-fetch and rescale the context
   if (resized) {
     patternContext = pattern.getContext('2d');
-    patternContext.scale(ratio, ratio);
     overlay.width = pattern.width;
     overlay.height = pattern.height;
     overlay.style.width = pattern.style.width;
     overlay.style.height = pattern.style.height;
     overlayContext = overlay.getContext('2d');
-    overlayContext.scale(ratio, ratio);
-    }
+  }
 }
+
+
 
 
 async function saveTextFile() {
