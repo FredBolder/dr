@@ -6,6 +6,8 @@ import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
 import { Presets } from "./presets.js";
 
+let patternContext;
+
 Glob.init();
 
 function applyPresetPattern() {
@@ -178,30 +180,8 @@ function drawPattern(currentColumn = -1) {
 
   const pattern = Glob.settings.pattern;
 
-  // Use 2x for high resolution AND adapt to devicePixelRatio
-  const ratio = (window.devicePixelRatio || 1) * 2;
+  resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1);
 
-  // Set the *display* size (CSS size)
-  const desiredWidth = `${labelWidth + (columns * dx1)}px`;
-  const desiredHeight = `${(rows + 1) * dy1}px`;
-  if (pattern.style.width !== desiredWidth) {
-    pattern.style.width = desiredWidth;
-  }
-  if (pattern.style.height !== desiredHeight) {
-    pattern.style.height = desiredHeight;
-  }
-
-  // Set the *drawing buffer* size (actual canvas resolution)
-  pattern.width = (labelWidth + (columns * dx1)) * ratio;
-  pattern.height = (rows + 1) * dy1 * ratio;
-
-  // Re-fetch context after resizing
-  let patternContext = pattern.getContext('2d');
-
-  // Scale drawing context to account for high DPI
-  patternContext.scale(ratio, ratio);
-
-  // Clear the canvas
   patternContext.clearRect(0, 0, pattern.width, pattern.height);
 
   // console.log(
@@ -679,6 +659,39 @@ async function playPattern() {
   disableWhilePlaying();
   Glob.stop = false;
   drawPattern();
+}
+
+function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
+  const ratio = (window.devicePixelRatio || 1) * 2;
+  const desiredWidth = `${labelWidth + (columns * dx1)}px`;
+  const desiredHeight = `${(rows + 1) * dy1}px`;
+  const desiredCanvasWidth = (labelWidth + (columns * dx1)) * ratio;
+  const desiredCanvasHeight = (rows + 1) * dy1 * ratio;
+
+  let resized = false;
+
+  // Only update style width/height if changed
+  if (pattern.style.width !== desiredWidth) {
+    pattern.style.width = desiredWidth;
+    resized = true;
+  }
+  if (pattern.style.height !== desiredHeight) {
+    pattern.style.height = desiredHeight;
+    resized = true;
+  }
+
+  // Only update canvas width/height if changed
+  if (pattern.width !== desiredCanvasWidth || pattern.height !== desiredCanvasHeight) {
+    pattern.width = desiredCanvasWidth;
+    pattern.height = desiredCanvasHeight;
+    resized = true;
+  }
+
+  // If resized, re-fetch and rescale the context
+  if (resized) {
+    patternContext = pattern.getContext('2d');
+    patternContext.scale(ratio, ratio);
+  }
 }
 
 async function saveTextFile() {
