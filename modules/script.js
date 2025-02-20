@@ -675,7 +675,7 @@ function scheduleDraw(currentColumn = -1) {
 }
 
 function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
-  const ratio = (window.devicePixelRatio || 1) * 2;
+  const ratio = (window.devicePixelRatio || 1) * 1; // Perhaps multiply by 2 on pc
 
   // Desired display size based on updated column/row values
   const displayWidth = labelWidth + (columns * dx1);
