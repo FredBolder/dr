@@ -190,9 +190,6 @@ function drawPattern(currentColumn = -1) {
     overlayContext.fillStyle = 'rgba(255, 0, 0, 0.3)';
     overlayContext.fillRect(currentColumn * dx1 + labelWidth, 0, dx1, overlay.height);
     return;
-  } else {
-    overlayContext = overlay.getContext('2d');
-
   }
 
   patternContext.clearRect(0, 0, pattern.width, pattern.height);

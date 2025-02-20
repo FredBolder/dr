@@ -77,6 +77,8 @@ fieldset {
 }
 
 #overlay {
+    height: 400px;
+    width: 1000px;
     margin-top: 1em;
     margin-bottom: 1em;
 }
