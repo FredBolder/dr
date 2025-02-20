@@ -169,6 +169,10 @@ function drawPattern(currentColumn = -1) {
   let radius = 0;
   let text = "";
 
+  if (currentColumn !== -1) {
+    return;
+  }
+
   const measure = Measures.measures[Glob.currentMeasure];
   divisionsPerBeat = measure.divisions;
   divisionsPerMeasure = measure.bassDrum.length;
