@@ -676,39 +676,41 @@ function scheduleDraw(currentColumn = -1) {
 }
 
 function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
-  const ratio = window.devicePixelRatio || 1; // No extra *2 scaling
-  const desiredWidth = `${labelWidth + (columns * dx1)}px`;
-  const desiredHeight = `${(rows + 1) * dy1}px`;
-  const desiredCanvasWidth = (labelWidth + (columns * dx1)) * ratio;
-  const desiredCanvasHeight = (rows + 1) * dy1 * ratio;
+  const ratio = window.devicePixelRatio || 1;
 
-  let resized = false;
+  // Desired display size based on updated column/row values
+  const displayWidth = labelWidth + (columns * dx1);
+  const displayHeight = (rows + 1) * dy1;
 
-  if (pattern.style.width !== desiredWidth) {
-    pattern.style.width = desiredWidth;
-    resized = true;
-  }
-  if (pattern.style.height !== desiredHeight) {
-    pattern.style.height = desiredHeight;
-    resized = true;
+  // Check if style dimensions need an update
+  if (pattern.style.width !== `${displayWidth}px` || pattern.style.height !== `${displayHeight}px`) {
+    pattern.style.width = `${displayWidth}px`;
+    pattern.style.height = `${displayHeight}px`;
   }
 
+  // Use getBoundingClientRect AFTER updating style to get the latest size
+  const rect = pattern.getBoundingClientRect();
+  const desiredCanvasWidth = rect.width * ratio;
+  const desiredCanvasHeight = rect.height * ratio;
+
+  // Only resize drawing buffer if needed
   if (pattern.width !== desiredCanvasWidth || pattern.height !== desiredCanvasHeight) {
     pattern.width = desiredCanvasWidth;
     pattern.height = desiredCanvasHeight;
-    resized = true;
-  }
 
-  if (resized) {
+    // Re-fetch and rescale context after resizing
     patternContext = pattern.getContext('2d');
-    overlay.width = pattern.width;
-    overlay.height = pattern.height;
+    patternContext.scale(ratio, ratio);
+
+    // If you have an overlay, update it too
+    overlay.width = desiredCanvasWidth;
+    overlay.height = desiredCanvasHeight;
     overlay.style.width = pattern.style.width;
     overlay.style.height = pattern.style.height;
     overlayContext = overlay.getContext('2d');
+    overlayContext.scale(ratio, ratio);
   }
 }
-
 
 
 
