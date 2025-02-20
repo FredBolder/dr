@@ -11,6 +11,7 @@ class Settings {
     this.measuresToPlay = "";
     this.newButton = document.getElementById("newButton");
     this.openButton = document.getElementById("openButton");
+    this.overlay = document.getElementById("overlay");
     this.pattern = document.getElementById("pattern");
     this.saveButton = document.getElementById("saveButton");
     this.tempo = 120;

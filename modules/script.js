@@ -6,6 +6,7 @@ import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
 import { Presets } from "./presets.js";
 
+let overlayContext;
 let patternContext;
 
 Glob.init();
@@ -169,10 +170,6 @@ function drawPattern(currentColumn = -1) {
   let radius = 0;
   let text = "";
 
-  if (currentColumn !== -1) {
-    return;
-  }
-
   const measure = Measures.measures[Glob.currentMeasure];
   divisionsPerBeat = measure.divisions;
   divisionsPerMeasure = measure.bassDrum.length;
@@ -186,6 +183,15 @@ function drawPattern(currentColumn = -1) {
 
   resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1);
 
+  if (currentColumn !== -1) {
+    overlayContext = overlay.getContext('2d');
+    overlayContext.clearRect(0, 0, overlay.width, overlay.height);
+  
+    overlayContext.fillStyle = 'rgba(255, 0, 0, 0.3)';
+    overlayContext.fillRect(currentColumn * dx1 + labelWidth, 0, dx1, overlay.height);
+    return;
+  }
+  
   patternContext.clearRect(0, 0, pattern.width, pattern.height);
 
   // console.log(
@@ -699,8 +705,15 @@ function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
   if (resized) {
     patternContext = pattern.getContext('2d');
     patternContext.scale(ratio, ratio);
-  }
+    overlay.width = pattern.width;
+    overlay.height = pattern.height;
+    overlay.style.width = pattern.style.width;
+    overlay.style.height = pattern.style.height;
+    overlayContext = overlay.getContext('2d');
+    overlayContext.scale(ratio, ratio);
+    }
 }
+
 
 async function saveTextFile() {
   const fileVersion = 2;
