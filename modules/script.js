@@ -182,8 +182,14 @@ function drawPattern(currentColumn = -1) {
   const ratio = (window.devicePixelRatio || 1) * 2;
 
   // Set the *display* size (CSS size)
-  pattern.style.width = `${labelWidth + (columns * dx1)}px`;
-  pattern.style.height = `${(rows + 1) * dy1}px`;
+  const desiredWidth = `${labelWidth + (columns * dx1)}px`;
+  const desiredHeight = `${(rows + 1) * dy1}px`;
+  if (pattern.style.width !== desiredWidth) {
+    pattern.style.width = desiredWidth;
+  }
+  if (pattern.style.height !== desiredHeight) {
+    pattern.style.height = desiredHeight;
+  }
 
   // Set the *drawing buffer* size (actual canvas resolution)
   pattern.width = (labelWidth + (columns * dx1)) * ratio;
