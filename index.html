@@ -52,11 +52,18 @@
         <input type="range" min="0" max="100" value="75" id="volumeSlider">
         <div id="volumeValue"></div>
       </div>
-    </div>
-    <div id="measuresToPlay">
-      <label for="measuresToPlayInput">Measures to play (empty=all)</label>
-      <input type="text" id="measuresToPlayInput" name="measuresToPlayInput" value="">
-      <label>Example: 1, 1, 1, 3, 2, 2, 2, 4</label>
+      <div>
+        <label for="instrumentSetSelector">Instrument set</label>
+        <select name="instrumentSetSelector" id="instrumentSetSelector">
+          <option value="0">Drums</option>
+          <option value="1">Greek percussion</option>
+        </select>
+      </div>
+      <div id="measuresToPlay">
+        <label for="measuresToPlayInput">Measures to play (empty=all)</label>
+        <input type="text" id="measuresToPlayInput" name="measuresToPlayInput" value="">
+        <label>Example: 1, 1, 1, 3, 2, 2, 2, 4</label>
+      </div>
     </div>
     <div>
       <canvas id="pattern"></canvas>

@@ -19,6 +19,10 @@ class Measure {
         this.snareDrum = [];
         this.bassDrum = [];
         this.pedalHiHat = [];
+        this.touberlekiSlap = [];
+        this.touberlekiKa = [];
+        this.touberlekiTek = [];
+        this.touberlekiDoum = [];
     }
 
     static fixMeasure(measure) {

@@ -35,45 +35,45 @@ function applyPresetPattern() {
         odd = !odd;
         column = (i * measure.divisions) + j;
         if (clearOtherColumns) {
-          setCell(column, row, 0);
+          Instruments.setCell(column, row, 0);
         }
         switch (pattern) {
           case 0:
             // Never (clear row)
-            setCell(column, row, 0);
+            Instruments.setCell(column, row, 0);
             break;
           case 1:
             // Every beat
             if (j === 0) {
-              setCell(column, row, 1);
+              Instruments.setCell(column, row, 1);
             }
             break;
           case 2:
             // Every column
-            setCell(column, row, 1);
+            Instruments.setCell(column, row, 1);
             break;
           case 3:
             // Odd columns
             if (odd) {
-              setCell(column, row, 1);
+              Instruments.setCell(column, row, 1);
             }
             break;
           case 4:
             // Even column
             if (!odd) {
-              setCell(column, row, 1);
+              Instruments.setCell(column, row, 1);
             }
             break;
           case 5:
             // Random
             if (Math.random() > 0.5) {
-              setCell(column, row, 1);
+              Instruments.setCell(column, row, 1);
             }
             break;
           case 6:
             // Every column of last beat
             if (i === measure.beats - 1) {
-              setCell(column, row, 1);
+              Instruments.setCell(column, row, 1);
             }
             break;
           case 7:
@@ -122,7 +122,7 @@ function applyPresetPattern() {
               if (hit >= hits.length) {
                 hit = hits.length - 1;
               }
-              setCell(column, row, hits[hit]);
+              Instruments.setCell(column, row, hits[hit]);
             }
             break;
           default:
@@ -134,54 +134,78 @@ function applyPresetPattern() {
   drawPattern();
 }
 
+function disableWhilePlaying() {
+  Glob.settings.instrumentSetSelector.disabled = Glob.playing;
+  Glob.settings.loadRhythmButton.disabled = Glob.playing;
+  Glob.settings.newButton.disabled = Glob.playing;
+  Glob.settings.openButton.disabled = Glob.playing;
+  Glob.settings.saveButton.disabled = Glob.playing;
+  Glob.settings.previousMeasureButton.disabled = Glob.playing;
+  Glob.settings.nextMeasureButton.disabled = Glob.playing;
+  Glob.settings.clearMeasureButton.disabled = Glob.playing;
+  Glob.settings.addMeasureButton.disabled = Glob.playing;
+  Glob.settings.deleteMeasureButton.disabled = Glob.playing;
+  Glob.settings.addBeatButton.disabled = Glob.playing;
+  Glob.settings.deleteBeatButton.disabled = Glob.playing;
+  Glob.settings.incDivisionButton.disabled = Glob.playing;
+  Glob.settings.decDivisionButton.disabled = Glob.playing;
+  Glob.settings.copyMeasureButton.disabled = Glob.playing;
+  Glob.settings.expertCheckbox.disabled = Glob.playing;
+  Glob.settings.applyPresetPatternButton.disabled = Glob.playing;
+}
 
 function drawPattern(currentColumn = -1) {
-  let ch = 0;
   let columns = 0;
-  let cw = 0;
   let dx1 = 0;
   let dy1 = 0;
   let factor = 1;
   let fontSize = 0;
-  let labelWidth;
   let n = 0;
   let divisionsPerBeat = 0;
   let divisionsPerMeasure = 0;
   let measureStatus = "";
   let radius = 0;
-  let rows = 0;
   let text = "";
 
-  const pattern = Glob.settings.pattern;
-  pattern.height = pattern.clientHeight * 2;
-  pattern.width = pattern.clientWidth * 2;
-  const patternContext = pattern.getContext("2d");
+  const measure = Measures.measures[Glob.currentMeasure];
+  divisionsPerBeat = measure.divisions;
+  divisionsPerMeasure = measure.bassDrum.length;
+  const rows = Instruments.sets[Glob.settings.instrumentSet].length;
+  columns = divisionsPerMeasure;
+  const labelWidth = 135;
+  dx1 = 25;
+  dy1 = 25;
 
-  patternContext.reset();
+  const pattern = Glob.settings.pattern;
+
+  // Use 2x for high resolution AND adapt to devicePixelRatio
+  const ratio = (window.devicePixelRatio || 1) * 2;
+
+  // Set the *display* size (CSS size)
+  pattern.style.width = `${labelWidth + (columns * dx1)}px`;
+  pattern.style.height = `${(rows + 1) * dy1}px`;
+
+  // Set the *drawing buffer* size (actual canvas resolution)
+  pattern.width = (labelWidth + (columns * dx1)) * ratio;
+  pattern.height = (rows + 1) * dy1 * ratio;
+
+  // Re-fetch context after resizing
+  let patternContext = pattern.getContext('2d');
+
+  // Scale drawing context to account for high DPI
+  patternContext.scale(ratio, ratio);
+
+  // Clear the canvas
+  patternContext.clearRect(0, 0, pattern.width, pattern.height);
 
   // console.log(
   //   `Width: ${pattern.width}, Height: ${pattern.height}, ClientWidth: ${pattern.clientWidth}, ClientHeight: ${pattern.clientHeight}`
   // );
 
-  const measure = Measures.measures[Glob.currentMeasure];
-  divisionsPerBeat = measure.divisions;
-  divisionsPerMeasure = measure.bassDrum.length;
-  columns = divisionsPerMeasure;
-  rows = 16;
-  labelWidth = 275;
-  ch = pattern.height;
-  cw = pattern.width;
-  dx1 = (cw - labelWidth) / columns;
-  dy1 = ch / (rows + 1);
-  if (dx1 > dy1) {
-    dx1 = dy1;
-  } else {
-    dy1 = dx1;
-  }
   // Labels
   patternContext.lineWidth = 2;
   patternContext.strokeStyle = "white";
-  fontSize = Glob.minMax(dy1 - 15, 5, dy1 - 10);
+  fontSize = dy1 * 0.6;
   patternContext.font = `${fontSize}px arial`;
   patternContext.textAlign = "left";
   patternContext.beginPath;
@@ -194,7 +218,7 @@ function drawPattern(currentColumn = -1) {
     patternContext.fillRect(0, i * dy1 + dy1, labelWidth, dy1);
     patternContext.strokeRect(0, i * dy1 + dy1, labelWidth, dy1);
     patternContext.fillStyle = "white";
-    patternContext.fillText(Instruments.names[i], 10, i * dy1 + (dy1 * 1.75));
+    patternContext.fillText(Instruments.sets[Glob.settings.instrumentSet][i].name, 10, i * dy1 + (dy1 * 1.75));
   }
   patternContext.textAlign = "center";
   n = 1;
@@ -212,7 +236,7 @@ function drawPattern(currentColumn = -1) {
   // Pattern
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < columns; j++) {
-      const cellValue = getCell(j, i);
+      const cellValue = Instruments.getCell(j, i);
 
       patternContext.lineWidth = 2;
       if (currentColumn === j) {
@@ -324,13 +348,32 @@ function expertClicked() {
 function fillPatternInstruments() {
   let selector = document.getElementById("presetPatternInstrument");
   selector.innerHTML = ""; // Remove all options
-  Instruments.names.forEach((name, index) => {
+  Instruments.sets[Glob.settings.instrumentSet].forEach((instrument, index) => {
+    const name = instrument.name;
     let option = document.createElement("option");
     option.textContent = name;
     option.value = index;
     selector.appendChild(option);
   });
-  selector.selectedIndex = 8;
+  switch (Glob.settings.instrumentSet) {
+    case 0:
+      // Drums
+      selector.selectedIndex = 8;
+      break;
+    case 1:
+      // Greek percussion
+      selector.selectedIndex = 2;
+      break;
+    default:
+      selector.selectedIndex = 0;
+      break;
+  }
+}
+
+function instrumentSetChanged() {
+  Glob.settings.instrumentSet = Glob.tryParseInt(document.getElementById("instrumentSetSelector").value, 0);
+  drawPattern();
+  fillPatternInstruments();
 }
 
 function loopClicked() {
@@ -350,6 +393,7 @@ async function openTextFile() {
       multiple: false,
     });
     Glob.currentMeasure = 0;
+    Glob.settings.instrumentSet = 0;
     const file = await fileHandle.getFile();
     if (!file.name.toLowerCase().endsWith(".dr")) {
       alert("Invalid file type. Please select a .dr file.");
@@ -360,7 +404,15 @@ async function openTextFile() {
     fileVersion = Glob.tryParseInt(lines[0], 0);
     Glob.settings.measuresToPlay = lines[1];
     Glob.settings.tempo = Glob.tryParseInt(lines[2], 0);
-    Measures.measures = JSON.parse(lines[3]);
+    if (fileVersion >= 2) {
+      Glob.settings.instrumentSet = Glob.tryParseInt(lines[3], 0);
+      Measures.measures = JSON.parse(lines[4]);
+    } else {
+      Measures.measures = JSON.parse(lines[3]);
+    }
+    Measures.addMissingProps();
+    document.getElementById("instrumentSetSelector").selectedIndex = Glob.settings.instrumentSet;
+    instrumentSetChanged();
     drawPattern();
     document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
     document.getElementById("tempoSlider").value = Glob.settings.tempo;
@@ -383,12 +435,14 @@ async function playPattern() {
   let playMeasures = [];
   let prevEndsWithFill = false;
   let volume = 0.75;
+  const set = Glob.settings.instrumentSet;
 
   if (Glob.playing || (Measures.measures.length === 0)) {
     ok = false;
   }
   if (ok) {
     Glob.playing = true;
+    disableWhilePlaying();
     odd = false;
 
     // Check if all URLs are cached
@@ -437,8 +491,9 @@ async function playPattern() {
         for (let j = 0; j < divisionsPerMeasure && !Glob.stop; j++) {
           drawPattern(j);
           // Create and configure BufferSource nodes for each audio buffer
-          Instruments.fileNames.forEach((url, idx) => {
-            let cellValue = getCell(j, idx);
+          Instruments.sets[set].forEach((instrument, idx) => {
+            let url = instrument.fileName;
+            let cellValue = Instruments.getCell(j, idx);
 
             if ((cellValue >= 7) && (cellValue <= 9)) {
               // Additional hit
@@ -525,7 +580,7 @@ async function playPattern() {
               gainNodeFlam.connect(audioCtx.destination);
             }
 
-            if (idx === 7) {
+            if ((set === 0) && (idx === 7)) {
               source.started = false;  // Add a custom property to track if the source has started
               setTimeout(() => {
                 openHiHat.push({ source, gainNode });
@@ -574,7 +629,7 @@ async function playPattern() {
               };
             }
 
-            if (idx === 8 || idx === 15) { // Closed Hi-Hat or Pedal Hi-Hat
+            if ((set === 0) && (idx === 8 || idx === 15)) { // Closed Hi-Hat or Pedal Hi-Hat
               setTimeout(() => {
                 openHiHat.forEach(oh => {
                   if (oh.source.started) {
@@ -615,12 +670,13 @@ async function playPattern() {
     }
   }
   Glob.playing = false;
+  disableWhilePlaying();
   Glob.stop = false;
   drawPattern();
 }
 
 async function saveTextFile() {
-  const fileVersion = 1;
+  const fileVersion = 2;
   try {
     const fileHandle = await window.showSaveFilePicker({
       suggestedName: "myPattern.dr", // Default filename
@@ -635,6 +691,7 @@ async function saveTextFile() {
     await writable.write(fileVersion.toString() + "\n");
     await writable.write(Glob.settings.measuresToPlay + "\n");
     await writable.write(Glob.settings.tempo.toString() + "\n");
+    await writable.write(Glob.settings.instrumentSet.toString() + "\n");
     await writable.write(JSON.stringify(Measures.measures) + "\n");
     await writable.close();
   } catch (err) {
@@ -649,85 +706,6 @@ function showMessage(msg) {
 
 function updateEndsWithFill() {
   document.getElementById("endsWithFill").checked = Measures.measures[Glob.currentMeasure].endsWithFill;
-}
-
-function getCell(c, r) {
-  const measure = Measures.measures[Glob.currentMeasure];
-  const map = [
-    measure.cowbell[c],
-    measure.crashCymbal1[c],
-    measure.crashCymbal2[c],
-    measure.chineseCymbal[c],
-    measure.splashCymbal[c],
-    measure.rideBell[c],
-    measure.rideCymbal[c],
-    measure.openHiHat[c],
-    measure.closedHiHat[c],
-    measure.highTom[c],
-    measure.midTom[c],
-    measure.lowTom[c],
-    measure.crossStick[c],
-    measure.snareDrum[c],
-    measure.bassDrum[c],
-    measure.pedalHiHat[c],
-  ];
-  return map[r];
-}
-
-function setCell(c, r, value) {
-  const measure = Measures.measures[Glob.currentMeasure];
-  switch (r) {
-    case 0:
-      measure.cowbell[c] = value;
-      break;
-    case 1:
-      measure.crashCymbal1[c] = value;
-      break;
-    case 2:
-      measure.crashCymbal2[c] = value;
-      break;
-    case 3:
-      measure.chineseCymbal[c] = value;
-      break;
-    case 4:
-      measure.splashCymbal[c] = value;
-      break;
-    case 5:
-      measure.rideBell[c] = value;
-      break;
-    case 6:
-      measure.rideCymbal[c] = value;
-      break;
-    case 7:
-      measure.openHiHat[c] = value;
-      break;
-    case 8:
-      measure.closedHiHat[c] = value;
-      break;
-    case 9:
-      measure.highTom[c] = value;
-      break;
-    case 10:
-      measure.midTom[c] = value;
-      break;
-    case 11:
-      measure.lowTom[c] = value;
-      break;
-    case 12:
-      measure.crossStick[c] = value;
-      break;
-    case 13:
-      measure.snareDrum[c] = value;
-      break;
-    case 14:
-      measure.bassDrum[c] = value;
-      break;
-    case 15:
-      measure.pedalHiHat[c] = value;
-      break;
-    default:
-      break;
-  }
 }
 
 function additionalChanged() {
@@ -748,7 +726,7 @@ function humanizeVolumesChanged() {
 
 function patternClicked(event) {
   const columns = Measures.measures[Glob.currentMeasure].bassDrum.length;
-  const rows = 16;
+  const rows = Instruments.sets[Glob.settings.instrumentSet].length;
   const labelWidth = 275 / 2;
   const pattern = Glob.settings.pattern;
   const rect = pattern.getBoundingClientRect()
@@ -772,10 +750,10 @@ function patternClicked(event) {
     c = Math.trunc((x - labelWidth) / dx1);
     r = Math.trunc((y - dy1) / dy1);
     if ((c >= 0) && (r >= 0) && (c < columns) && (r < rows)) {
-      if (getCell(c, r) > 0) {
-        setCell(c, r, 0);
+      if (Instruments.getCell(c, r) > 0) {
+        Instruments.setCell(c, r, 0);
       } else {
-        setCell(c, r, hit);
+        Instruments.setCell(c, r, hit);
       }
       drawPattern();
     }
@@ -801,6 +779,8 @@ try {
       Presets.fillRhythmSelect();
       document.getElementById("rhythmSelector").value = "Rock2";
       Measures.load("Rock2");
+      document.getElementById("instrumentSetSelector").selectedIndex = Glob.settings.instrumentSet;
+      instrumentSetChanged();
       document.getElementById("message").style.visibility = "hidden";
       document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
       document.getElementById("tempoSlider").value = Glob.settings.tempo;
@@ -829,6 +809,8 @@ try {
       }
       if (userChoice || Glob.settings.expert) {
         Measures.load(rhythm);
+        document.getElementById("instrumentSetSelector").selectedIndex = Glob.settings.instrumentSet;
+        instrumentSetChanged();
         tempoChanged();
         document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
         volumeChanged();
@@ -845,6 +827,7 @@ try {
       }
       if (userChoice || Glob.settings.expert) {
         Glob.currentMeasure = 0;
+        Glob.settings.instrumentSet = 0;
         Glob.settings.measuresToPlay = "";
         Glob.settings.tempoSlider.value = 120;
         const measure1 = new Measure();
@@ -853,6 +836,8 @@ try {
         Measure.fixMeasure(measure1);
         Measures.measures = [];
         Measures.measures.push(measure1);
+        document.getElementById("instrumentSetSelector").selectedIndex = Glob.settings.instrumentSet;
+        instrumentSetChanged();
         tempoChanged();
         document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
         drawPattern();
@@ -878,6 +863,10 @@ try {
 
   document.getElementById("volumeSlider").addEventListener("input", (e) => {
     volumeChanged();
+  });
+
+  document.getElementById("instrumentSetSelector").addEventListener("change", (e) => {
+    instrumentSetChanged();
   });
 
   document.getElementById('measuresToPlayInput').addEventListener('input', function () {
@@ -924,7 +913,7 @@ try {
         const measure = Measures.measures[Glob.currentMeasure];
         for (let r = 0; r < Instruments.names.length; r++) {
           for (let c = 0; c < measure.bassDrum.length; c++) {
-            setCell(c, r, 0);
+            Instruments.setCell(c, r, 0);
           }
         }
         drawPattern();
