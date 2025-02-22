@@ -233,21 +233,12 @@ function drawPattern(currentColumn = -1) {
       const cellValue = Instruments.getCell(j, i);
 
       patternContext.lineWidth = 2;
-      if (currentColumn === j) {
-        patternContext.fillStyle = "black";
-        patternContext.strokeStyle = "white";
-      } else {
-        patternContext.fillStyle = "white";
-        patternContext.strokeStyle = "black";
-      }
+      patternContext.fillStyle = "white";
+      patternContext.strokeStyle = "black";
       patternContext.beginPath;
       patternContext.fillRect(j * dx1 + labelWidth, i * dy1 + dy1, dx1, dy1);
       patternContext.strokeRect(j * dx1 + labelWidth, i * dy1 + dy1, dx1, dy1);
-      if (currentColumn === j) {
-        patternContext.fillStyle = "white";
-      } else {
-        patternContext.fillStyle = "black";
-      }
+      patternContext.fillStyle = "black";
 
       if ((cellValue >= 7) && (cellValue <= 9)) {
         // Additional hit

@@ -25,6 +25,8 @@ class Measure {
         this.touberlekiDoum = [];
         this.defiTek = [];
         this.defiDoum = [];
+        this.daouliTek = [];
+        this.daouliDoum = [];
     }
 
     static fixMeasure(measure) {
