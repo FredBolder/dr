@@ -528,6 +528,9 @@ class Measures {
                 measure1 = new Measure();
                 measure1.beats = 9;
                 measure1.divisions = 2;
+                measure1.touberlekiKa = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0];
+                measure1.touberlekiTek = [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0];
+                measure1.touberlekiDoum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0];
                 measure1.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0];
                 measure1.snareDrum = [0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0];
                 measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0];
@@ -551,6 +554,8 @@ class Measures {
                 measure1 = new Measure();
                 measure1.beats = 9;
                 measure1.divisions = 1;
+                measure1.touberlekiKa = [0, 2, 0, 2, 0, 2, 0, 0, 2];
+                measure1.touberlekiDoum = [1, 0, 1, 0, 1, 0, 1, 0, 0];
                 measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1];
                 measure1.snareDrum = [0, 1, 0, 1, 0, 1, 0, 1, 1];
                 measure1.bassDrum = [1, 0, 1, 0, 1, 0, 1, 0, 0];
@@ -558,13 +563,17 @@ class Measures {
                 this.measures.push(measure1);
                 break;
             case "Karsilamas2":
+                Glob.settings.instrumentSet = 1;
                 Glob.settings.tempoSlider.value = 243;
                 measure1 = new Measure();
                 measure1.beats = 9;
-                measure1.divisions = 1;
-                measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1];
-                measure1.snareDrum = [0, 0, 1, 0, 0, 0, 0, 1, 0];
-                measure1.bassDrum = [1, 0, 0, 0, 1, 0, 1, 0, 0];
+                measure1.divisions = 2;
+                measure1.touberlekiKa = [0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 2, 0, 2, 0];
+                measure1.touberlekiTek = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0];
+                measure1.touberlekiDoum = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                measure1.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0];
+                measure1.snareDrum = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
@@ -801,6 +810,8 @@ class Measures {
                 measure1 = new Measure();
                 measure1.beats = 9;
                 measure1.divisions = 4;
+                measure1.touberlekiTek = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                measure1.touberlekiDoum = [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
                 measure1.openHiHat = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
                 measure1.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0];
                 measure1.snareDrum = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
@@ -810,6 +821,9 @@ class Measures {
                 measure2 = new Measure();
                 measure2.beats = 9;
                 measure2.divisions = 4;
+                measure2.touberlekiKa = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2];
+                measure2.touberlekiTek = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0];
+                measure2.touberlekiDoum = [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
                 measure2.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0];
                 measure2.snareDrum = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1, 0, 1];
                 measure2.bassDrum = [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
