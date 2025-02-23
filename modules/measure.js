@@ -25,6 +25,8 @@ class Measure {
         this.touberlekiDoum = [];
         this.defiTek = [];
         this.defiDoum = [];
+        this.bendirTek = [];
+        this.bendirDoum = [];
         this.daouliTek = [];
         this.daouliDoum = [];
     }

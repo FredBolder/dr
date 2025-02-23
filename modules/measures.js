@@ -384,9 +384,25 @@ class Measures {
                 measure1 = new Measure();
                 measure1.beats = 9;
                 measure1.divisions = 2;
+                measure1.touberlekiTek = [0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1];
+                measure1.touberlekiDoum = [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
                 measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
                 measure1.snareDrum = [0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1];
                 measure1.bassDrum = [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
+            case "Berati1":
+                Glob.settings.instrumentSet = 1;
+                Glob.settings.tempoSlider.value = 90;
+                measure1 = new Measure();
+                measure1.beats = 8;
+                measure1.divisions = 2;
+                measure1.defiTek = [0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0];
+                measure1.defiDoum = [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0];
+                measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+                measure1.snareDrum = [0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
@@ -553,10 +569,13 @@ class Measures {
                 this.measures.push(measure1);
                 break;
             case "PalioZeibekiko1":
+                Glob.settings.instrumentSet = 1;
                 Glob.settings.tempoSlider.value = 63;
                 measure1 = new Measure();
                 measure1.beats = 9;
                 measure1.divisions = 2;
+                measure1.bendirTek = [0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0];
+                measure1.bendirDoum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0];
                 measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
                 measure1.snareDrum = [0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0];
                 measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0];
@@ -582,6 +601,9 @@ class Measures {
                 measure1 = new Measure();
                 measure1.beats = 2;
                 measure1.divisions = 4;
+                measure1.touberlekiKa = [0, 0, 0, 1, 0, 0, 0, 0];
+                measure1.touberlekiTek = [0, 0, 0, 0, 0, 0, 1, 0];
+                measure1.touberlekiDoum = [1, 0, 0, 0, 1, 0, 0, 0];
                 measure1.closedHiHat = [1, 0, 1, 0, 1, 0, 1, 0];
                 measure1.snareDrum = [0, 0, 0, 1, 0, 0, 1, 0];
                 measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0];
@@ -631,10 +653,13 @@ class Measures {
                 this.measures.push(measure1);
                 break;
             case "Tiktromachton1":
+                Glob.settings.instrumentSet = 1;
                 Glob.settings.tempoSlider.value = 511;
                 measure1 = new Measure();
                 measure1.beats = 7;
                 measure1.divisions = 1;
+                measure1.daouliTek = [0, 0, 1, 1, 0, 1, 1];
+                measure1.daouliDoum = [1, 0, 0, 0, 1, 0, 0];
                 measure1.closedHiHat = [1, 0, 0, 0, 0, 0, 0];
                 measure1.snareDrum = [0, 0, 1, 1, 1, 1, 1];
                 measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0];
@@ -642,11 +667,14 @@ class Measures {
                 this.measures.push(measure1);
                 break;
             case "Tiktromachton2":
+                Glob.settings.instrumentSet = 1;
                 Glob.settings.measuresToPlay = "1, 1, 1, 2";
                 Glob.settings.tempoSlider.value = 511;
                 measure1 = new Measure();
                 measure1.beats = 7;
                 measure1.divisions = 1;
+                measure1.daouliTek = [0, 0, 1, 0, 0, 0, 1];
+                measure1.daouliDoum = [1, 0, 0, 0, 1, 0, 0];
                 measure1.splashCymbal = [12, 0, 0, 0, 0, 0, 0];
                 measure1.closedHiHat = [13, 0, 0, 0, 1, 0, 0];
                 measure1.snareDrum = [0, 0, 1, 0, 0, 0, 1];
@@ -657,6 +685,8 @@ class Measures {
                 measure2.beats = 7;
                 measure2.divisions = 1;
                 measure2.endsWithFill = true;
+                measure2.daouliTek = [0, 0, 1, 0, 3, 0, 0];
+                measure2.daouliDoum = [1, 0, 0, 0, 0, 0, 0];
                 measure2.closedHiHat = [1, 0, 1, 0, 1, 0, 0];
                 measure2.snareDrum = [0, 0, 0, 0, 0, 0, 1];
                 measure2.bassDrum = [1, 0, 1, 0, 1, 0, 0];
@@ -757,6 +787,8 @@ class Measures {
                 measure1 = new Measure();
                 measure1.beats = 9;
                 measure1.divisions = 2;
+                measure1.bendirTek = [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0];
+                measure1.bendirDoum = [1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0];
                 measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
                 measure1.lowTom = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
                 measure1.snareDrum = [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0];

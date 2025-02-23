@@ -12,6 +12,8 @@ class Instruments {
       "Touberleki Doum",
       "Defi Tek",
       "Defi Doum",
+      "Bendir Tek",
+      "Bendir Doum",
       "Daouli Tek",
       "Daouli Doum",
       "Cowbell",
@@ -43,12 +45,12 @@ class Instruments {
         case 0:
           // Drums
           for (let j = 0; j < 16; j++) {
-            this.sets[i].push({ name: this.names[j + 8], fileName: this.fileNames[j + 8] });
+            this.sets[i].push({ name: this.names[j + 10], fileName: this.fileNames[j + 10] });
           }
           break;
         case 1:
           // Greek percussion
-          for (let j = 0; j < 8; j++) {
+          for (let j = 0; j < 10; j++) {
             this.sets[i].push({ name: this.names[j], fileName: this.fileNames[j] });
           }
           break;
@@ -92,6 +94,8 @@ class Instruments {
           measure.touberlekiDoum[c],
           measure.defiTek[c],
           measure.defiDoum[c],
+          measure.bendirTek[c],
+          measure.bendirDoum[c],
           measure.daouliTek[c],
           measure.daouliDoum[c],
         ];
@@ -183,9 +187,15 @@ class Instruments {
             measure.defiDoum[c] = value;
             break;
           case 6:
-            measure.daouliTek[c] = value;
+            measure.bendirTek[c] = value;
             break;
           case 7:
+            measure.bendirDoum[c] = value;
+            break;
+          case 8:
+            measure.daouliTek[c] = value;
+            break;
+          case 9:
             measure.daouliDoum[c] = value;
             break;
         }
