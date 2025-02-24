@@ -958,9 +958,6 @@ class Measures {
                         while (measure[prop].length < columns) {
                             measure[prop].push(0);
                         }
-                        while (measure[prop].length > columns) {
-                            measure[prop].pop();
-                        }
                     }
                 }
             }

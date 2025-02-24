@@ -410,6 +410,7 @@ async function openTextFile() {
 async function playPattern() {
   let factor = 1;
   let first = true;
+  let found = false;
   let humanizeDeltaTime = 0;
   let humanizeTiming = 0;
   let humanizeVolumeFactor = 1;
@@ -472,6 +473,20 @@ async function playPattern() {
         let flamTime = Math.min(0.025, (60 / Glob.settings.tempo) * 0.2);
         const secondsPerBeat = 60.0 / Glob.settings.tempo;
         const timeBetweenDivisions = (secondsPerBeat * beatsPerMeasure) / divisionsPerMeasure;
+
+        if (first && (i === 0)) {
+          // Check if there is a flam in the first column
+          found = false;
+          Instruments.sets[set].forEach((instrument, idx) => {
+            let cellValue = Instruments.getCell(0, idx);
+            if (cellValue === 6) {
+              found = true;
+            }
+          });
+          if (found) {
+            nextNoteTime += (flamTime * 2);
+          }
+        }
 
         for (let j = 0; j < divisionsPerMeasure && !Glob.stop; j++) {
           scheduleDraw(j);
@@ -705,6 +720,8 @@ function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
 
 async function saveTextFile() {
   const fileVersion = 2;
+  let found = false;
+  let saveMeasures = [];
   try {
     const fileHandle = await window.showSaveFilePicker({
       suggestedName: "myPattern.dr", // Default filename
@@ -720,7 +737,34 @@ async function saveTextFile() {
     await writable.write(Glob.settings.measuresToPlay + "\n");
     await writable.write(Glob.settings.tempo.toString() + "\n");
     await writable.write(Glob.settings.instrumentSet.toString() + "\n");
-    await writable.write(JSON.stringify(Measures.measures) + "\n");
+
+    // Compact saving
+    for (let i = 0; i < Measures.measures.length; i++) {
+      const measure = Measures.measures[i];
+      let saveMeasure = {};
+      saveMeasure.beats = measure.beats;
+      saveMeasure.divisions = measure.divisions;
+      saveMeasure.endsWithFill = measure.endsWithFill;
+      for (const prop in measure) {
+        if (Array.isArray(measure[prop])) {
+          found = false;
+          for (let j = 0; j < measure[prop].length; j++) {
+            if (measure[prop][j] > 0) {
+              found = true;
+            }
+          }
+          if (found) {
+            saveMeasure[prop] = [];
+            for (let j = 0; j < measure[prop].length; j++) {
+              saveMeasure[prop].push(measure[prop][j]);
+            }
+          }
+        }
+      }
+      saveMeasures.push(saveMeasure);
+    }
+
+    await writable.write(JSON.stringify(saveMeasures) + "\n");
     await writable.close();
   } catch (err) {
     console.error("Error saving file:", err);
