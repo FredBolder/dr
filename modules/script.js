@@ -419,6 +419,7 @@ async function openTextFile() {
 }
 
 async function playPattern() {
+  let currentTempo = 0;
   let factor = 1;
   let first = true;
   let found = false;
@@ -482,7 +483,7 @@ async function playPattern() {
           columnIdx = 0;
         }
         const beatsPerMeasure = currentMeasure.beats;
-        const secondsPerBeat = 60.0 / Glob.settings.tempo;
+        const secondsPerBeat = 60.0 / currentTempo;
         totalTime += (secondsPerBeat * beatsPerMeasure) / currentMeasure.bassDrum.length;
       }
       return totalTime;
@@ -492,6 +493,7 @@ async function playPattern() {
     prevEndsWithFill = false;
     while (!Glob.stop && (Glob.settings.loop || first)) {
       for (let i = 0; i < playMeasures.length && !Glob.stop; i++) {
+        currentTempo = Glob.settings.tempo;
         odd = !odd;
         Glob.currentMeasure = playMeasures[i];
         scheduleDraw();
@@ -499,9 +501,10 @@ async function playPattern() {
         const beatsPerMeasure = measure.beats;
         const divisionsPerMeasure = measure.bassDrum.length;
 
-        let flamTime = Math.min(0.025, (60 / Glob.settings.tempo) * 0.35);
+        let flamTime = Math.min(0.025, (60 / currentTempo) * 0.35);
+        flamTime = 0.03;
         let ghostNoteTime = flamTime;
-        const secondsPerBeat = 60.0 / Glob.settings.tempo;
+        const secondsPerBeat = 60.0 / currentTempo;
         const timeBetweenDivisions = (secondsPerBeat * beatsPerMeasure) / divisionsPerMeasure;
 
         // Check if there is a flam or roll in the first two columns
@@ -569,6 +572,7 @@ async function playPattern() {
             if (cellValue > 0) {
               source = audioCtx.createBufferSource();
               source.started = false;
+              source.isGhostNote = false;
               source.buffer = audioBuffer;
               gainNode = audioCtx.createGain();
 
@@ -653,6 +657,7 @@ async function playPattern() {
               ghostNotes[g].source.connect(ghostNotes[g].gainNode);
               ghostNotes[g].gainNode.connect(audioCtx.destination);
               ghostNotes[g].source.started = false;
+              ghostNotes[g].source.isGhostNote = true;
             }
 
             if ((set === 0) && (idx === 7)) {
@@ -673,7 +678,7 @@ async function playPattern() {
                       gainNode: ghostNotes[g].gainNode
                     });
                   }
-                }, (nextNoteTime + calculateFlamOffset(Glob.currentMeasure, j) + humanizeDeltaTime - ((g + 1) * ghostNoteTime) - audioCtx.currentTime) * 1000);
+                }, (nextNoteTime + calculateFlamOffset(Glob.currentMeasure, j) + (humanizeDeltaTime * 0.3) - ((g + 1) * ghostNoteTime) - audioCtx.currentTime) * 1000);
               }
             }
 
@@ -687,16 +692,15 @@ async function playPattern() {
                 openHiHat = openHiHat.filter(oh => oh.source !== source);
                 source.disconnect();
                 gainNode.disconnect();
-                const index = activeSources.indexOf(source);
-                if (index !== -1) activeSources.splice(index, 1);
+                activeSources = activeSources.filter(active => active.source !== source);
               };
               source.start(sourceStart);
               source.started = true;  // Mark as started
-              activeSources.push(source);
+              activeSources.push({source, gainNode});
             }
 
             for (let g = 0; g < ghostNotes.length; g++) {
-              let sourceFlamStart = nextNoteTime + calculateFlamOffset(Glob.currentMeasure, j) + humanizeDeltaTime - ((g + 1) * ghostNoteTime);
+              let sourceFlamStart = nextNoteTime + calculateFlamOffset(Glob.currentMeasure, j) + (humanizeDeltaTime * 0.3) - ((g + 1) * ghostNoteTime);
               if (sourceFlamStart < audioCtx.currentTime + 0.001) {
                 sourceFlamStart = audioCtx.currentTime + 0.001;
                 showMessage("sourceFlamStart was too small");
@@ -705,12 +709,11 @@ async function playPattern() {
                 openHiHat = openHiHat.filter(oh => oh.source !== ghostNotes[g].source);
                 ghostNotes[g].source.disconnect();
                 ghostNotes[g].gainNode.disconnect();
-                const index = activeSources.indexOf(ghostNotes[g].source);
-                if (index !== -1) activeSources.splice(index, 1);
+                activeSources = activeSources.filter(active => active.source !== ghostNotes[g].source);
               };
               ghostNotes[g].source.start(sourceFlamStart);
               ghostNotes[g].source.started = true;
-              activeSources.push(ghostNotes[g].source);
+              activeSources.push({source: ghostNotes[g].source, gainNode: ghostNotes[g].gainNode});
             }
 
             if ((set === 0) && (idx === 8 || idx === 15)) { // Closed Hi-Hat or Pedal Hi-Hat
@@ -756,6 +759,28 @@ async function playPattern() {
 
 function scheduleDraw(currentColumn = -1) {
   requestAnimationFrame(() => drawPattern(currentColumn));
+}
+
+function stopSounds(mode = 0) {
+  // mode: 0 = all, 1 = ghost notes
+  const audioCtx = Audio.audioContext;
+  activeSources.forEach((active) => {
+    if (active.source.started && (active.source.isGhostNote || (mode === 0))) {
+      try {
+        let fadeOutTime = 0.2;
+        if (mode === 1) {
+          fadeOutTime = 0.05;
+        }
+        active.gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeOutTime);
+        setTimeout(() => {
+          active.source.stop();
+        }, fadeOutTime * 1000);
+      } catch (e) {
+        console.error("Error stopping audio source:", e);
+      }
+    }
+  });
+  activeSources.length = 0; // Reset after stopping
 }
 
 function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
@@ -1010,6 +1035,7 @@ try {
 
   document.getElementById("tempoSlider").addEventListener("input", (e) => {
     tempoChanged();
+    stopSounds(1);
   });
 
   document.getElementById("volumeSlider").addEventListener("input", (e) => {
@@ -1031,8 +1057,7 @@ try {
   document.getElementById("startStopButton").addEventListener("click", (e) => {
     if (Glob.playing) {
       Glob.stop = true;
-      activeSources.forEach((source) => source.stop());
-      activeSources.length = 0; // Reset after stopping
+      stopSounds();
     } else {
       playPattern();
     }
