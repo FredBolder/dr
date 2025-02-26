@@ -60,9 +60,9 @@ class Instruments {
     }
   }
 
-  static getCell(c, r) {
+  static getCell(m, c, r) {
     let map = [];
-    const measure = Measures.measures[Glob.currentMeasure];
+    const measure = Measures.measures[m];
     switch (Glob.settings.instrumentSet) {
       case 0:
         // Drums
