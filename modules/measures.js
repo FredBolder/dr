@@ -348,6 +348,25 @@ class Measures {
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
+            case "Tango3":
+                Glob.settings.tempoSlider.value = 132;
+                measure1 = new Measure();
+                measure1.beats = 4;
+                measure1.divisions = 2;
+                measure1.snareDrum = [14, 0, 1, 0, 1, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0];
+                measure1.pedalHiHat = [0, 0, 1, 0, 0, 0, 1, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                measure2 = new Measure();
+                measure2.beats = 4;
+                measure2.divisions = 2;
+                measure2.snareDrum = [14, 1, 0, 1, 6, 0, 1, 0];
+                measure2.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0];
+                measure2.pedalHiHat = [0, 0, 1, 0, 0, 0, 1, 0];
+                Measure.fixMeasure(measure2);
+                this.measures.push(measure2);
+                break;
             case "Viennesewaltz1":
                 Glob.settings.tempoSlider.value = 180;
                 measure1 = new Measure();

@@ -20,7 +20,7 @@ class Presets {
                 break;
             case "BallroomLatin":
                 options = ["Cha Cha Cha 1", "Jive 1", "Merengue 1", "Paso doble 1", "Paso doble 2", "Quickstep 1", "Rumba 1", "Samba 1",
-                    "Samba 2", "Slow waltz 1", "Slowfox 1", "Tango 1", "Tango 2", "Viennese waltz 1", "Zouk 1"
+                    "Samba 2", "Slow waltz 1", "Slowfox 1", "Tango 1", "Tango 2", "Tango 3", "Viennese waltz 1", "Zouk 1"
                 ];
                 break;
             case "Greek":

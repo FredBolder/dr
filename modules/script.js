@@ -687,7 +687,7 @@ async function playPattern() {
               let sourceFlamStart = nextNoteTime + calculateFlamOffset(i, j) + (humanizeDeltaTime * 0.3) - ((g + 1) * ghostNoteTime);
               if (sourceFlamStart < audioCtx.currentTime + 0.001) {
                 sourceFlamStart = audioCtx.currentTime + 0.001;
-                showMessage("sourceFlamStart was too small");
+                //showMessage("sourceFlamStart was too small");
               }
               ghostNotes[g].source.onended = () => {
                 openHiHat = openHiHat.filter(oh => oh.source !== ghostNotes[g].source);
