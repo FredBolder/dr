@@ -5,6 +5,7 @@ import { Instruments } from "./instruments.js";
 import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
 import { Presets } from "./presets.js";
+import { Test } from "./test.js";
 
 let activeSources = [];
 let overlayContext;
@@ -264,7 +265,7 @@ function drawPattern(currentColumn = -1) {
         patternContext.moveTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + factor) * dy1));
         patternContext.lineTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + (1 - factor)) * dy1));
         patternContext.stroke();
-      } else if ((cellValue >= 10) && (cellValue <= 13)) {
+      } else if ((cellValue >= 10) && (cellValue <= 14)) {
         switch (cellValue) {
           case 10:
             text = "E";
@@ -278,7 +279,10 @@ function drawPattern(currentColumn = -1) {
           case 13:
             text = "f";
             break;
-          default:
+            case 14:
+              text = "4";
+              break;
+            default:
             text = "-";
             break;
         }
@@ -312,16 +316,6 @@ function drawPattern(currentColumn = -1) {
           patternContext.fill();
           radius = dx1 * 0.4 * 0.35;
           patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
-          patternContext.fill();
-        } else if (cellValue === 14) {
-          // Ruff
-          patternContext.beginPath();
-          patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.70), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
-          patternContext.fill();
-          radius = dx1 * 0.4 * 0.35;
-          patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
-          patternContext.fill();
-          patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.4), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
           patternContext.fill();
         } else {
           patternContext.beginPath();
@@ -427,6 +421,7 @@ async function playPattern() {
   let humanizeTiming = 0;
   let humanizeVolumeFactor = 1;
   let humanizeVolumes = 0;
+  const lookAheadFlam = 4;
   let numberOfGhostNotes = 0;
   let odd = false;
   let ok = true;
@@ -474,17 +469,11 @@ async function playPattern() {
 
     const calculateFlamOffset = (measureIdx, columnIdx) => {
       let totalTime = 0;
-      for (let offset = 0; offset < 2; offset++) {
-        columnIdx++;
-        const currentMeasureIdx = measureIdx;
-        const currentMeasure = Measures.measures[playMeasures[currentMeasureIdx]];
-        if (columnIdx >= currentMeasure.bassDrum.length) {
-          measureIdx = (measureIdx + 1) % playMeasures.length;
-          columnIdx = 0;
-        }
-        const beatsPerMeasure = currentMeasure.beats;
+      for (let i = 0; i < lookAheadFlam; i++) {
+        const result = Measures.calculateMeasureAndColumn(measureIdx, columnIdx + i, playMeasures);
+        const beatsPerMeasure = Measures.measures[result.measure].beats;
         const secondsPerBeat = 60.0 / currentTempo;
-        totalTime += (secondsPerBeat * beatsPerMeasure) / currentMeasure.bassDrum.length;
+        totalTime += (secondsPerBeat * beatsPerMeasure) / Measures.measures[result.measure].bassDrum.length;
       }
       return totalTime;
     };
@@ -502,24 +491,25 @@ async function playPattern() {
         const divisionsPerMeasure = measure.bassDrum.length;
 
         let flamTime = Math.min(0.025, (60 / currentTempo) * 0.35);
-        flamTime = 0.03;
+        flamTime = 0.04;
         let ghostNoteTime = flamTime;
         const secondsPerBeat = 60.0 / currentTempo;
         const timeBetweenDivisions = (secondsPerBeat * beatsPerMeasure) / divisionsPerMeasure;
 
-        // Check if there is a flam or roll in the first two columns
+        // Check if there is a flam or roll
         let startDivision = 0;
         if (first && (i === 0)) {
           found = false;
-          Instruments.sets[set].forEach((instrument, idx) => {
-            let cellValue1 = Instruments.getCell(Glob.currentMeasure, 0, idx);
-            let cellValue2 = divisionsPerMeasure > 1 ? Instruments.getCell(Glob.currentMeasure, 1, idx) : 0;
-            if ([6, 14].includes(cellValue1) || [6, 14].includes(cellValue2)) {
-              found = true;
-            }
-          });
+          for (let c = 0; c < lookAheadFlam; c++) {
+            Instruments.sets[set].forEach((instrument, idx) => {
+              const checkFlam = Measures.calculateMeasureAndColumn(i, c, playMeasures);
+              if ([6, 14].includes(Instruments.getCell(checkFlam.measure, checkFlam.column, idx))) {
+                found = true;
+              }
+            });
+          }
           if (found) {
-            startDivision = -2;
+            startDivision = -lookAheadFlam;
           }
         }
 
@@ -528,13 +518,7 @@ async function playPattern() {
             scheduleDraw(j);
           }
 
-          let checkFlamMeasureIndex = i;
-          let checkFlamColumn = j + 2;
-          if (checkFlamColumn >= divisionsPerMeasure) {
-            checkFlamColumn -= divisionsPerMeasure;
-            checkFlamMeasureIndex = (i + 1) % playMeasures.length;
-          }
-          const checkFlamMeasure = playMeasures[checkFlamMeasureIndex];
+          const checkFlam = Measures.calculateMeasureAndColumn(i, j + lookAheadFlam, playMeasures);
 
           // Create and configure BufferSource nodes for each audio buffer
           Instruments.sets[set].forEach((instrument, idx) => {
@@ -543,7 +527,7 @@ async function playPattern() {
             if (j >= 0) {
               cellValue = Instruments.getCell(Glob.currentMeasure, j, idx);
             }
-            let cellValueFlam = Instruments.getCell(checkFlamMeasure, checkFlamColumn, idx);
+            let cellValueFlam = Instruments.getCell(checkFlam.measure, checkFlam.column, idx);
 
             if ((cellValue >= 7) && (cellValue <= 9)) {
               // Additional hit
@@ -637,7 +621,7 @@ async function playPattern() {
                 numberOfGhostNotes = 1;
                 break;
               case 14:
-                numberOfGhostNotes = 2;
+                numberOfGhostNotes = 3;
                 break;
               default:
                 numberOfGhostNotes = 0;
@@ -645,7 +629,7 @@ async function playPattern() {
             }
 
             if (numberOfGhostNotes > 1) {
-              ghostNoteTime = flamTime * 1; // was 0.9
+              ghostNoteTime = flamTime * 1;
             } else {
               ghostNoteTime = flamTime;
             }
@@ -678,7 +662,7 @@ async function playPattern() {
                       gainNode: ghostNotes[g].gainNode
                     });
                   }
-                }, (nextNoteTime + calculateFlamOffset(Glob.currentMeasure, j) + (humanizeDeltaTime * 0.3) - ((g + 1) * ghostNoteTime) - audioCtx.currentTime) * 1000);
+                }, (nextNoteTime + calculateFlamOffset(i, j) + (humanizeDeltaTime * 0.3) - ((g + 1) * ghostNoteTime) - audioCtx.currentTime) * 1000);
               }
             }
 
@@ -696,11 +680,11 @@ async function playPattern() {
               };
               source.start(sourceStart);
               source.started = true;  // Mark as started
-              activeSources.push({source, gainNode});
+              activeSources.push({ source, gainNode });
             }
 
             for (let g = 0; g < ghostNotes.length; g++) {
-              let sourceFlamStart = nextNoteTime + calculateFlamOffset(Glob.currentMeasure, j) + (humanizeDeltaTime * 0.3) - ((g + 1) * ghostNoteTime);
+              let sourceFlamStart = nextNoteTime + calculateFlamOffset(i, j) + (humanizeDeltaTime * 0.3) - ((g + 1) * ghostNoteTime);
               if (sourceFlamStart < audioCtx.currentTime + 0.001) {
                 sourceFlamStart = audioCtx.currentTime + 0.001;
                 showMessage("sourceFlamStart was too small");
@@ -713,7 +697,7 @@ async function playPattern() {
               };
               ghostNotes[g].source.start(sourceFlamStart);
               ghostNotes[g].source.started = true;
-              activeSources.push({source: ghostNotes[g].source, gainNode: ghostNotes[g].gainNode});
+              activeSources.push({ source: ghostNotes[g].source, gainNode: ghostNotes[g].gainNode });
             }
 
             if ((set === 0) && (idx === 8 || idx === 15)) { // Closed Hi-Hat or Pedal Hi-Hat
@@ -1245,6 +1229,12 @@ try {
       }
     }
   });
+
+  document.getElementById("testButton").addEventListener("click", (e) => {
+    Test.runTests();
+    drawPattern();
+  });
+
 
   Instruments.init();
   Audio.init();

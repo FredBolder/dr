@@ -965,6 +965,20 @@ class Measures {
         }
     }
 
+    static calculateMeasureAndColumn(currentMeasureIndex, targetColumn, measureList) {
+        let newMeasure = 0;
+        let newMeasureIndex = currentMeasureIndex;
+        let newColumn = targetColumn;
+
+        newMeasure = measureList[newMeasureIndex];
+        while (newColumn >= this.measures[newMeasure].bassDrum.length) {
+            newColumn -= this.measures[newMeasure].bassDrum.length;
+            newMeasureIndex = (newMeasureIndex + 1) % measureList.length;
+            newMeasure = measureList[newMeasureIndex];
+        }
+        return { measure: newMeasure, column: newColumn };
+    }
+
     static copyMeasure(from, to) {
         if ((from >= 1) && (to >= 1) && (from !== to) && (from <= Measures.measures.length) && (to <= Measures.measures.length)) {
             this.measures[to - 1].beats = this.measures[from - 1].beats;
