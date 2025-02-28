@@ -265,7 +265,7 @@ function drawPattern(currentColumn = -1) {
         patternContext.moveTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + factor) * dy1));
         patternContext.lineTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + (1 - factor)) * dy1));
         patternContext.stroke();
-      } else if ((cellValue >= 10) && (cellValue <= 14)) {
+      } else if ((cellValue >= 10) && (cellValue <= 15)) {
         switch (cellValue) {
           case 10:
             text = "E";
@@ -279,10 +279,13 @@ function drawPattern(currentColumn = -1) {
           case 13:
             text = "f";
             break;
-            case 14:
-              text = "4";
-              break;
-            default:
+          case 14:
+            text = "3";
+            break;
+          case 15:
+            text = "4";
+            break;
+          default:
             text = "-";
             break;
         }
@@ -503,7 +506,7 @@ async function playPattern() {
           for (let c = 0; c < lookAheadFlam; c++) {
             Instruments.sets[set].forEach((instrument, idx) => {
               const checkFlam = Measures.calculateMeasureAndColumn(i, c, playMeasures);
-              if ([6, 14].includes(Instruments.getCell(checkFlam.measure, checkFlam.column, idx))) {
+              if ([6, 14, 15].includes(Instruments.getCell(checkFlam.measure, checkFlam.column, idx))) {
                 found = true;
               }
             });
@@ -547,7 +550,7 @@ async function playPattern() {
               cellValue = 0;
             }
 
-            if ((cellValue === 0) && (cellValueFlam !== 6) && (cellValueFlam !== 14)) return;
+            if ((cellValue === 0) && (cellValueFlam !== 6) && (cellValueFlam !== 14) && (cellValueFlam !== 15)) return;
 
             const audioBuffer = Audio.getCachedAudioBuffer(url);
             let source;
@@ -621,6 +624,9 @@ async function playPattern() {
                 numberOfGhostNotes = 1;
                 break;
               case 14:
+                numberOfGhostNotes = 2;
+                break;
+              case 15:
                 numberOfGhostNotes = 3;
                 break;
               default:
