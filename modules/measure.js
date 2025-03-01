@@ -3,6 +3,7 @@ class Measure {
         this.beats = 0;
         this.divisions = 0;
         this.endsWithFill = false;
+        this.claves = [];
         this.cowbell = [];
         this.crashCymbal1 = [];
         this.crashCymbal2 = [];
@@ -15,6 +16,8 @@ class Measure {
         this.highTom = [];
         this.midTom = [];
         this.lowTom = [];
+        this.sdSnaresOff = [];
+        this.rimshot = [];
         this.crossStick = [];
         this.snareDrum = [];
         this.bassDrum = [];

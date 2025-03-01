@@ -16,6 +16,7 @@ class Instruments {
       "Bendir Doum",
       "Daouli Tek",
       "Daouli Doum",
+      "Claves",
       "Cowbell",
       "Crash cymbal 1",
       "Crash cymbal 2",
@@ -28,6 +29,8 @@ class Instruments {
       "High tom",
       "Mid tom",
       "Low tom",
+      "Sd (snrs off)",
+      "Rimshot",
       "Cross stick",
       "Snare drum",
       "Bass drum",
@@ -44,7 +47,7 @@ class Instruments {
       switch (i) {
         case 0:
           // Drums
-          for (let j = 0; j < 16; j++) {
+          for (let j = 0; j < 19; j++) {
             this.sets[i].push({ name: this.names[j + 10], fileName: this.fileNames[j + 10] });
           }
           break;
@@ -67,6 +70,7 @@ class Instruments {
       case 0:
         // Drums
         map = [
+          measure.claves[c],
           measure.cowbell[c],
           measure.crashCymbal1[c],
           measure.crashCymbal2[c],
@@ -79,6 +83,8 @@ class Instruments {
           measure.highTom[c],
           measure.midTom[c],
           measure.lowTom[c],
+          measure.sdSnaresOff[c],
+          measure.rimshot[c],
           measure.crossStick[c],
           measure.snareDrum[c],
           measure.bassDrum[c],
@@ -114,51 +120,60 @@ class Instruments {
         // Drums
         switch (r) {
           case 0:
-            measure.cowbell[c] = value;
+            measure.claves[c] = value;
             break;
           case 1:
-            measure.crashCymbal1[c] = value;
+            measure.cowbell[c] = value;
             break;
           case 2:
-            measure.crashCymbal2[c] = value;
+            measure.crashCymbal1[c] = value;
             break;
           case 3:
-            measure.chineseCymbal[c] = value;
+            measure.crashCymbal2[c] = value;
             break;
           case 4:
-            measure.splashCymbal[c] = value;
+            measure.chineseCymbal[c] = value;
             break;
           case 5:
-            measure.rideBell[c] = value;
+            measure.splashCymbal[c] = value;
             break;
           case 6:
-            measure.rideCymbal[c] = value;
+            measure.rideBell[c] = value;
             break;
           case 7:
-            measure.openHiHat[c] = value;
+            measure.rideCymbal[c] = value;
             break;
           case 8:
-            measure.closedHiHat[c] = value;
+            measure.openHiHat[c] = value;
             break;
           case 9:
-            measure.highTom[c] = value;
+            measure.closedHiHat[c] = value;
             break;
           case 10:
-            measure.midTom[c] = value;
+            measure.highTom[c] = value;
             break;
           case 11:
-            measure.lowTom[c] = value;
+            measure.midTom[c] = value;
             break;
           case 12:
-            measure.crossStick[c] = value;
+            measure.lowTom[c] = value;
             break;
           case 13:
-            measure.snareDrum[c] = value;
+            measure.sdSnaresOff[c] = value;
             break;
           case 14:
-            measure.bassDrum[c] = value;
+            measure.rimshot[c] = value;
             break;
           case 15:
+            measure.crossStick[c] = value;
+            break;
+          case 16:
+            measure.snareDrum[c] = value;
+            break;
+          case 17:
+            measure.bassDrum[c] = value;
+            break;
+          case 18:
             measure.pedalHiHat[c] = value;
             break;
           default:

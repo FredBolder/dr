@@ -650,7 +650,8 @@ async function playPattern() {
               ghostNotes[g].source.isGhostNote = true;
             }
 
-            if ((set === 0) && (idx === 7)) {
+            if ((set === 0) && (idx === 8)) {
+              // Open hi-hat
               if (cellValue > 0) {
                 setTimeout(() => {
                   if (Glob.playing && !Glob.stop) {
@@ -706,7 +707,8 @@ async function playPattern() {
               activeSources.push({ source: ghostNotes[g].source, gainNode: ghostNotes[g].gainNode });
             }
 
-            if ((set === 0) && (idx === 8 || idx === 15)) { // Closed Hi-Hat or Pedal Hi-Hat
+            if ((set === 0) && (idx === 9 || idx === 18)) { 
+              // Closed Hi-Hat or Pedal Hi-Hat
               setTimeout(() => {
                 openHiHat.forEach(oh => {
                   if (oh.source.started) {

@@ -79,7 +79,7 @@ class Measures {
                 measure1.beats = 4;
                 measure1.divisions = 2;
                 measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1];
-                measure1.snareDrum = [0, 0, 1, 0, 0, 0, 1, 0];
+                measure1.rimshot = [0, 0, 1, 0, 0, 0, 1, 0];
                 measure1.bassDrum = [1, 0, 0, 0, 1, 1, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
@@ -353,7 +353,7 @@ class Measures {
                 measure1 = new Measure();
                 measure1.beats = 4;
                 measure1.divisions = 2;
-                measure1.snareDrum = [14, 0, 1, 0, 1, 0, 1, 0];
+                measure1.snareDrum = [15, 0, 1, 0, 1, 0, 1, 0];
                 measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0];
                 measure1.pedalHiHat = [0, 0, 1, 0, 0, 0, 1, 0];
                 Measure.fixMeasure(measure1);
@@ -361,7 +361,7 @@ class Measures {
                 measure2 = new Measure();
                 measure2.beats = 4;
                 measure2.divisions = 2;
-                measure2.snareDrum = [14, 1, 0, 1, 6, 0, 1, 0];
+                measure2.snareDrum = [15, 1, 0, 1, 6, 0, 1, 0];
                 measure2.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0];
                 measure2.pedalHiHat = [0, 0, 1, 0, 0, 0, 1, 0];
                 Measure.fixMeasure(measure2);
@@ -1008,6 +1008,7 @@ class Measures {
                 switch (Glob.settings.instrumentSet) {
                     case 0:
                         // Drums
+                        this.measures[to - 1].claves[i] = this.measures[from - 1].claves[i];
                         this.measures[to - 1].cowbell[i] = this.measures[from - 1].cowbell[i];
                         this.measures[to - 1].crashCymbal1[i] = this.measures[from - 1].crashCymbal1[i];
                         this.measures[to - 1].crashCymbal2[i] = this.measures[from - 1].crashCymbal2[i];
@@ -1020,6 +1021,8 @@ class Measures {
                         this.measures[to - 1].highTom[i] = this.measures[from - 1].highTom[i];
                         this.measures[to - 1].midTom[i] = this.measures[from - 1].midTom[i];
                         this.measures[to - 1].lowTom[i] = this.measures[from - 1].lowTom[i];
+                        this.measures[to - 1].sdSnaresOff[i] = this.measures[from - 1].sdSnaresOff[i];
+                        this.measures[to - 1].rimshot[i] = this.measures[from - 1].rimshot[i];
                         this.measures[to - 1].crossStick[i] = this.measures[from - 1].crossStick[i];
                         this.measures[to - 1].snareDrum[i] = this.measures[from - 1].snareDrum[i];
                         this.measures[to - 1].bassDrum[i] = this.measures[from - 1].bassDrum[i];
@@ -1031,6 +1034,12 @@ class Measures {
                         this.measures[to - 1].touberlekiKa[i] = this.measures[from - 1].touberlekiKa[i];
                         this.measures[to - 1].touberlekiTek[i] = this.measures[from - 1].touberlekiTek[i];
                         this.measures[to - 1].touberlekiDoum[i] = this.measures[from - 1].touberlekiDoum[i];
+                        this.measures[to - 1].defiTek[i] = this.measures[from - 1].defiTek[i];
+                        this.measures[to - 1].defiDoum[i] = this.measures[from - 1].defiDoum[i];
+                        this.measures[to - 1].bendirTek[i] = this.measures[from - 1].bendirTek[i];
+                        this.measures[to - 1].bendirDoum[i] = this.measures[from - 1].bendirDoum[i];
+                        this.measures[to - 1].daouliTek[i] = this.measures[from - 1].daouliTek[i];
+                        this.measures[to - 1].daouliDoum[i] = this.measures[from - 1].daouliDoum[i];
                         break;
                     default:
                         break;
