@@ -8,6 +8,8 @@ import { Presets } from "./presets.js";
 import { Test } from "./test.js";
 
 let activeSources = [];
+const labelWidth = 170;
+let openHiHat = [];
 let overlayContext;
 let patternContext;
 
@@ -177,13 +179,12 @@ function drawPattern(currentColumn = -1) {
   divisionsPerMeasure = measure.bassDrum.length;
   const rows = Instruments.sets[Glob.settings.instrumentSet].length;
   columns = divisionsPerMeasure;
-  const labelWidth = 135;
   dx1 = 25;
   dy1 = 25;
 
   const pattern = Glob.settings.pattern;
 
-  resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1);
+  resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1);
 
   overlayContext.clearRect(0, 0, overlay.width, overlay.height);
   if (currentColumn !== -1) {
@@ -215,6 +216,7 @@ function drawPattern(currentColumn = -1) {
     patternContext.strokeRect(0, i * dy1 + dy1, labelWidth, dy1);
     patternContext.fillStyle = "white";
     patternContext.fillText(Instruments.sets[Glob.settings.instrumentSet][i].name, 10, i * dy1 + (dy1 * 1.75));
+    patternContext.fillText(Instruments.sets[Glob.settings.instrumentSet][i].key, 150, i * dy1 + (dy1 * 1.75));
   }
   patternContext.textAlign = "center";
   n = 1;
@@ -363,6 +365,75 @@ function fillPatternInstruments() {
   }
 }
 
+async function handleKeyDown(e) {
+  let url = "";
+
+  for (let i = 0; i < Instruments.instruments.length; i++) {
+    const instrument = Instruments.instruments[i];
+    if ((instrument.key !== "") && (("Key" + instrument.key) === e.code)) {
+      url = instrument.file;
+    }
+  }
+
+  if (url.length > 0) {
+    // Preload specific file if not cached
+    if (!Audio.audioCache.has(url)) {
+      await Audio.preloadAudioFiles([url]);
+    }
+
+    const audioCtx = Audio.audioContext;
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
+
+    const audioBuffer = Audio.getCachedAudioBuffer(url);
+    if (!audioBuffer) {
+      console.error('Audio buffer not found for URL:', url);
+      return;
+    }
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = audioBuffer;
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = 0.9 * 0.6;
+    source.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    source.onended = () => {
+      openHiHat = openHiHat.filter(oh => oh.source !== source);
+      source.disconnect();
+      gainNode.disconnect();
+    };
+
+    source.start(0);
+    source.started = true;
+    if (url.toLowerCase().includes("open_hi-hat")) {
+      setTimeout(() => {
+        openHiHat.push({ source, gainNode });
+      }, 0);
+    }
+    if (url.toLowerCase().includes("closed_hi-hat") || url.toLowerCase().includes("pedal_hi-hat")) {
+      setTimeout(() => {
+        openHiHat.forEach(oh => {
+          if (oh.source.started) {
+            try {
+              const fadeOutTime = 0.2; // Time in seconds
+              oh.gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeOutTime);
+              setTimeout(() => {
+                oh.source.stop();
+              }, fadeOutTime * 1000);
+            } catch (e) {
+              console.error("Error stopping open hi-hat:", e);
+            }
+          }
+        });
+        openHiHat = openHiHat.filter(oh => oh.source.started); // Keep only started ones
+      }, 0);
+    }
+  }
+}
+
+
 function instrumentSetChanged() {
   Glob.settings.instrumentSet = Glob.tryParseInt(document.getElementById("instrumentSetSelector").value, 0);
   drawPattern();
@@ -428,7 +499,6 @@ async function playPattern() {
   let numberOfGhostNotes = 0;
   let odd = false;
   let ok = true;
-  let openHiHat = [];
   let playMeasures = [];
   let prevEndsWithFill = false;
   let volume = 0.75;
@@ -525,7 +595,7 @@ async function playPattern() {
 
           // Create and configure BufferSource nodes for each audio buffer
           Instruments.sets[set].forEach((instrument, idx) => {
-            let url = instrument.fileName;
+            let url = instrument.file;
             let cellValue = 0;
             if (j >= 0) {
               cellValue = Instruments.getCell(Glob.currentMeasure, j, idx);
@@ -707,7 +777,7 @@ async function playPattern() {
               activeSources.push({ source: ghostNotes[g].source, gainNode: ghostNotes[g].gainNode });
             }
 
-            if ((set === 0) && (idx === 9 || idx === 18)) { 
+            if ((set === 0) && (idx === 9 || idx === 18)) {
               // Closed Hi-Hat or Pedal Hi-Hat
               setTimeout(() => {
                 openHiHat.forEach(oh => {
@@ -775,7 +845,7 @@ function stopSounds(mode = 0) {
   activeSources.length = 0; // Reset after stopping
 }
 
-function resizeCanvasIfNeeded(pattern, labelWidth, columns, dx1, rows, dy1) {
+function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
   const ratio = window.devicePixelRatio || 1;
 
   // Desired display size based on updated column/row values
@@ -895,7 +965,6 @@ function humanizeVolumesChanged() {
 function patternClicked(event) {
   const columns = Measures.measures[Glob.currentMeasure].bassDrum.length;
   const rows = Instruments.sets[Glob.settings.instrumentSet].length;
-  const labelWidth = 275 / 2;
   const pattern = Glob.settings.pattern;
   const rect = pattern.getBoundingClientRect()
   const ch = rect.height;
@@ -1081,7 +1150,7 @@ try {
       }
       if (userChoice || Glob.settings.expert) {
         const measure = Measures.measures[Glob.currentMeasure];
-        for (let r = 0; r < Instruments.names.length; r++) {
+        for (let r = 0; r < Instruments.sets[Glob.settings.instrumentSet].length; r++) {
           for (let c = 0; c < measure.bassDrum.length; c++) {
             Instruments.setCell(c, r, 0);
           }
@@ -1241,6 +1310,10 @@ try {
   document.getElementById("testButton").addEventListener("click", (e) => {
     Test.runTests();
     drawPattern();
+  });
+
+  document.getElementById("body").addEventListener("keydown", (e) => {
+    handleKeyDown(e);
   });
 
 
