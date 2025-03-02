@@ -16,7 +16,7 @@ class Presets {
         const category = document.getElementById("categorySelector").value;
         switch (category) {
             case "PopRock":
-                options = ["Disco 1", "Disco 2", "Metal 1", "Metal 2", "Rock 1", "Rock 2", "Rock ballad 1"];
+                options = ["Disco 1", "Disco 2", "Metal 1", "Metal 2", "Rock 1", "Rock 2", "Rock 3", "Rock ballad 1"];
                 break;
             case "BallroomLatin":
                 options = ["Cha Cha Cha 1", "Jive 1", "Merengue 1", "Paso doble 1", "Paso doble 2", "Quickstep 1", "Rumba 1", "Samba 1",

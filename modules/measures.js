@@ -1,4 +1,5 @@
 import { Glob } from "./glob.js";
+import { Instruments } from "./instruments.js";
 import { Measure } from "./measure.js";
 
 class Measures {
@@ -78,13 +79,33 @@ class Measures {
                 measure1 = new Measure();
                 measure1.beats = 4;
                 measure1.divisions = 2;
-                measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1];
+                measure1.openHiHat = [0, 0, 0, 0, 0, 0, 0, 10];
+                measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 11];
                 measure1.rimshot = [0, 0, 1, 0, 0, 0, 1, 0];
                 measure1.bassDrum = [1, 0, 0, 0, 1, 1, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
             case "Rock2":
+                Glob.settings.tempoSlider.value = 120;
+                measure1 = new Measure();
+                measure1.beats = 4;
+                measure1.divisions = 2;
+                measure1.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1];
+                measure1.snareDrum = [0, 0, 1, 0, 0, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 1, 1, 0, 1];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                measure2 = new Measure();
+                measure2.beats = 4;
+                measure2.divisions = 2;
+                measure2.closedHiHat = [1, 1, 1, 1, 1, 1, 1, 1];
+                measure2.snareDrum = [0, 0, 1, 0, 0, 0, 1, 0];
+                measure2.bassDrum = [1, 1, 0, 1, 0, 1, 0, 1];
+                Measure.fixMeasure(measure2);
+                this.measures.push(measure2);
+                break;
+            case "Rock3":
                 Glob.settings.tempoSlider.value = 120;
                 measure1 = new Measure();
                 measure1.beats = 4;
@@ -1005,44 +1026,10 @@ class Measures {
             this.measures[to - 1].endsWithFill = this.measures[from - 1].endsWithFill;
             Measure.fixMeasure(this.measures[to - 1]);
             for (let i = 0; i < this.measures[from - 1].bassDrum.length; i++) {
-                switch (Glob.settings.instrumentSet) {
-                    case 0:
-                        // Drums
-                        this.measures[to - 1].claves[i] = this.measures[from - 1].claves[i];
-                        this.measures[to - 1].cowbell[i] = this.measures[from - 1].cowbell[i];
-                        this.measures[to - 1].crashCymbal1[i] = this.measures[from - 1].crashCymbal1[i];
-                        this.measures[to - 1].crashCymbal2[i] = this.measures[from - 1].crashCymbal2[i];
-                        this.measures[to - 1].chineseCymbal[i] = this.measures[from - 1].chineseCymbal[i];
-                        this.measures[to - 1].splashCymbal[i] = this.measures[from - 1].splashCymbal[i];
-                        this.measures[to - 1].rideBell[i] = this.measures[from - 1].rideBell[i];
-                        this.measures[to - 1].rideCymbal[i] = this.measures[from - 1].rideCymbal[i];
-                        this.measures[to - 1].openHiHat[i] = this.measures[from - 1].openHiHat[i];
-                        this.measures[to - 1].closedHiHat[i] = this.measures[from - 1].closedHiHat[i];
-                        this.measures[to - 1].highTom[i] = this.measures[from - 1].highTom[i];
-                        this.measures[to - 1].midTom[i] = this.measures[from - 1].midTom[i];
-                        this.measures[to - 1].lowTom[i] = this.measures[from - 1].lowTom[i];
-                        this.measures[to - 1].sdSnaresOff[i] = this.measures[from - 1].sdSnaresOff[i];
-                        this.measures[to - 1].rimshot[i] = this.measures[from - 1].rimshot[i];
-                        this.measures[to - 1].crossStick[i] = this.measures[from - 1].crossStick[i];
-                        this.measures[to - 1].snareDrum[i] = this.measures[from - 1].snareDrum[i];
-                        this.measures[to - 1].bassDrum[i] = this.measures[from - 1].bassDrum[i];
-                        this.measures[to - 1].pedalHiHat[i] = this.measures[from - 1].pedalHiHat[i];
-                        break;
-                    case 1:
-                        // Greek percussion
-                        this.measures[to - 1].touberlekiSlap[i] = this.measures[from - 1].touberlekiSlap[i];
-                        this.measures[to - 1].touberlekiKa[i] = this.measures[from - 1].touberlekiKa[i];
-                        this.measures[to - 1].touberlekiTek[i] = this.measures[from - 1].touberlekiTek[i];
-                        this.measures[to - 1].touberlekiDoum[i] = this.measures[from - 1].touberlekiDoum[i];
-                        this.measures[to - 1].defiTek[i] = this.measures[from - 1].defiTek[i];
-                        this.measures[to - 1].defiDoum[i] = this.measures[from - 1].defiDoum[i];
-                        this.measures[to - 1].bendirTek[i] = this.measures[from - 1].bendirTek[i];
-                        this.measures[to - 1].bendirDoum[i] = this.measures[from - 1].bendirDoum[i];
-                        this.measures[to - 1].daouliTek[i] = this.measures[from - 1].daouliTek[i];
-                        this.measures[to - 1].daouliDoum[i] = this.measures[from - 1].daouliDoum[i];
-                        break;
-                    default:
-                        break;
+                for (let j = 0; j < Instruments.sets[Glob.settings.instrumentSet].length; j++) {
+                    const prop = Instruments.sets[Glob.settings.instrumentSet][j].property;
+                    this.measures[to - 1][prop][i] = this.measures[from - 1][prop][i];
+
                 }
             }
         }

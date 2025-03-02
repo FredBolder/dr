@@ -1007,8 +1007,8 @@ try {
       Glob.settings = new Settings();
       //console.log("Settings loaded");
       Presets.fillRhythmSelect();
-      document.getElementById("rhythmSelector").value = "Rock2";
-      Measures.load("Rock2");
+      document.getElementById("rhythmSelector").value = "Rock3";
+      Measures.load("Rock3");
       document.getElementById("instrumentSetSelector").selectedIndex = Glob.settings.instrumentSet;
       instrumentSetChanged();
       document.getElementById("message").style.visibility = "hidden";
@@ -1029,7 +1029,7 @@ try {
   });
 
   document.getElementById("loadRhythmButton").addEventListener("click", (e) => {
-    let rhythm = "Rock2";
+    let rhythm = "Rock3";
     let userChoice = false;
 
     if (!Glob.playing) {

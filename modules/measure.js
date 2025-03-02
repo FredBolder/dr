@@ -1,37 +1,14 @@
+import { Instruments } from "./instruments.js";
+
 class Measure {
     constructor() {
         this.beats = 0;
         this.divisions = 0;
         this.endsWithFill = false;
-        this.claves = [];
-        this.cowbell = [];
-        this.crashCymbal1 = [];
-        this.crashCymbal2 = [];
-        this.chineseCymbal = [];
-        this.splashCymbal = [];
-        this.rideBell = [];
-        this.rideCymbal = [];
-        this.openHiHat = [];
-        this.closedHiHat = [];
-        this.highTom = [];
-        this.midTom = [];
-        this.lowTom = [];
-        this.sdSnaresOff = [];
-        this.rimshot = [];
-        this.crossStick = [];
-        this.snareDrum = [];
-        this.bassDrum = [];
-        this.pedalHiHat = [];
-        this.touberlekiSlap = [];
-        this.touberlekiKa = [];
-        this.touberlekiTek = [];
-        this.touberlekiDoum = [];
-        this.defiTek = [];
-        this.defiDoum = [];
-        this.bendirTek = [];
-        this.bendirDoum = [];
-        this.daouliTek = [];
-        this.daouliDoum = [];
+        for (let i = 0; i < Instruments.instruments.length; i++) {
+            const prop = Instruments.instruments[i].property;
+            this[prop] = [];
+        }
     }
 
     static fixMeasure(measure) {
