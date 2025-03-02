@@ -364,8 +364,9 @@ function fillPatternInstruments() {
   }
 }
 
-async function handleKeyDown(e) {
+function handleKeyDown(e) {
   let url = "";
+  let volumeFactor = 0.6;
   const key = e.key.toUpperCase();
   if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(key)) {
     for (let i = 0; i < Instruments.instruments.length; i++) {
@@ -375,7 +376,10 @@ async function handleKeyDown(e) {
       }
     }
     if (url.length > 0) {
-      playInstrument(url);
+      if (e.shiftKey) {
+        volumeFactor = 0.8;
+      }
+      playInstrument(url, volumeFactor);
     }
   }
 }
@@ -433,8 +437,19 @@ async function openTextFile() {
   }
 }
 
-async function playInstrument(url) {
+async function playInstrument(url, volumeFactor = 0.6) {
+  let humanizeVolumes = 0;
+  let humanizeVolumeFactor = 1;
+  let volume = 75;
+
   if (url.length > 0) {
+    volume = Glob.settings.volume / 100;
+    humanizeVolumes = Glob.settings.humanizeVolumes / 10;
+    if (humanizeVolumes > 0) {
+      humanizeVolumeFactor = 1 + (0.5 * humanizeVolumes) - (Math.random() * humanizeVolumes);
+    } else {
+      humanizeVolumeFactor = 1;
+    }
     // Preload specific file if not cached
     if (!Audio.audioCache.has(url)) {
       await Audio.preloadAudioFiles([url]);
@@ -454,7 +469,7 @@ async function playInstrument(url) {
     const source = audioCtx.createBufferSource();
     source.buffer = audioBuffer;
     const gainNode = audioCtx.createGain();
-    gainNode.gain.value = 0.9 * 0.6;
+    gainNode.gain.value = 0.9 * volumeFactor * humanizeVolumeFactor * volume;
     source.connect(gainNode);
     gainNode.connect(audioCtx.destination);
 
