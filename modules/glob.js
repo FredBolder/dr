@@ -6,6 +6,7 @@ class Glob {
 
   static init() {
     this.currentMeasure = 0;
+    this.openHiHat = [];
     this.playing = false;
     this.settings = null;
     this.stop = false;

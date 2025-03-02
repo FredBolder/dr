@@ -9,7 +9,6 @@ import { Test } from "./test.js";
 
 let activeSources = [];
 const labelWidth = 170;
-let openHiHat = [];
 let overlayContext;
 let patternContext;
 
@@ -367,68 +366,16 @@ function fillPatternInstruments() {
 
 async function handleKeyDown(e) {
   let url = "";
-
-  for (let i = 0; i < Instruments.instruments.length; i++) {
-    const instrument = Instruments.instruments[i];
-    if ((instrument.key !== "") && (("Key" + instrument.key) === e.code)) {
-      url = instrument.file;
+  const key = e.key.toUpperCase();
+  if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(key)) {
+    for (let i = 0; i < Instruments.instruments.length; i++) {
+      const instrument = Instruments.instruments[i];
+      if ((instrument.key !== "") && ((instrument.key) === key)) {
+        url = instrument.file;
+      }
     }
-  }
-
-  if (url.length > 0) {
-    // Preload specific file if not cached
-    if (!Audio.audioCache.has(url)) {
-      await Audio.preloadAudioFiles([url]);
-    }
-
-    const audioCtx = Audio.audioContext;
-    if (audioCtx.state === "suspended") {
-      await audioCtx.resume();
-    }
-
-    const audioBuffer = Audio.getCachedAudioBuffer(url);
-    if (!audioBuffer) {
-      console.error('Audio buffer not found for URL:', url);
-      return;
-    }
-
-    const source = audioCtx.createBufferSource();
-    source.buffer = audioBuffer;
-    const gainNode = audioCtx.createGain();
-    gainNode.gain.value = 0.9 * 0.6;
-    source.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    source.onended = () => {
-      openHiHat = openHiHat.filter(oh => oh.source !== source);
-      source.disconnect();
-      gainNode.disconnect();
-    };
-
-    source.start(0);
-    source.started = true;
-    if (url.toLowerCase().includes("open_hi-hat")) {
-      setTimeout(() => {
-        openHiHat.push({ source, gainNode });
-      }, 0);
-    }
-    if (url.toLowerCase().includes("closed_hi-hat") || url.toLowerCase().includes("pedal_hi-hat")) {
-      setTimeout(() => {
-        openHiHat.forEach(oh => {
-          if (oh.source.started) {
-            try {
-              const fadeOutTime = 0.2; // Time in seconds
-              oh.gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeOutTime);
-              setTimeout(() => {
-                oh.source.stop();
-              }, fadeOutTime * 1000);
-            } catch (e) {
-              console.error("Error stopping open hi-hat:", e);
-            }
-          }
-        });
-        openHiHat = openHiHat.filter(oh => oh.source.started); // Keep only started ones
-      }, 0);
+    if (url.length > 0) {
+      playInstrument(url);
     }
   }
 }
@@ -483,6 +430,50 @@ async function openTextFile() {
     tempoChanged();
   } catch (err) {
     console.error("Error opening file:", err);
+  }
+}
+
+async function playInstrument(url) {
+  if (url.length > 0) {
+    // Preload specific file if not cached
+    if (!Audio.audioCache.has(url)) {
+      await Audio.preloadAudioFiles([url]);
+    }
+
+    const audioCtx = Audio.audioContext;
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
+
+    const audioBuffer = Audio.getCachedAudioBuffer(url);
+    if (!audioBuffer) {
+      console.error('Audio buffer not found for URL:', url);
+      return;
+    }
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = audioBuffer;
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = 0.9 * 0.6;
+    source.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    source.onended = () => {
+      Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== source);
+      source.disconnect();
+      gainNode.disconnect();
+    };
+
+    source.start(0);
+    source.started = true;
+    if (url.toLowerCase().includes("open_hi-hat")) {
+      setTimeout(() => {
+        Glob.openHiHat.push({ source, gainNode });
+      }, 0);
+    }
+    if (url.toLowerCase().includes("closed_hi-hat") || url.toLowerCase().includes("pedal_hi-hat")) {
+      Instruments.stopOpenHiHat(0);
+    }
   }
 }
 
@@ -725,7 +716,7 @@ async function playPattern() {
               if (cellValue > 0) {
                 setTimeout(() => {
                   if (Glob.playing && !Glob.stop) {
-                    openHiHat.push({ source, gainNode });
+                    Glob.openHiHat.push({ source, gainNode });
                   }
                 }, (nextNoteTime + humanizeDeltaTime - audioCtx.currentTime) * 1000);
               }
@@ -734,7 +725,7 @@ async function playPattern() {
               for (let g = 0; g < ghostNotes.length; g++) {
                 setTimeout(() => {
                   if (Glob.playing && !Glob.stop) {
-                    openHiHat.push({
+                    Glob.openHiHat.push({
                       source: ghostNotes[g].source,
                       gainNode: ghostNotes[g].gainNode
                     });
@@ -750,7 +741,7 @@ async function playPattern() {
                 //showMessage("sourceStart was too small");
               }
               source.onended = () => {
-                openHiHat = openHiHat.filter(oh => oh.source !== source);
+                Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== source);
                 source.disconnect();
                 gainNode.disconnect();
                 activeSources = activeSources.filter(active => active.source !== source);
@@ -767,7 +758,7 @@ async function playPattern() {
                 //showMessage("sourceFlamStart was too small");
               }
               ghostNotes[g].source.onended = () => {
-                openHiHat = openHiHat.filter(oh => oh.source !== ghostNotes[g].source);
+                Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== ghostNotes[g].source);
                 ghostNotes[g].source.disconnect();
                 ghostNotes[g].gainNode.disconnect();
                 activeSources = activeSources.filter(active => active.source !== ghostNotes[g].source);
@@ -779,24 +770,8 @@ async function playPattern() {
 
             if ((set === 0) && (idx === 9 || idx === 18)) {
               // Closed Hi-Hat or Pedal Hi-Hat
-              setTimeout(() => {
-                openHiHat.forEach(oh => {
-                  if (oh.source.started) {
-                    try {
-                      const fadeOutTime = Math.min(0.2, timeBetweenDivisions); // Time in seconds
-                      oh.gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeOutTime);
-                      setTimeout(() => {
-                        oh.source.stop();
-                      }, fadeOutTime * 1000);
-                    } catch (e) {
-                      console.error("Error stopping open hi-hat:", e);
-                    }
-                  }
-                });
-                openHiHat = openHiHat.filter(oh => oh.source.started); // Keep only started ones
-              }, (nextNoteTime + humanizeDeltaTime - audioCtx.currentTime) * 1000);
+              Instruments.stopOpenHiHat((nextNoteTime + humanizeDeltaTime - audioCtx.currentTime) * 1000);
             }
-
           });
 
           nextNoteTime += timeBetweenDivisions;
@@ -994,6 +969,9 @@ function patternClicked(event) {
       }
       scheduleDraw();
     }
+  } else if ((x > 0) && (x < labelWidth) && (y > dy1)) {
+    r = Math.trunc((y - dy1) / dy1);
+    playInstrument(Instruments.sets[Glob.settings.instrumentSet][r].file);
   }
 }
 
