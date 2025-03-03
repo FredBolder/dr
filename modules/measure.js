@@ -25,6 +25,34 @@ class Measure {
             }
         }
     }
+
+    static multiplyDivisionsByTwo(measure) {
+        for (const prop in measure) {
+            if (Array.isArray(measure[prop])) {
+                const oldArray = measure[prop].slice();
+                measure[prop] = [];
+                for (let i = 0; i < oldArray.length; i++) {
+                    measure[prop].push(oldArray[i]);
+                    measure[prop].push(0);
+                }
+            }
+        }
+        measure.divisions = measure.divisions * 2;
+    }
+
+    static divideDivisionsByTwo(measure) {
+        for (const prop in measure) {
+            if (Array.isArray(measure[prop])) {
+                const oldArray = measure[prop].slice();
+                measure[prop] = [];
+                for (let i = 0; i < oldArray.length; i += 2) {
+                    measure[prop].push(oldArray[i]);
+                }
+            }
+        }
+        measure.divisions = measure.divisions / 2;
+    }
+
 }
 
 export { Measure };

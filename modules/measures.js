@@ -797,6 +797,34 @@ class Measures {
                 Measure.fixMeasure(measure2);
                 this.measures.push(measure2);
                 break;
+            case "Tsamikos2":
+                Glob.settings.tempoSlider.value = 90;
+                Glob.settings.measuresToPlay = "1, 1, 1, 2";
+                measure1 = new Measure();
+                measure1.beats = 3;
+                measure1.divisions = 4;
+                measure1.touberlekiKa = [0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 2, 0];
+                measure1.touberlekiTek = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
+                measure1.touberlekiDoum = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                measure1.lowTom = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                measure1.snareDrum = [0, 0, 0, 2, 1, 0, 1, 0, 0, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                measure2 = new Measure();
+                measure2.beats = 3;
+                measure2.divisions = 4;
+                measure2.touberlekiKa = [0, 0, 0, 2, 0, 0, 2, 0, 0, 1, 0, 1];
+                measure2.touberlekiTek = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0];
+                measure2.touberlekiDoum = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                measure2.highTom = [0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0];
+                measure2.midTom = [0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0];
+                measure2.lowTom = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0];
+                measure2.snareDrum = [6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                measure2.bassDrum = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                Measure.fixMeasure(measure2);
+                this.measures.push(measure2);
+                break;
             case "Tsifteteli1":
                 Glob.settings.instrumentSet = 1;
                 Glob.settings.tempoSlider.value = 120;

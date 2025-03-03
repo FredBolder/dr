@@ -188,6 +188,16 @@
           <option value="6">Every column of last beat</option>
           <option value="7">Every column of last beat (soft to hard)</option>
           <option value="8">Every column of last beat (hard to soft)</option>
+          <option value="9">3 per measure with equal times inbetween</option>
+          <option value="10">6 per measure with equal times inbetween</option>
+          <option value="11">3 per measure (3-3-2)</option>
+          <option value="12">6 per measure (2 x 3-3-2)</option>
+          <option value="13">3 per measure (2-1-1)</option>
+          <option value="14">6 per measure (2 x 2-1-1)</option>
+          <option value="15">3 per beat (2-1-1)</option>
+          <option value="16">3 per measure (1-1-2)</option>
+          <option value="17">6 per measure (2 x 1-1-2)</option>
+          <option value="18">3 per beat (1-1-2)</option>
         </select>
         <div class="checkboxGroup">
           <label for="presetPatternClear">Clear other columns</label>
@@ -198,6 +208,10 @@
           <input type="checkbox" id="presetPatternAllMeasures" name="presetPatternAllMeasures">
         </div>
         <button type="button" id="applyPresetPatternButton">Apply</button>
+      </div>
+      <div>
+        <button type="button" id="multiplyDivisionsByTwo">Div x 2</button>
+        <button type="button" id="divideDivisionsByTwo">Div / 2</button>
       </div>
     </fieldset>
   </main>

@@ -31,6 +31,8 @@ class Settings {
     this.copyMeasureButton = document.getElementById("copyMeasureButton");
     this.expertCheckbox = document.getElementById("expert");
     this.applyPresetPatternButton = document.getElementById("applyPresetPatternButton");
+    this.multiplyDivisionsByTwo = document.getElementById("multiplyDivisionsByTwo");
+    this.divideDivisionsByTwo = document.getElementById("divideDivisionsByTwo");
   }
 
 }

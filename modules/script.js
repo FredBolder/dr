@@ -16,8 +16,12 @@ Glob.init();
 
 function applyPresetPattern() {
   let column = 0;
+  let columnsPerMeasure = 0;
   let hit = 0;
   let hits = [];
+  let n1 = 0;
+  let n2 = 0;
+  let n3 = 0;
   let nStart = 0;
   let nStop = 0;
   let odd = false;
@@ -36,6 +40,7 @@ function applyPresetPattern() {
     odd = false;
     const measure = Measures.measures[m];
     Glob.currentMeasure = m;
+    columnsPerMeasure = measure.beats * measure.divisions;
     for (let i = 0; i < measure.beats; i++) {
       for (let j = 0; j < measure.divisions; j++) {
         odd = !odd;
@@ -84,7 +89,8 @@ function applyPresetPattern() {
             break;
           case 7:
           case 8:
-            // Every column of last beat (soft to hard)
+            // 7: Every column of last beat (soft to hard)
+            // 8: Every column of last beat (hard to soft)
             if (i === measure.beats - 1) {
               switch (measure.divisions) {
                 case 1:
@@ -131,6 +137,87 @@ function applyPresetPattern() {
               Instruments.setCell(column, row, hits[hit]);
             }
             break;
+          case 9:
+          case 10:
+            // 9: 3 per measure with equal times inbetween
+            // 10: 6 per measure with equal times inbetween
+            if (pattern === 9) {
+              n1 = columnsPerMeasure / 3;
+            } else {
+              n1 = columnsPerMeasure / 6;
+            }
+            if (n1 === Math.trunc(n1)) {
+              if ((column % n1) === 0) {
+                Instruments.setCell(column, row, 1);
+              }
+            }
+            break;
+          case 11:
+          case 12:
+            // 11: 3 per measure (3-3-2)
+            // 12: 6 per measure (2 x 3-3-2)
+            if (pattern === 11) {
+              n1 = columnsPerMeasure / 8;
+            } else {
+              n1 = columnsPerMeasure / 16;
+            }
+            if (n1 === Math.trunc(n1)) {
+              if ((column === 0) || (column === (3 * n1)) || (column === (6 * n1))) {
+                Instruments.setCell(column, row, 1);
+              }
+              if (pattern === 12) {
+                if ((column === (8 * n1)) || (column === (11 * n1)) || (column === (14 * n1))) {
+                  Instruments.setCell(column, row, 1);
+                }
+              }
+            }
+            break;
+          case 13:
+          case 14:
+          case 15:
+          case 16:
+          case 17:
+          case 18:
+            // 13: 3 per measure (2-1-1)
+            // 14: 6 per measure (2 x 2-1-1)
+            // 15: 3 per beat (2-1-1)
+            // 16: 3 per measure (1-1-2)
+            // 17: 6 per measure (2 x 1-1-2)
+            // 18: 3 per beat (1-1-2)
+            switch (pattern) {
+              case 13:
+              case 16:
+                n1 = columnsPerMeasure / 4;
+                n2 = 1;
+                break;
+              case 14:
+              case 17:
+                n1 = columnsPerMeasure / 8;
+                n2 = 2;
+                break;
+              case 15:
+              case 18:
+                n1 = measure.divisions / 4;
+                n2 = measure.beats;
+                break;
+              default:
+                n1 = columnsPerMeasure / 4;
+                n2 = 1;
+                break;
+            }
+            if (pattern > 15) {
+              n3 = 1;
+            } else {
+              n3 = 0;
+            }
+            if (n1 === Math.trunc(n1)) {
+              for (let k = 0; k < n2; k++) {
+                if ((column === ((k * 4) * n1)) || (column === ((2 - n3 + (k * 4)) * n1)) || (column === ((3 - n3 + (k * 4)) * n1))) {
+                  Instruments.setCell(column, row, 1);
+                }
+              }
+            }
+            break;
           default:
             break;
         }
@@ -158,6 +245,8 @@ function disableWhilePlaying() {
   Glob.settings.copyMeasureButton.disabled = Glob.playing;
   Glob.settings.expertCheckbox.disabled = Glob.playing;
   Glob.settings.applyPresetPatternButton.disabled = Glob.playing;
+  Glob.settings.multiplyDivisionsByTwo.disabled = Glob.playing;
+  Glob.settings.divideDivisionsByTwo.disabled = Glob.playing;
 }
 
 function drawPattern(currentColumn = -1) {
@@ -352,7 +441,7 @@ function fillPatternInstruments() {
   switch (Glob.settings.instrumentSet) {
     case 0:
       // Drums
-      selector.selectedIndex = 8;
+      selector.selectedIndex = 9;
       break;
     case 1:
       // Greek percussion
@@ -1300,15 +1389,44 @@ try {
     }
   });
 
-  document.getElementById("testButton").addEventListener("click", (e) => {
-    Test.runTests();
-    drawPattern();
+  document.getElementById("multiplyDivisionsByTwo").addEventListener("click", (e) => {
+    let userChoice = false;
+    if (!Glob.playing) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Multiply divisions of current measure by 2 (pattern will be adapted)?`);
+      }
+      if (userChoice || Glob.settings.expert) {
+        Measure.multiplyDivisionsByTwo(Measures.measures[Glob.currentMeasure]);
+        drawPattern();
+      }
+    }
+  });
+
+  document.getElementById("divideDivisionsByTwo").addEventListener("click", (e) => {
+    let userChoice = false;
+    if (!Glob.playing) {
+      if ((Measures.measures[Glob.currentMeasure].divisions % 2) === 0) {
+        if (!Glob.settings.expert) {
+          userChoice = window.confirm(`Divide divisions of current measure by 2 (even columns will be deleted)?`);
+        }
+        if (userChoice || Glob.settings.expert) {
+          Measure.divideDivisionsByTwo(Measures.measures[Glob.currentMeasure]);
+          drawPattern();
+        }
+      } else {
+        alert("Divisions of current measure can not be divided by 2.");
+      }
+    }
   });
 
   document.getElementById("body").addEventListener("keydown", (e) => {
     handleKeyDown(e);
   });
 
+  document.getElementById("testButton").addEventListener("click", (e) => {
+    Test.runTests();
+    drawPattern();
+  });
 
   Instruments.init();
   Audio.init();
