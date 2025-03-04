@@ -20,6 +20,14 @@ class Glob {
     }
   }
 
+  static boolToYesNo(b) {
+    if (b) {
+      return "Yes";
+    } else {
+      return "No";
+    }
+  }
+
   static intToBool(i) {
     return (i === 1);
   }

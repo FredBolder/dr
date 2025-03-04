@@ -7,13 +7,14 @@ class Settings {
     this.instrumentSet = 0; // 0 = Drums, 1 = Greek percussion
     this.instrumentSetSelector = document.getElementById("instrumentSetSelector");
     this.loadRhythmButton = document.getElementById("loadRhythmButton");
-    this.loop = true;
+    this.loop = document.getElementById("loop").checked;
     this.measuresToPlay = "";
     this.newButton = document.getElementById("newButton");
     this.openButton = document.getElementById("openButton");
     this.overlay = document.getElementById("overlay");
     this.pattern = document.getElementById("pattern");
     this.saveButton = document.getElementById("saveButton");
+    this.showSettings = document.getElementById("showSettings").checked;
     this.tempo = 120;
     this.tempoSlider = document.getElementById("tempoSlider");
     this.volume = 75;

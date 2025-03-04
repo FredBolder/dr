@@ -37,6 +37,8 @@ class Instruments {
       {name: "Bass drum", file: "wav/Bass_drum.wav", key: "C", property: "bassDrum"},
       {name: "Pedal hi-hat", file: "wav/Pedal_hi-hat.wav", key: "K", property: "pedalHiHat"},
     ];
+    this.initSettings();
+
     this.fileNames = [];
     for (let i = 0; i < this.instruments.length; i++) {
       this.fileNames.push(this.instruments[i].file);
@@ -60,6 +62,16 @@ class Instruments {
         default:
           break;
       }
+    }
+  }
+
+  static initSettings(){
+    for (let i = 0; i < this.instruments.length; i++) {
+      this.instruments[i].mute = false;
+      this.instruments[i].solo = false;
+      this.instruments[i].volume = 100;
+      this.instruments[i].pitch = 50; // 50 = original pitch, 0 = octave lower, 100 = octave higher
+      this.instruments[i].pan = 50; // 50 = center, 0 = left, 1 = right
     }
   }
 

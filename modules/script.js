@@ -11,6 +11,7 @@ let activeSources = [];
 const labelWidth = 170;
 let overlayContext;
 let patternContext;
+const settingLabels = ["Mute", "Solo", "Volume", "Pitch", "Pan"];
 
 Glob.init();
 
@@ -251,8 +252,9 @@ function disableWhilePlaying() {
 
 function drawPattern(currentColumn = -1) {
   let columns = 0;
-  let dx1 = 0;
-  let dy1 = 0;
+  let dx1 = 25;
+  let dy1 = 25;
+  let dx2 = 25 * 3; // Settings
   let factor = 1;
   let fontSize = 0;
   let n = 0;
@@ -260,6 +262,7 @@ function drawPattern(currentColumn = -1) {
   let divisionsPerMeasure = 0;
   let measureStatus = "";
   let radius = 0;
+  const set = Instruments.sets[Glob.settings.instrumentSet];
   let text = "";
 
   const measure = Measures.measures[Glob.currentMeasure];
@@ -267,15 +270,17 @@ function drawPattern(currentColumn = -1) {
   divisionsPerMeasure = measure.bassDrum.length;
   const rows = Instruments.sets[Glob.settings.instrumentSet].length;
   columns = divisionsPerMeasure;
-  dx1 = 25;
-  dy1 = 25;
 
   const pattern = Glob.settings.pattern;
 
-  resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1);
+  if (Glob.settings.showSettings) {
+    resizeCanvasIfNeeded(pattern, settingLabels.length, dx2, rows, dy1);
+  } else {
+    resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1);
+  }
 
   overlayContext.clearRect(0, 0, overlay.width, overlay.height);
-  if (currentColumn !== -1) {
+  if ((currentColumn !== -1) && (!Glob.settings.showSettings)) {
     overlayContext.fillStyle = 'rgba(255, 0, 0, 0.3)';
     overlayContext.fillRect(currentColumn * dx1 + labelWidth, 0, dx1, overlay.height);
     return;
@@ -295,6 +300,7 @@ function drawPattern(currentColumn = -1) {
   patternContext.textAlign = "left";
   patternContext.beginPath;
   measureStatus = `Measure ${Glob.currentMeasure + 1}/${Measures.measures.length}`;
+  patternContext.fillStyle = "black";
   patternContext.fillText(measureStatus, 10, dy1 * 0.75);
   patternContext.strokeStyle = "white";
   for (let i = 0; i < rows; i++) {
@@ -306,114 +312,162 @@ function drawPattern(currentColumn = -1) {
     patternContext.fillText(Instruments.sets[Glob.settings.instrumentSet][i].name, 10, i * dy1 + (dy1 * 1.75));
     patternContext.fillText(Instruments.sets[Glob.settings.instrumentSet][i].key, 150, i * dy1 + (dy1 * 1.75));
   }
-  patternContext.textAlign = "center";
-  n = 1;
-  for (let i = 0; i < columns; i++) {
-    patternContext.beginPath;
-    patternContext.fillStyle = "blue";
-    patternContext.fillRect(i * dx1 + labelWidth, 0, dx1, dy1);
-    patternContext.strokeRect(i * dx1 + labelWidth, 0, dx1, dy1);
-    patternContext.fillStyle = "white";
-    if ((i % divisionsPerBeat) === 0) {
-      patternContext.fillText(n.toString(), i * dx1 + labelWidth + (dx1 / 2), dy1 * 0.75, dx1 * 0.9);
-      n++;
-    }
-  }
-  // Pattern
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < columns; j++) {
-      const cellValue = Instruments.getCell(Glob.currentMeasure, j, i);
-
-      patternContext.lineWidth = 2;
-      patternContext.fillStyle = "white";
-      patternContext.strokeStyle = "black";
+  if (Glob.settings.showSettings) {
+    // Setting labels
+    patternContext.textAlign = "center";
+    for (let i = 0; i < settingLabels.length; i++) {
       patternContext.beginPath;
-      patternContext.fillRect(j * dx1 + labelWidth, i * dy1 + dy1, dx1, dy1);
-      patternContext.strokeRect(j * dx1 + labelWidth, i * dy1 + dy1, dx1, dy1);
-      patternContext.fillStyle = "black";
-
-      if ((cellValue >= 7) && (cellValue <= 9)) {
-        // Additional hit
-        switch (cellValue) {
-          case 7:
-            factor = 0.2;
+      patternContext.fillStyle = "blue";
+      patternContext.fillRect(i * dx2 + labelWidth, 0, dx2, dy1);
+      patternContext.strokeRect(i * dx2 + labelWidth, 0, dx2, dy1);
+      patternContext.fillStyle = "white";
+      patternContext.fillText(settingLabels[i], i * dx2 + labelWidth + (dx2 / 2), dy1 * 0.75, dx2 * 0.9);
+    }
+    // Settings
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < settingLabels.length; j++) {
+        patternContext.lineWidth = 2;
+        patternContext.fillStyle = "white";
+        patternContext.strokeStyle = "black";
+        patternContext.beginPath;
+        patternContext.fillRect(j * dx2 + labelWidth, i * dy1 + dy1, dx2, dy1);
+        patternContext.strokeRect(j * dx2 + labelWidth, i * dy1 + dy1, dx2, dy1);
+        patternContext.fillStyle = "black";
+        switch (j) {
+          case 0:
+            text = Glob.boolToYesNo(set[i].mute);
             break;
-          case 8:
-            factor = 0.3;
-            break;
-          case 9:
-            factor = 0.1;
-            break;
-          default:
-            factor = 0.2;
-            break;
-        }
-        patternContext.lineWidth = 4;
-        patternContext.beginPath();
-        patternContext.moveTo(j * dx1 + labelWidth + (dx1 * factor), i * dy1 + (1.5 * dy1));
-        patternContext.lineTo(j * dx1 + labelWidth + (dx1 * (1 - factor)), i * dy1 + (1.5 * dy1));
-        patternContext.moveTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + factor) * dy1));
-        patternContext.lineTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + (1 - factor)) * dy1));
-        patternContext.stroke();
-      } else if ((cellValue >= 10) && (cellValue <= 15)) {
-        switch (cellValue) {
-          case 10:
-            text = "E";
-            break;
-          case 11:
-            text = "e";
-            break;
-          case 12:
-            text = "F";
-            break;
-          case 13:
-            text = "f";
-            break;
-          case 14:
-            text = "3";
-            break;
-          case 15:
-            text = "4";
-            break;
-          default:
-            text = "-";
-            break;
-        }
-        patternContext.fillText(text, j * dx1 + labelWidth + (dx1 / 2), i * dy1 + dy1 * 1.75, dx1 * 0.9);
-      } else if (cellValue > 0) {
-        switch (cellValue) {
           case 1:
-            factor = 0.6;
+            text = Glob.boolToYesNo(set[i].solo);
             break;
           case 2:
-            factor = 0.4;
+            text = set[i].volume.toString();
             break;
           case 3:
-            factor = 0.8;
+            text = set[i].pitch.toString();
             break;
           case 4:
-            factor = 0.2;
-            break;
-          case 5:
-            factor = 1;
+            text = set[i].pan.toString();
             break;
           default:
-            factor = 0.6;
+            text = "?";
             break;
         }
-        radius = dx1 * 0.4 * factor;
-        if (cellValue === 6) {
-          // Flam
+        patternContext.fillText(text, j * dx2 + labelWidth + (dx2 / 2), i * dy1 + dy1 * 1.75, dx2 * 0.9);
+
+      }
+    }
+  } else {
+    // Count labels
+    patternContext.textAlign = "center";
+    n = 1;
+    for (let i = 0; i < columns; i++) {
+      patternContext.beginPath;
+      patternContext.fillStyle = "blue";
+      patternContext.fillRect(i * dx1 + labelWidth, 0, dx1, dy1);
+      patternContext.strokeRect(i * dx1 + labelWidth, 0, dx1, dy1);
+      patternContext.fillStyle = "white";
+      if ((i % divisionsPerBeat) === 0) {
+        patternContext.fillText(n.toString(), i * dx1 + labelWidth + (dx1 / 2), dy1 * 0.75, dx1 * 0.9);
+        n++;
+      }
+    }
+    // Pattern
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < columns; j++) {
+        const cellValue = Instruments.getCell(Glob.currentMeasure, j, i);
+
+        patternContext.lineWidth = 2;
+        patternContext.fillStyle = "white";
+        patternContext.strokeStyle = "black";
+        patternContext.beginPath;
+        patternContext.fillRect(j * dx1 + labelWidth, i * dy1 + dy1, dx1, dy1);
+        patternContext.strokeRect(j * dx1 + labelWidth, i * dy1 + dy1, dx1, dy1);
+        patternContext.fillStyle = "black";
+
+        if ((cellValue >= 7) && (cellValue <= 9)) {
+          // Additional hit
+          switch (cellValue) {
+            case 7:
+              factor = 0.2;
+              break;
+            case 8:
+              factor = 0.3;
+              break;
+            case 9:
+              factor = 0.1;
+              break;
+            default:
+              factor = 0.2;
+              break;
+          }
+          patternContext.lineWidth = 4;
           patternContext.beginPath();
-          patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.65), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
-          patternContext.fill();
-          radius = dx1 * 0.4 * 0.35;
-          patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
-          patternContext.fill();
-        } else {
-          patternContext.beginPath();
-          patternContext.ellipse(j * dx1 + labelWidth + (dx1 / 2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
-          patternContext.fill();
+          patternContext.moveTo(j * dx1 + labelWidth + (dx1 * factor), i * dy1 + (1.5 * dy1));
+          patternContext.lineTo(j * dx1 + labelWidth + (dx1 * (1 - factor)), i * dy1 + (1.5 * dy1));
+          patternContext.moveTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + factor) * dy1));
+          patternContext.lineTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + (1 - factor)) * dy1));
+          patternContext.stroke();
+        } else if ((cellValue >= 10) && (cellValue <= 15)) {
+          switch (cellValue) {
+            case 10:
+              text = "E";
+              break;
+            case 11:
+              text = "e";
+              break;
+            case 12:
+              text = "F";
+              break;
+            case 13:
+              text = "f";
+              break;
+            case 14:
+              text = "3";
+              break;
+            case 15:
+              text = "4";
+              break;
+            default:
+              text = "-";
+              break;
+          }
+          patternContext.fillText(text, j * dx1 + labelWidth + (dx1 / 2), i * dy1 + dy1 * 1.75, dx1 * 0.9);
+        } else if (cellValue > 0) {
+          switch (cellValue) {
+            case 1:
+              factor = 0.6;
+              break;
+            case 2:
+              factor = 0.4;
+              break;
+            case 3:
+              factor = 0.8;
+              break;
+            case 4:
+              factor = 0.2;
+              break;
+            case 5:
+              factor = 1;
+              break;
+            default:
+              factor = 0.6;
+              break;
+          }
+          radius = dx1 * 0.4 * factor;
+          if (cellValue === 6) {
+            // Flam
+            patternContext.beginPath();
+            patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.65), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
+            patternContext.fill();
+            radius = dx1 * 0.4 * 0.35;
+            patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
+            patternContext.fill();
+          } else {
+            patternContext.beginPath();
+            patternContext.ellipse(j * dx1 + labelWidth + (dx1 / 2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
+            patternContext.fill();
+          }
         }
       }
     }
@@ -503,6 +557,7 @@ async function openTextFile() {
       alert("Invalid file type. Please select a .dr file.");
       return;
     }
+    Instruments.initSettings();
     const text = await file.text();
     const lines = text.split("\n");
     fileVersion = Glob.tryParseInt(lines[0], 0);
@@ -515,6 +570,22 @@ async function openTextFile() {
       Measures.measures = JSON.parse(lines[3]);
     }
     Measures.addMissingProps();
+    if (fileVersion >= 3) {
+      const instrumentSettings = JSON.parse(lines[5]);
+      for (let i = 0; i < instrumentSettings.length; i++) {
+        const settings = instrumentSettings[i];
+        for (let j = 0; j < Instruments.instruments.length; j++) {
+          const instrument = Instruments.instruments[j];
+          if (instrument.property === settings.property) {
+            instrument.mute = settings.mute;
+            instrument.solo = settings.solo;
+            instrument.volume = settings.volume;
+            instrument.pitch = settings.pitch;
+            instrument.pan = settings.pan;
+          }
+        }
+      }
+    }
     document.getElementById("instrumentSetSelector").selectedIndex = Glob.settings.instrumentSet;
     instrumentSetChanged();
     drawPattern();
@@ -646,6 +717,13 @@ async function playPattern() {
       return totalTime;
     };
 
+    const stereoNodes = [];
+
+    Instruments.sets[set].forEach((instrument, idx) => {
+      let pan = instrument.pan < 50 ? -((50 - instrument.pan) / 50) : ((instrument.pan - 50) / 50);
+      stereoNodes.push(new StereoPannerNode(audioCtx, { pan }));
+    });
+
     first = true;
     prevEndsWithFill = false;
     while (!Glob.stop && (Glob.settings.loop || first)) {
@@ -688,8 +766,31 @@ async function playPattern() {
 
           const checkFlam = Measures.calculateMeasureAndColumn(i, j + lookAheadFlam, playMeasures);
 
+          let hasSolo = false;
+          Instruments.sets[set].forEach((instrument, idx) => {
+            if (instrument.solo && !instrument.mute) {
+              hasSolo = true;
+            }
+          });
+
           // Create and configure BufferSource nodes for each audio buffer
           Instruments.sets[set].forEach((instrument, idx) => {
+            const play = !instrument.mute && (instrument.solo || !hasSolo);
+            if (!play) return;
+
+            let pitch = 0;
+            if (instrument.pitch < 50) {
+              pitch = 1 - (0.5 * ((50 - instrument.pitch) / 50));
+            } else {
+              pitch = ((instrument.pitch - 50) / 50) + 1;
+            }
+
+            let pan = 0;
+            if (instrument.pan < 50) {
+              pan = -((50 - instrument.pan) / 50);
+            } else {
+              pan = ((instrument.pan - 50) / 50);
+            }
             let url = instrument.file;
             let cellValue = 0;
             if (j >= 0) {
@@ -720,13 +821,16 @@ async function playPattern() {
             const audioBuffer = Audio.getCachedAudioBuffer(url);
             let source;
             let gainNode;
+            let stereoNode;
 
             if (cellValue > 0) {
               source = audioCtx.createBufferSource();
               source.started = false;
+              source.playbackRate.value = pitch;
               source.isGhostNote = false;
               source.buffer = audioBuffer;
               gainNode = audioCtx.createGain();
+              stereoNode = stereoNodes[idx];
 
               switch (cellValue) {
                 case 1:
@@ -778,9 +882,11 @@ async function playPattern() {
             }
 
             if (cellValue > 0) {
-              gainNode.gain.value = 0.9 * factor * humanizeVolumeFactor * volume;
+              gainNode.gain.value = 0.9 * factor * humanizeVolumeFactor * volume * (instrument.volume / 100);
+              stereoNode.pan.value = pan;
               source.connect(gainNode);
-              gainNode.connect(audioCtx.destination);
+              gainNode.connect(stereoNode);
+              stereoNode.connect(audioCtx.destination);
             }
 
             let ghostNotes = [];
@@ -806,11 +912,15 @@ async function playPattern() {
             }
 
             for (let g = 0; g < numberOfGhostNotes; g++) {
-              ghostNotes.push({ source: audioCtx.createBufferSource(), gainNode: audioCtx.createGain() });
-              ghostNotes[ghostNotes.length - 1].source.buffer = audioBuffer;
-              ghostNotes[g].gainNode.gain.value = 0.9 * 0.4 * humanizeVolumeFactor * volume;
+              ghostNotes.push({ source: audioCtx.createBufferSource(), gainNode: audioCtx.createGain(), stereoNode: stereoNodes[idx] });
+              ghostNotes[g].source.buffer = audioBuffer;
+              ghostNotes[g].gainNode.gain.value = 0.9 * 0.4 * humanizeVolumeFactor * volume * (instrument.volume / 100);
+              ghostNotes[g].stereoNode.pan.value = pan;
+              ghostNotes[g].source.playbackRate.value = pitch;
+
               ghostNotes[g].source.connect(ghostNotes[g].gainNode);
-              ghostNotes[g].gainNode.connect(audioCtx.destination);
+              ghostNotes[g].gainNode.connect(ghostNotes[g].stereoNode);
+              ghostNotes[g].stereoNode.connect(audioCtx.destination);
               ghostNotes[g].source.started = false;
               ghostNotes[g].source.isGhostNote = true;
             }
@@ -891,6 +1001,7 @@ async function playPattern() {
       }
       first = false;
     }
+    stereoNodes.forEach(node => node.disconnect());
   }
   Glob.playing = false;
   disableWhilePlaying();
@@ -900,6 +1011,11 @@ async function playPattern() {
 
 function scheduleDraw(currentColumn = -1) {
   requestAnimationFrame(() => drawPattern(currentColumn));
+}
+
+function showSettingsClicked() {
+  Glob.settings.showSettings = document.getElementById("showSettings").checked;
+  scheduleDraw();
 }
 
 function stopSounds(mode = 0) {
@@ -964,9 +1080,10 @@ function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
 
 
 async function saveTextFile() {
-  const fileVersion = 2;
+  const fileVersion = 3;
   let found = false;
   let saveMeasures = [];
+  let saveSettings = [];
   try {
     const fileHandle = await window.showSaveFilePicker({
       suggestedName: "myPattern.dr", // Default filename
@@ -1008,8 +1125,20 @@ async function saveTextFile() {
       }
       saveMeasures.push(saveMeasure);
     }
-
     await writable.write(JSON.stringify(saveMeasures) + "\n");
+    for (let i = 0; i < Instruments.instruments.length; i++) {
+      const instrument = Instruments.instruments[i];
+      const instrumentSettings = {
+        property: instrument.property,
+        mute: instrument.mute,
+        solo: instrument.solo,
+        volume: instrument.volume,
+        pitch: instrument.pitch,
+        pan: instrument.pan
+      };
+      saveSettings.push(instrumentSettings);
+    }
+    await writable.write(JSON.stringify(saveSettings) + "\n");
     await writable.close();
   } catch (err) {
     console.error("Error saving file:", err);
@@ -1042,34 +1171,80 @@ function humanizeVolumesChanged() {
 }
 
 function patternClicked(event) {
-  const columns = Measures.measures[Glob.currentMeasure].bassDrum.length;
+  let columns = 0;
   const rows = Instruments.sets[Glob.settings.instrumentSet].length;
   const pattern = Glob.settings.pattern;
   const rect = pattern.getBoundingClientRect()
-  const ch = rect.height;
-  const cw = rect.width;
   let c = 0;
+  let dx = 0;
+  let dx1 = 25;
+  let dy1 = 25;
+  let dx2 = 25 * 3; // Settings
+  let inputDefault = 0;
+  let inputStr = "";
+  let param = "";
   let r = 0;
-  let dx1 = 0;
-  let dy1 = 0;
-  dx1 = (cw - labelWidth) / columns;
-  dy1 = ch / (rows + 1);
-  if (dx1 > dy1) {
-    dx1 = dy1;
+  let value = 0;
+
+  if (Glob.settings.showSettings) {
+    dx = dx2;
+    columns = settingLabels.length;
   } else {
-    dy1 = dx1;
+    dx = dx1;
+    columns = Measures.measures[Glob.currentMeasure].bassDrum.length;
   }
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
   const hit = Glob.tryParseInt(document.getElementById("inputSelector").value, 1);
   if ((x > labelWidth) && (y > dy1)) {
-    c = Math.trunc((x - labelWidth) / dx1);
+    c = Math.trunc((x - labelWidth) / dx);
     r = Math.trunc((y - dy1) / dy1);
     if ((c >= 0) && (r >= 0) && (c < columns) && (r < rows)) {
-      if (Instruments.getCell(Glob.currentMeasure, c, r) > 0) {
-        Instruments.setCell(c, r, 0);
+      if (Glob.settings.showSettings) {
+        switch (c) {
+          case 0:
+            Instruments.sets[Glob.settings.instrumentSet][r].mute = !Instruments.sets[Glob.settings.instrumentSet][r].mute;
+            break;
+          case 1:
+            Instruments.sets[Glob.settings.instrumentSet][r].solo = !Instruments.sets[Glob.settings.instrumentSet][r].solo;
+            break;
+          case 2:
+          case 3:
+          case 4:
+            if (!Glob.playing) {
+              switch (c) {
+                case 2:
+                  param = "volume";
+                  break;
+                case 3:
+                  param = "pitch";
+                  break;
+                case 4:
+                  param = "pan";
+                  break;
+                default:
+                  param = "unknown";
+                  break;
+              }
+              inputDefault = Instruments.sets[Glob.settings.instrumentSet][r][param];
+              inputStr = prompt(`Enter new ${param}`, inputDefault.toString());
+              if (inputStr !== null) {
+                value = Glob.tryParseInt(inputStr, inputDefault);
+                if ((value >= 0) && (value <= 100)) {
+                  Instruments.sets[Glob.settings.instrumentSet][r][param] = value;
+                }
+              }
+            }
+            break;
+          default:
+            break;
+        }
       } else {
-        Instruments.setCell(c, r, hit);
+        if (Instruments.getCell(Glob.currentMeasure, c, r) > 0) {
+          Instruments.setCell(c, r, 0);
+        } else {
+          Instruments.setCell(c, r, hit);
+        }
       }
       scheduleDraw();
     }
@@ -1133,6 +1308,7 @@ try {
         tempoChanged();
         document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
         volumeChanged();
+        Instruments.initSettings();
         drawPattern();
       }
     }
@@ -1159,6 +1335,7 @@ try {
         instrumentSetChanged();
         tempoChanged();
         document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
+        Instruments.initSettings();
         drawPattern();
       }
     }
@@ -1195,6 +1372,10 @@ try {
 
   document.getElementById("loop").addEventListener("click", (e) => {
     loopClicked();
+  });
+
+  document.getElementById("showSettings").addEventListener("click", (e) => {
+    showSettingsClicked();
   });
 
   document.getElementById("startStopButton").addEventListener("click", (e) => {
