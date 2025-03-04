@@ -508,21 +508,21 @@ function fillPatternInstruments() {
 }
 
 function handleKeyDown(e) {
-  let url = "";
+  let found = null;
   let volumeFactor = 0.6;
   const key = e.key.toUpperCase();
   if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(key)) {
     for (let i = 0; i < Instruments.instruments.length; i++) {
       const instrument = Instruments.instruments[i];
       if ((instrument.key !== "") && ((instrument.key) === key)) {
-        url = instrument.file;
+        found = instrument;
       }
     }
-    if (url.length > 0) {
+    if (found !== null) {
       if (e.shiftKey) {
         volumeFactor = 0.8;
       }
-      playInstrument(url, volumeFactor);
+      playInstrument(found, volumeFactor);
     }
   }
 }
@@ -597,11 +597,14 @@ async function openTextFile() {
   }
 }
 
-async function playInstrument(url, volumeFactor = 0.6) {
+async function playInstrument(instrument, volumeFactor = 0.6) {
   let humanizeVolumes = 0;
   let humanizeVolumeFactor = 1;
+  let pan = 0;
+  let url = "";
   let volume = 75;
 
+  url = instrument.file;
   if (url.length > 0) {
     volume = Glob.settings.volume / 100;
     humanizeVolumes = Glob.settings.humanizeVolumes / 10;
@@ -628,15 +631,20 @@ async function playInstrument(url, volumeFactor = 0.6) {
 
     const source = audioCtx.createBufferSource();
     source.buffer = audioBuffer;
+    source.playbackRate.value = Glob.percentToPitch(instrument.pitch);
     const gainNode = audioCtx.createGain();
-    gainNode.gain.value = 0.9 * volumeFactor * humanizeVolumeFactor * volume;
+    gainNode.gain.value = 0.9 * volumeFactor * humanizeVolumeFactor * volume * (instrument.volume / 100);
+    pan = Glob.percentToPan(instrument.pan);
+    const stereoNode = new StereoPannerNode(audioCtx, { pan })
     source.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+    gainNode.connect(stereoNode);
+    stereoNode.connect(audioCtx.destination);
 
     source.onended = () => {
       Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== source);
       source.disconnect();
       gainNode.disconnect();
+      stereoNode.disconnect();
     };
 
     source.start(0);
@@ -720,7 +728,7 @@ async function playPattern() {
     const stereoNodes = [];
 
     Instruments.sets[set].forEach((instrument, idx) => {
-      let pan = instrument.pan < 50 ? -((50 - instrument.pan) / 50) : ((instrument.pan - 50) / 50);
+      const pan = Glob.percentToPan(instrument.pan);
       stereoNodes.push(new StereoPannerNode(audioCtx, { pan }));
     });
 
@@ -778,12 +786,7 @@ async function playPattern() {
             const play = !instrument.mute && (instrument.solo || !hasSolo);
             if (!play) return;
 
-            let pitch = 0;
-            if (instrument.pitch < 50) {
-              pitch = 1 - (0.5 * ((50 - instrument.pitch) / 50));
-            } else {
-              pitch = ((instrument.pitch - 50) / 50) + 1;
-            }
+            let pitch = Glob.percentToPitch(instrument.pitch);
 
             let pan = 0;
             if (instrument.pan < 50) {
@@ -883,7 +886,6 @@ async function playPattern() {
 
             if (cellValue > 0) {
               gainNode.gain.value = 0.9 * factor * humanizeVolumeFactor * volume * (instrument.volume / 100);
-              stereoNode.pan.value = pan;
               source.connect(gainNode);
               gainNode.connect(stereoNode);
               stereoNode.connect(audioCtx.destination);
@@ -915,7 +917,6 @@ async function playPattern() {
               ghostNotes.push({ source: audioCtx.createBufferSource(), gainNode: audioCtx.createGain(), stereoNode: stereoNodes[idx] });
               ghostNotes[g].source.buffer = audioBuffer;
               ghostNotes[g].gainNode.gain.value = 0.9 * 0.4 * humanizeVolumeFactor * volume * (instrument.volume / 100);
-              ghostNotes[g].stereoNode.pan.value = pan;
               ghostNotes[g].source.playbackRate.value = pitch;
 
               ghostNotes[g].source.connect(ghostNotes[g].gainNode);
@@ -1307,7 +1308,7 @@ function patternClicked(event) {
     }
   } else if ((x > 0) && (x < labelWidth) && (y > dy1)) {
     r = Math.trunc((y - dy1) / dy1);
-    playInstrument(Instruments.sets[Glob.settings.instrumentSet][r].file);
+    playInstrument(Instruments.sets[Glob.settings.instrumentSet][r]);
   }
 }
 

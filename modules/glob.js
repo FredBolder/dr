@@ -45,6 +45,22 @@ class Glob {
     return result;
   }
 
+  static percentToPan(percentage) {
+    if (percentage < 50) {
+      return -((50 - percentage) / 50);
+    } else {
+      return ((percentage - 50) / 50);
+    }
+  }
+
+  static percentToPitch(percentage) {
+    if (percentage < 50) {
+      return 1 - (0.5 * ((50 - percentage) / 50));
+    } else {
+      return ((percentage - 50) / 50) + 1;
+    }
+  }
+
   static removeChars(input, chars) {
     let result = "";
     for (let i = 0; i < input.length; i++) {
