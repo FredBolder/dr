@@ -1184,6 +1184,7 @@ function patternClicked(event) {
   let inputStr = "";
   let param = "";
   let r = 0;
+  let userChoice = false;
   let value = 0;
 
   if (Glob.settings.showSettings) {
@@ -1196,54 +1197,110 @@ function patternClicked(event) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
   const hit = Glob.tryParseInt(document.getElementById("inputSelector").value, 1);
-  if ((x > labelWidth) && (y > dy1)) {
+  if (x > labelWidth) {
     c = Math.trunc((x - labelWidth) / dx);
-    r = Math.trunc((y - dy1) / dy1);
-    if ((c >= 0) && (r >= 0) && (c < columns) && (r < rows)) {
-      if (Glob.settings.showSettings) {
-        switch (c) {
-          case 0:
-            Instruments.sets[Glob.settings.instrumentSet][r].mute = !Instruments.sets[Glob.settings.instrumentSet][r].mute;
-            break;
-          case 1:
-            Instruments.sets[Glob.settings.instrumentSet][r].solo = !Instruments.sets[Glob.settings.instrumentSet][r].solo;
-            break;
-          case 2:
-          case 3:
-          case 4:
-            if (!Glob.playing) {
+    r = Math.trunc(y / dy1);
+    if ((c >= 0) && (r >= 0) && (c < columns) && (r <= rows)) {
+      if (r > 0) {
+        if (Glob.settings.showSettings) {
+          switch (c) {
+            case 0:
+              Instruments.sets[Glob.settings.instrumentSet][r - 1].mute = !Instruments.sets[Glob.settings.instrumentSet][r - 1].mute;
+              break;
+            case 1:
+              Instruments.sets[Glob.settings.instrumentSet][r - 1].solo = !Instruments.sets[Glob.settings.instrumentSet][r - 1].solo;
+              break;
+            case 2:
+            case 3:
+            case 4:
+              if (!Glob.playing) {
+                switch (c) {
+                  case 2:
+                    param = "volume";
+                    break;
+                  case 3:
+                    param = "pitch";
+                    break;
+                  case 4:
+                    param = "pan";
+                    break;
+                  default:
+                    param = "unknown";
+                    break;
+                }
+                inputDefault = Instruments.sets[Glob.settings.instrumentSet][r - 1][param];
+                inputStr = prompt(`Enter new ${param}`, inputDefault.toString());
+                if (inputStr !== null) {
+                  value = Glob.tryParseInt(inputStr, inputDefault);
+                  if ((value >= 0) && (value <= 100)) {
+                    Instruments.sets[Glob.settings.instrumentSet][r - 1][param] = value;
+                  }
+                }
+              }
+              break;
+            default:
+              break;
+          }
+        } else {
+          if (Instruments.getCell(Glob.currentMeasure, c, r - 1) > 0) {
+            Instruments.setCell(c, r - 1, 0);
+          } else {
+            Instruments.setCell(c, r - 1, hit);
+          }
+        }
+      } else {
+        if (!Glob.playing && Glob.settings.showSettings) {
+          switch (c) {
+            case 0:
+            case 1:
+              if (c === 0) {
+                param = "mute";
+              } else {
+                param = "solo";
+              }
+              if (!Glob.settings.expert) {
+                userChoice = window.confirm(`Un${param} all?`);
+              }
+              if (userChoice || Glob.settings.expert) {
+                for (let i = 0; i < Instruments.sets[Glob.settings.instrumentSet].length; i++) {
+                  Instruments.sets[Glob.settings.instrumentSet][i][param] = false;
+                }
+              }
+              break;
+            case 2:
+            case 3:
+            case 4:
               switch (c) {
                 case 2:
                   param = "volume";
+                  inputDefault = 100;
                   break;
                 case 3:
                   param = "pitch";
+                  inputDefault = 50;
                   break;
                 case 4:
                   param = "pan";
+                  inputDefault = 50;
                   break;
                 default:
                   param = "unknown";
+                  inputDefault = 0;
                   break;
               }
-              inputDefault = Instruments.sets[Glob.settings.instrumentSet][r][param];
-              inputStr = prompt(`Enter new ${param}`, inputDefault.toString());
+              inputStr = prompt(`Enter new ${param} for all instruments in this set`, inputDefault.toString());
               if (inputStr !== null) {
                 value = Glob.tryParseInt(inputStr, inputDefault);
                 if ((value >= 0) && (value <= 100)) {
-                  Instruments.sets[Glob.settings.instrumentSet][r][param] = value;
+                  for (let i = 0; i < Instruments.sets[Glob.settings.instrumentSet].length; i++) {
+                    Instruments.sets[Glob.settings.instrumentSet][i][param] = value;
+                  }
                 }
               }
-            }
-            break;
-          default:
-            break;
-        }
-      } else {
-        if (Instruments.getCell(Glob.currentMeasure, c, r) > 0) {
-          Instruments.setCell(c, r, 0);
-        } else {
-          Instruments.setCell(c, r, hit);
+              break;
+            default:
+              break;
+          }
         }
       }
       scheduleDraw();
