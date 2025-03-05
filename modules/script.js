@@ -516,7 +516,7 @@ function fillPatternInstruments() {
 
 function handleKeyDown(e) {
   let found = null;
-  let volumeFactor = 0.6;
+  let volumeFactor = 0.7;
   const key = e.key.toUpperCase();
   if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(key)) {
     for (let i = 0; i < Instruments.instruments.length; i++) {
@@ -621,7 +621,7 @@ async function openTextFile() {
   }
 }
 
-async function playInstrument(instrument, volumeFactor = 0.6) {
+async function playInstrument(instrument, volumeFactor = 0.7) {
   let humanizeVolumes = 0;
   let humanizeVolumeFactor = 1;
   let pan = 0;
@@ -659,7 +659,7 @@ async function playInstrument(instrument, volumeFactor = 0.6) {
       source.buffer = audioBuffer;
       source.playbackRate.value = Glob.percentToPitch(instrument.pitch);
       const gainNode = audioCtx.createGain();
-      gainNode.gain.value = 0.9 * volumeFactor * humanizeVolumeFactor * volume * (instrument.volume / 100);
+      gainNode.gain.value = volumeFactor * humanizeVolumeFactor * volume * (instrument.volume / 100);
       pan = Glob.percentToPan(instrument.pan);
       const stereoNode = new StereoPannerNode(audioCtx, { pan })
       source.connect(gainNode);
@@ -880,28 +880,28 @@ async function playPattern() {
                 case 11:
                 case 12:
                 case 13:
-                  factor = 0.6;
+                  factor = 0.7;
                   break;
                 case 2:
                 case 8:
-                  factor = 0.4;
+                  factor = 0.5;
                   break;
                 case 3:
                 case 9:
-                  factor = 0.8;
+                  factor = 0.9;
                   break;
                 case 4:
-                  factor = 0.2;
+                  factor = 0.3;
                   break;
                 case 5:
                   factor = 1;
                   break;
                 case 6:
                   // Flam
-                  factor = 0.6;
+                  factor = 0.7;
                   break;
                 default:
-                  factor = 0.6;
+                  factor = 0.7;
                   break;
               }
             }
@@ -923,7 +923,7 @@ async function playPattern() {
             }
 
             if (cellValue > 0) {
-              gainNode.gain.value = 0.9 * factor * humanizeVolumeFactor * volume * (instrument.volume / 100);
+              gainNode.gain.value = factor * humanizeVolumeFactor * volume * (instrument.volume / 100);
               source.connect(gainNode);
               gainNode.connect(stereoNode);
               if (instrument.reverb) {
@@ -958,7 +958,7 @@ async function playPattern() {
             for (let g = 0; g < numberOfGhostNotes; g++) {
               ghostNotes.push({ source: audioCtx.createBufferSource(), gainNode: audioCtx.createGain(), stereoNode: stereoNodes[idx] });
               ghostNotes[g].source.buffer = audioBuffer;
-              ghostNotes[g].gainNode.gain.value = 0.9 * 0.4 * humanizeVolumeFactor * volume * (instrument.volume / 100);
+              ghostNotes[g].gainNode.gain.value = 0.5 * humanizeVolumeFactor * volume * (instrument.volume / 100);
               ghostNotes[g].source.playbackRate.value = pitch;
 
               ghostNotes[g].source.connect(ghostNotes[g].gainNode);
