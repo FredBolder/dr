@@ -28,6 +28,14 @@ class Glob {
     }
   }
 
+  static initSettings() {
+    Glob.currentMeasure = 0;
+    Glob.settings.measuresToPlay = "";
+    this.settings.instrumentSet = 0;
+    this.settings.reverbType = 3;
+    this.settings.reverbWet = 25;
+  }
+
   static intToBool(i) {
     return (i === 1);
   }

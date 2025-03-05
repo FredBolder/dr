@@ -5,13 +5,16 @@ import { Instruments } from "./instruments.js";
 import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
 import { Presets } from "./presets.js";
+import { Reverb } from "./reverb.js";
 import { Test } from "./test.js";
 
 let activeSources = [];
 const labelWidth = 170;
+const msgReverbNotLoaded = "Reverb is not loaded yet. Try again later.";
 let overlayContext;
 let patternContext;
-const settingLabels = ["Mute", "Solo", "Volume", "Pitch", "Pan"];
+let reverb;
+const settingLabels = ["Mute", "Solo", "Reverb", "Volume", "Pitch", "Pan",];
 
 Glob.init();
 
@@ -230,6 +233,7 @@ function applyPresetPattern() {
 
 function disableWhilePlaying() {
   Glob.settings.instrumentSetSelector.disabled = Glob.playing;
+  Glob.settings.reverbTypeSelector.disabled = Glob.playing;
   Glob.settings.loadRhythmButton.disabled = Glob.playing;
   Glob.settings.newButton.disabled = Glob.playing;
   Glob.settings.openButton.disabled = Glob.playing;
@@ -341,12 +345,15 @@ function drawPattern(currentColumn = -1) {
             text = Glob.boolToYesNo(set[i].solo);
             break;
           case 2:
-            text = set[i].volume.toString();
+            text = Glob.boolToYesNo(set[i].reverb);
             break;
           case 3:
-            text = set[i].pitch.toString();
+            text = set[i].volume.toString();
             break;
           case 4:
+            text = set[i].pitch.toString();
+            break;
+          case 5:
             text = set[i].pan.toString();
             break;
           default:
@@ -529,7 +536,7 @@ function handleKeyDown(e) {
 
 
 function instrumentSetChanged() {
-  Glob.settings.instrumentSet = Glob.tryParseInt(document.getElementById("instrumentSetSelector").value, 0);
+  Glob.settings.instrumentSet = Glob.tryParseInt(Glob.settings.instrumentSetSelector.value, 0);
   drawPattern();
   fillPatternInstruments();
 }
@@ -540,6 +547,12 @@ function loopClicked() {
 
 async function openTextFile() {
   let fileVersion = 0;
+  // 1 Initial version
+  // 2 Instrument set added
+  // 3 Mute, solo, volume, pitch and pan added
+  // 4 Reverb added
+  let measurePointer = 0;
+
   try {
     const [fileHandle] = await window.showOpenFilePicker({
       types: [
@@ -550,8 +563,7 @@ async function openTextFile() {
       ],
       multiple: false,
     });
-    Glob.currentMeasure = 0;
-    Glob.settings.instrumentSet = 0;
+    Glob.initSettings();
     const file = await fileHandle.getFile();
     if (!file.name.toLowerCase().endsWith(".dr")) {
       alert("Invalid file type. Please select a .dr file.");
@@ -563,15 +575,20 @@ async function openTextFile() {
     fileVersion = Glob.tryParseInt(lines[0], 0);
     Glob.settings.measuresToPlay = lines[1];
     Glob.settings.tempo = Glob.tryParseInt(lines[2], 0);
+    measurePointer = 3;
     if (fileVersion >= 2) {
       Glob.settings.instrumentSet = Glob.tryParseInt(lines[3], 0);
-      Measures.measures = JSON.parse(lines[4]);
-    } else {
-      Measures.measures = JSON.parse(lines[3]);
+      measurePointer++;
     }
+    if (fileVersion >= 4) {
+      Glob.settings.reverbType = Glob.tryParseInt(lines[4], 3);
+      Glob.settings.reverbWet = Glob.tryParseInt(lines[5], 25);
+      measurePointer += 2;
+    }
+    Measures.measures = JSON.parse(lines[measurePointer]);
     Measures.addMissingProps();
     if (fileVersion >= 3) {
-      const instrumentSettings = JSON.parse(lines[5]);
+      const instrumentSettings = JSON.parse(lines[measurePointer + 1]);
       for (let i = 0; i < instrumentSettings.length; i++) {
         const settings = instrumentSettings[i];
         for (let j = 0; j < Instruments.instruments.length; j++) {
@@ -582,12 +599,19 @@ async function openTextFile() {
             instrument.volume = settings.volume;
             instrument.pitch = settings.pitch;
             instrument.pan = settings.pan;
+            if (fileVersion >= 4) {
+              instrument.reverb = settings.reverb;
+            }
           }
         }
       }
     }
-    document.getElementById("instrumentSetSelector").selectedIndex = Glob.settings.instrumentSet;
+    Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
     instrumentSetChanged();
+    Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+    reverbTypeChanged();
+    Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
+    reverbWetChanged();
     drawPattern();
     document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
     document.getElementById("tempoSlider").value = Glob.settings.tempo;
@@ -606,56 +630,65 @@ async function playInstrument(instrument, volumeFactor = 0.6) {
 
   url = instrument.file;
   if (url.length > 0) {
-    volume = Glob.settings.volume / 100;
-    humanizeVolumes = Glob.settings.humanizeVolumes / 10;
-    if (humanizeVolumes > 0) {
-      humanizeVolumeFactor = 1 + (0.5 * humanizeVolumes) - (Math.random() * humanizeVolumes);
+    const convolver = reverb.getConvolver();
+    if (convolver) {
+      volume = Glob.settings.volume / 100;
+      humanizeVolumes = Glob.settings.humanizeVolumes / 10;
+      if (humanizeVolumes > 0) {
+        humanizeVolumeFactor = 1 + (0.5 * humanizeVolumes) - (Math.random() * humanizeVolumes);
+      } else {
+        humanizeVolumeFactor = 1;
+      }
+      // Preload specific file if not cached
+      if (!Audio.audioCache.has(url)) {
+        await Audio.preloadAudioFiles([url]);
+      }
+
+      const audioCtx = Audio.audioContext;
+      if (audioCtx.state === "suspended") {
+        await audioCtx.resume();
+      }
+
+      const audioBuffer = Audio.getCachedAudioBuffer(url);
+      if (!audioBuffer) {
+        console.error('Audio buffer not found for URL:', url);
+        return;
+      }
+
+      const source = audioCtx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.playbackRate.value = Glob.percentToPitch(instrument.pitch);
+      const gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0.9 * volumeFactor * humanizeVolumeFactor * volume * (instrument.volume / 100);
+      pan = Glob.percentToPan(instrument.pan);
+      const stereoNode = new StereoPannerNode(audioCtx, { pan })
+      source.connect(gainNode);
+      gainNode.connect(stereoNode);
+      if (instrument.reverb) {
+        reverb.connectSource(stereoNode);
+      } else {
+        stereoNode.connect(audioCtx.destination);
+      }
+
+      source.onended = () => {
+        Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== source);
+        source.disconnect();
+        gainNode.disconnect();
+        stereoNode.disconnect();
+      };
+
+      source.start(0);
+      source.started = true;
+      if (url.toLowerCase().includes("open_hi-hat")) {
+        setTimeout(() => {
+          Glob.openHiHat.push({ source, gainNode });
+        }, 0);
+      }
+      if (url.toLowerCase().includes("closed_hi-hat") || url.toLowerCase().includes("pedal_hi-hat")) {
+        Instruments.stopOpenHiHat(0);
+      }
     } else {
-      humanizeVolumeFactor = 1;
-    }
-    // Preload specific file if not cached
-    if (!Audio.audioCache.has(url)) {
-      await Audio.preloadAudioFiles([url]);
-    }
-
-    const audioCtx = Audio.audioContext;
-    if (audioCtx.state === "suspended") {
-      await audioCtx.resume();
-    }
-
-    const audioBuffer = Audio.getCachedAudioBuffer(url);
-    if (!audioBuffer) {
-      console.error('Audio buffer not found for URL:', url);
-      return;
-    }
-
-    const source = audioCtx.createBufferSource();
-    source.buffer = audioBuffer;
-    source.playbackRate.value = Glob.percentToPitch(instrument.pitch);
-    const gainNode = audioCtx.createGain();
-    gainNode.gain.value = 0.9 * volumeFactor * humanizeVolumeFactor * volume * (instrument.volume / 100);
-    pan = Glob.percentToPan(instrument.pan);
-    const stereoNode = new StereoPannerNode(audioCtx, { pan })
-    source.connect(gainNode);
-    gainNode.connect(stereoNode);
-    stereoNode.connect(audioCtx.destination);
-
-    source.onended = () => {
-      Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== source);
-      source.disconnect();
-      gainNode.disconnect();
-      stereoNode.disconnect();
-    };
-
-    source.start(0);
-    source.started = true;
-    if (url.toLowerCase().includes("open_hi-hat")) {
-      setTimeout(() => {
-        Glob.openHiHat.push({ source, gainNode });
-      }, 0);
-    }
-    if (url.toLowerCase().includes("closed_hi-hat") || url.toLowerCase().includes("pedal_hi-hat")) {
-      Instruments.stopOpenHiHat(0);
+      alert(msgReverbNotLoaded);
     }
   }
 }
@@ -678,6 +711,11 @@ async function playPattern() {
   let volume = 0.75;
   const set = Glob.settings.instrumentSet;
 
+  const convolver = reverb.getConvolver();
+  if (!convolver) {
+    alert(msgReverbNotLoaded);
+    ok = false;
+  }
   if (Glob.playing || (Measures.measures.length === 0)) {
     ok = false;
   }
@@ -888,7 +926,11 @@ async function playPattern() {
               gainNode.gain.value = 0.9 * factor * humanizeVolumeFactor * volume * (instrument.volume / 100);
               source.connect(gainNode);
               gainNode.connect(stereoNode);
-              stereoNode.connect(audioCtx.destination);
+              if (instrument.reverb) {
+                reverb.connectSource(stereoNode);
+              } else {
+                stereoNode.connect(audioCtx.destination);
+              }
             }
 
             let ghostNotes = [];
@@ -921,7 +963,11 @@ async function playPattern() {
 
               ghostNotes[g].source.connect(ghostNotes[g].gainNode);
               ghostNotes[g].gainNode.connect(ghostNotes[g].stereoNode);
-              ghostNotes[g].stereoNode.connect(audioCtx.destination);
+              if (instrument.reverb) {
+                reverb.connectSource(ghostNotes[g].stereoNode);
+              } else {
+                ghostNotes[g].stereoNode.connect(audioCtx.destination);
+              }
               ghostNotes[g].source.started = false;
               ghostNotes[g].source.isGhostNote = true;
             }
@@ -1010,6 +1056,12 @@ async function playPattern() {
   drawPattern();
 }
 
+function reverbTypeChanged() {
+  Glob.settings.reverbType = Glob.tryParseInt(Glob.settings.reverbTypeSelector.value, 0);
+  const file = Reverb.indexToImpulseResponseUrl(Glob.settings.reverbType);
+  reverb.loadReverb(file);
+}
+
 function scheduleDraw(currentColumn = -1) {
   requestAnimationFrame(() => drawPattern(currentColumn));
 }
@@ -1017,6 +1069,26 @@ function scheduleDraw(currentColumn = -1) {
 function showSettingsClicked() {
   Glob.settings.showSettings = document.getElementById("showSettings").checked;
   scheduleDraw();
+}
+
+function setupGlobalAudioNodes(audioContext, convolver) {
+  if (!setupGlobalAudioNodes.sharedWetGain) {
+    setupGlobalAudioNodes.sharedWetGain = audioContext.createGain();
+    setupGlobalAudioNodes.sharedWetGain.gain.value = 1;
+    convolver.connect(setupGlobalAudioNodes.sharedWetGain);
+    setupGlobalAudioNodes.sharedWetGain.connect(audioContext.destination);
+  }
+
+  if (!setupGlobalAudioNodes.sharedDryGain) {
+    setupGlobalAudioNodes.sharedDryGain = audioContext.createGain();
+    setupGlobalAudioNodes.sharedDryGain.gain.value = 1;
+    setupGlobalAudioNodes.sharedDryGain.connect(audioContext.destination);
+  }
+
+  return {
+    dryGain: setupGlobalAudioNodes.sharedDryGain,
+    wetGain: setupGlobalAudioNodes.sharedWetGain
+  };
 }
 
 function stopSounds(mode = 0) {
@@ -1081,7 +1153,7 @@ function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
 
 
 async function saveTextFile() {
-  const fileVersion = 3;
+  const fileVersion = 4;
   let found = false;
   let saveMeasures = [];
   let saveSettings = [];
@@ -1100,6 +1172,8 @@ async function saveTextFile() {
     await writable.write(Glob.settings.measuresToPlay + "\n");
     await writable.write(Glob.settings.tempo.toString() + "\n");
     await writable.write(Glob.settings.instrumentSet.toString() + "\n");
+    await writable.write(Glob.settings.reverbType.toString() + "\n");
+    await writable.write(Glob.settings.reverbWet.toString() + "\n");
 
     // Compact saving
     for (let i = 0; i < Measures.measures.length; i++) {
@@ -1133,6 +1207,7 @@ async function saveTextFile() {
         property: instrument.property,
         mute: instrument.mute,
         solo: instrument.solo,
+        reverb: instrument.reverb,
         volume: instrument.volume,
         pitch: instrument.pitch,
         pan: instrument.pan
@@ -1185,8 +1260,10 @@ function patternClicked(event) {
   let inputStr = "";
   let param = "";
   let r = 0;
+  let txt = "";
   let userChoice = false;
   let value = 0;
+  let val_b = false;
 
   if (Glob.settings.showSettings) {
     dx = dx2;
@@ -1212,17 +1289,22 @@ function patternClicked(event) {
               Instruments.sets[Glob.settings.instrumentSet][r - 1].solo = !Instruments.sets[Glob.settings.instrumentSet][r - 1].solo;
               break;
             case 2:
+              if (!Glob.playing) {
+                Instruments.sets[Glob.settings.instrumentSet][r - 1].reverb = !Instruments.sets[Glob.settings.instrumentSet][r - 1].reverb;
+              }
+              break;
             case 3:
             case 4:
+            case 5:
               if (!Glob.playing) {
                 switch (c) {
-                  case 2:
+                  case 3:
                     param = "volume";
                     break;
-                  case 3:
+                  case 4:
                     param = "pitch";
                     break;
-                  case 4:
+                  case 5:
                     param = "pan";
                     break;
                   default:
@@ -1254,33 +1336,49 @@ function patternClicked(event) {
           switch (c) {
             case 0:
             case 1:
-              if (c === 0) {
-                param = "mute";
-              } else {
-                param = "solo";
+              case 2:
+                switch (c) {
+                case 0:
+                  param = "mute";
+                  val_b = false;
+                  txt = "Unmute all instruments in this set?";
+                  break;
+                case 1:
+                  param = "solo";
+                  val_b = false;
+                  txt = "Disable solo for all instruments in this set?";
+                  break;
+                  case 2:
+                    param = "reverb";
+                    val_b = true;
+                    txt = "Enable reverb for all instruments in this set?";
+                    break;
+                  default:
+                  param = "unknown";
+                  break;
               }
               if (!Glob.settings.expert) {
-                userChoice = window.confirm(`Un${param} all?`);
+                userChoice = window.confirm(txt);
               }
               if (userChoice || Glob.settings.expert) {
                 for (let i = 0; i < Instruments.sets[Glob.settings.instrumentSet].length; i++) {
-                  Instruments.sets[Glob.settings.instrumentSet][i][param] = false;
+                  Instruments.sets[Glob.settings.instrumentSet][i][param] = val_b;
                 }
               }
               break;
-            case 2:
             case 3:
             case 4:
+            case 5:
               switch (c) {
-                case 2:
+                case 3:
                   param = "volume";
                   inputDefault = 100;
                   break;
-                case 3:
+                case 4:
                   param = "pitch";
                   inputDefault = 50;
                   break;
-                case 4:
+                case 5:
                   param = "pan";
                   inputDefault = 50;
                   break;
@@ -1312,14 +1410,20 @@ function patternClicked(event) {
   }
 }
 
+function reverbWetChanged() {
+  Glob.settings.reverbWet = Glob.settings.reverbWetSlider.value;
+  Glob.settings.reverbWetValue.innerText = Glob.settings.reverbWet.toString();
+  reverb.setWet(Glob.settings.reverbWet);
+}
+
 function tempoChanged() {
   Glob.settings.tempo = Glob.settings.tempoSlider.value;
-  document.getElementById("tempoValue").innerText = Glob.settings.tempo.toString();
+  Glob.settings.tempoValue.innerText = Glob.settings.tempo.toString();
 }
 
 function volumeChanged() {
   Glob.settings.volume = Glob.settings.volumeSlider.value;
-  document.getElementById("volumeValue").innerText = Glob.settings.volume.toString();
+  Glob.settings.volumeValue.innerText = Glob.settings.volume.toString();
 }
 
 // To prevent error when using node
@@ -1327,12 +1431,17 @@ try {
   window.addEventListener("load", (e) => {
     if (Glob.settings === null) {
       Glob.settings = new Settings();
+      Glob.initSettings();
       //console.log("Settings loaded");
       Presets.fillRhythmSelect();
       document.getElementById("rhythmSelector").value = "Rock3";
       Measures.load("Rock3");
-      document.getElementById("instrumentSetSelector").selectedIndex = Glob.settings.instrumentSet;
+      Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
       instrumentSetChanged();
+      Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+      reverbTypeChanged();
+      Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
+      reverbWetChanged();
       document.getElementById("message").style.visibility = "hidden";
       document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
       document.getElementById("tempoSlider").value = Glob.settings.tempo;
@@ -1361,8 +1470,12 @@ try {
       }
       if (userChoice || Glob.settings.expert) {
         Measures.load(rhythm);
-        document.getElementById("instrumentSetSelector").selectedIndex = Glob.settings.instrumentSet;
+        Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
         instrumentSetChanged();
+        Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+        reverbTypeChanged();
+        Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
+        reverbWetChanged();
         tempoChanged();
         document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
         volumeChanged();
@@ -1379,9 +1492,7 @@ try {
         userChoice = window.confirm(`Do you want to create a new rhythm?`);
       }
       if (userChoice || Glob.settings.expert) {
-        Glob.currentMeasure = 0;
-        Glob.settings.instrumentSet = 0;
-        Glob.settings.measuresToPlay = "";
+        Glob.initSettings();
         Glob.settings.tempoSlider.value = 120;
         const measure1 = new Measure();
         measure1.beats = 4;
@@ -1389,8 +1500,12 @@ try {
         Measure.fixMeasure(measure1);
         Measures.measures = [];
         Measures.measures.push(measure1);
-        document.getElementById("instrumentSetSelector").selectedIndex = Glob.settings.instrumentSet;
+        Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
         instrumentSetChanged();
+        Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+        reverbTypeChanged();
+        Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
+        reverbWetChanged();
         tempoChanged();
         document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
         Instruments.initSettings();
@@ -1422,6 +1537,14 @@ try {
 
   document.getElementById("instrumentSetSelector").addEventListener("change", (e) => {
     instrumentSetChanged();
+  });
+
+  document.getElementById("reverbTypeSelector").addEventListener("change", (e) => {
+    reverbTypeChanged();
+  });
+
+  document.getElementById("reverbWetSlider").addEventListener("input", (e) => {
+    reverbWetChanged();
   });
 
   document.getElementById('measuresToPlayInput').addEventListener('input', function () {
@@ -1669,6 +1792,7 @@ try {
 
   Instruments.init();
   Audio.init();
+  reverb = new Reverb(Audio.audioContext, "wav/Reverb_Plate_2.wav");
 } catch (e) {
   if (typeof window !== 'undefined') {
     console.log(e);

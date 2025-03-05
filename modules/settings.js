@@ -6,6 +6,8 @@ class Settings {
     this.humanizeVolumes = 2; // 0 = No
     this.instrumentSet = 0; // 0 = Drums, 1 = Greek percussion
     this.instrumentSetSelector = document.getElementById("instrumentSetSelector");
+    this.reverbType = 3;
+    this.reverbTypeSelector = document.getElementById("reverbTypeSelector");
     this.loadRhythmButton = document.getElementById("loadRhythmButton");
     this.loop = document.getElementById("loop").checked;
     this.measuresToPlay = "";
@@ -13,12 +15,17 @@ class Settings {
     this.openButton = document.getElementById("openButton");
     this.overlay = document.getElementById("overlay");
     this.pattern = document.getElementById("pattern");
+    this.reverbWet = 25;
+    this.reverbWetSlider = document.getElementById("reverbWetSlider");
+    this.reverbWetValue = document.getElementById("reverbWetValue");
     this.saveButton = document.getElementById("saveButton");
     this.showSettings = document.getElementById("showSettings").checked;
     this.tempo = 120;
     this.tempoSlider = document.getElementById("tempoSlider");
+    this.tempoValue = document.getElementById("tempoValue");
     this.volume = 75;
     this.volumeSlider = document.getElementById("volumeSlider");
+    this.volumeValue = document.getElementById("volumeValue");
 
     this.previousMeasureButton = document.getElementById("previousMeasureButton");
     this.nextMeasureButton = document.getElementById("nextMeasureButton");

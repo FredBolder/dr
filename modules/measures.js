@@ -15,9 +15,7 @@ class Measures {
         let measure7 = [];
         let measure8 = [];
         this.measures = [];
-        Glob.currentMeasure = 0;
-        Glob.settings.instrumentSet = 0;
-        Glob.settings.measuresToPlay = "";
+        Glob.initSettings();
         switch (rhythm) {
             case "Disco1":
                 Glob.settings.tempoSlider.value = 130;

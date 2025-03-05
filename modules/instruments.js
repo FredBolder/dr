@@ -69,6 +69,7 @@ class Instruments {
     for (let i = 0; i < this.instruments.length; i++) {
       this.instruments[i].mute = false;
       this.instruments[i].solo = false;
+      this.instruments[i].reverb = true;
       this.instruments[i].volume = 100;
       this.instruments[i].pitch = 50; // 50 = original pitch, 0 = octave lower, 100 = octave higher
       this.instruments[i].pan = 50; // 50 = center, 0 = left, 1 = right
