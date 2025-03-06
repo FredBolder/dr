@@ -37,6 +37,24 @@ class Glob {
     return result;
   }
 
+  static indexToFilterType(idx) {
+    const filters = ["lowpass", "lowpass", "highpass", "bandpass", "notch"]; // When off set also to lowpass
+    let result = "";
+    if ((idx >= 0) && (idx < filters.length)) {
+      result = filters[idx];
+    }
+    return result;
+  }
+
+  static indexToFilterTypeText(idx) {
+    const filters = ["OFF", "LP", "HP", "BP"];
+    let result = "";
+    if ((idx >= 0) && (idx < filters.length)) {
+      result = filters[idx];
+    }
+    return result;
+  }
+
   static initSettings() {
     Glob.currentMeasure = 0;
     Glob.settings.measuresToPlay = "";
@@ -60,6 +78,14 @@ class Glob {
       }
     }
     return result;
+  }
+
+  static percentToFilterFreq(p) {
+    return (p / 100) * 5000 + 10;
+  }
+
+  static percentToFilterQ(percentage) {
+    return (percentage / 100) * 10 + 0.0001;
   }
 
   static percentToPan(percentage) {

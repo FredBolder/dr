@@ -80,6 +80,9 @@ class Instruments {
       this.instruments[i].volume = 100;
       this.instruments[i].pitch = 50; // 50 = original pitch, 0 = octave lower, 100 = octave higher
       this.instruments[i].pan = 50; // 50 = center, 0 = left, 1 = right
+      this.instruments[i].filterType = 0; // 0 = OFF, 1 = LP, 2 = HP, 3 = BP
+      this.instruments[i].filterFreq = 50;
+      this.instruments[i].filterQ = 0;
     }
   }
 
