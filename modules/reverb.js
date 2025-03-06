@@ -61,7 +61,8 @@ class Reverb {
 
     static indexToImpulseResponseUrl(n) {
         let files = ["Reverb_Hall_1", "Reverb_Hall_2", "Reverb_Plate_1", "Reverb_Plate_2", "Reverb_Room_1", "Reverb_Room_2", 
-            "Reverb_Spring_1", "Reverb_Spring_2"];
+            "Reverb_Spring_1", "Reverb_Spring_2", "Reverb_Church_1", "Reverb_Church_2", "Reverb_Digital_1", "Reverb_Digital_2",
+            "Reverb_Garage_1", "Reverb_Garage_2"];
         let result = "";
         if ((n >= 0) && (n < files.length)) {
             result = files[n];

@@ -10,6 +10,7 @@ class Settings {
     this.reverbTypeSelector = document.getElementById("reverbTypeSelector");
     this.loadRhythmButton = document.getElementById("loadRhythmButton");
     this.loop = document.getElementById("loop").checked;
+    this.message = document.getElementById("message");
     this.measuresToPlay = "";
     this.newButton = document.getElementById("newButton");
     this.openButton = document.getElementById("openButton");

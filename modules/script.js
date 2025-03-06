@@ -10,11 +10,13 @@ import { Test } from "./test.js";
 
 let activeSources = [];
 const labelWidth = 170;
+const msgCanNotChangeWhilePlaying = "This setting can not be changed while playing.";
+const msgInstrumentsNotLoaded = "The instruments are not loaded yet. Try again later.";
 const msgReverbNotLoaded = "Reverb is not loaded yet. Try again later.";
 let overlayContext;
 let patternContext;
 let reverb;
-const settingLabels = ["Mute", "Solo", "Reverb", "Volume", "Pitch", "Pan",];
+const settingLabels = ["Mute", "Solo", "Reverb", "Other", "Volume", "Pitch", "Pan",];
 
 Glob.init();
 
@@ -348,12 +350,19 @@ function drawPattern(currentColumn = -1) {
             text = Glob.boolToYesNo(set[i].reverb);
             break;
           case 3:
-            text = set[i].volume.toString();
+            if (set[i].file.includes(",")) {
+              text = Glob.boolToYesNo(set[i].other);
+            } else {
+              text = "-";
+            }
             break;
           case 4:
-            text = set[i].pitch.toString();
+            text = set[i].volume.toString();
             break;
           case 5:
+            text = set[i].pitch.toString();
+            break;
+          case 6:
             text = set[i].pan.toString();
             break;
           default:
@@ -551,6 +560,7 @@ async function openTextFile() {
   // 2 Instrument set added
   // 3 Mute, solo, volume, pitch and pan added
   // 4 Reverb added
+  // 5 Other (instrument) added
   let measurePointer = 0;
 
   try {
@@ -602,6 +612,9 @@ async function openTextFile() {
             if (fileVersion >= 4) {
               instrument.reverb = settings.reverb;
             }
+            if (fileVersion >= 5) {
+              instrument.other = settings.other;
+            }
           }
         }
       }
@@ -628,7 +641,7 @@ async function playInstrument(instrument, volumeFactor = 0.7) {
   let url = "";
   let volume = 75;
 
-  url = instrument.file;
+  url = Glob.getStringFromCommaDelimited(instrument.file, Glob.boolToInt(instrument.other));
   if (url.length > 0) {
     const convolver = reverb.getConvolver();
     if (convolver) {
@@ -716,6 +729,10 @@ async function playPattern() {
     alert(msgReverbNotLoaded);
     ok = false;
   }
+  if (!Audio.ready) {
+    alert(msgInstrumentsNotLoaded);
+    ok = false;
+  }
   if (Glob.playing || (Measures.measures.length === 0)) {
     ok = false;
   }
@@ -723,11 +740,6 @@ async function playPattern() {
     Glob.playing = true;
     disableWhilePlaying();
     odd = false;
-
-    // Check if all URLs are cached
-    if (!Instruments.fileNames.every(url => Audio.audioCache.has(url))) {
-      await Audio.preloadAudioFiles(Instruments.fileNames);
-    }
 
     const audioCtx = Audio.audioContext;
     //showMessage(audioCtx.state);
@@ -832,7 +844,8 @@ async function playPattern() {
             } else {
               pan = ((instrument.pan - 50) / 50);
             }
-            let url = instrument.file;
+            let url = Glob.getStringFromCommaDelimited(instrument.file, Glob.boolToInt(instrument.other));
+
             let cellValue = 0;
             if (j >= 0) {
               cellValue = Instruments.getCell(Glob.currentMeasure, j, idx);
@@ -1153,7 +1166,7 @@ function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
 
 
 async function saveTextFile() {
-  const fileVersion = 4;
+  const fileVersion = 5;
   let found = false;
   let saveMeasures = [];
   let saveSettings = [];
@@ -1208,6 +1221,7 @@ async function saveTextFile() {
         mute: instrument.mute,
         solo: instrument.solo,
         reverb: instrument.reverb,
+        other: instrument.other,
         volume: instrument.volume,
         pitch: instrument.pitch,
         pan: instrument.pan
@@ -1222,8 +1236,8 @@ async function saveTextFile() {
 }
 
 function showMessage(msg) {
-  document.getElementById("message").innerText = msg;
-  document.getElementById("message").style.visibility = "visible";
+  Glob.settings.message.innerText = msg;
+  Glob.settings.message.style.visibility = "visible";
 }
 
 function updateEndsWithFill() {
@@ -1291,20 +1305,30 @@ function patternClicked(event) {
             case 2:
               if (!Glob.playing) {
                 Instruments.sets[Glob.settings.instrumentSet][r - 1].reverb = !Instruments.sets[Glob.settings.instrumentSet][r - 1].reverb;
+              } else {
+                showMessage(msgCanNotChangeWhilePlaying);
               }
               break;
             case 3:
+              if (Instruments.sets[Glob.settings.instrumentSet][r - 1].file.includes(",")) {
+                Instruments.sets[Glob.settings.instrumentSet][r - 1].other = !Instruments.sets[Glob.settings.instrumentSet][r - 1].other;
+              } else {
+                showMessage("There is no other file for this instrument.");
+                Instruments.sets[Glob.settings.instrumentSet][r - 1].other = false;
+              }
+              break;
             case 4:
             case 5:
+            case 6:
               if (!Glob.playing) {
                 switch (c) {
-                  case 3:
+                  case 4:
                     param = "volume";
                     break;
-                  case 4:
+                  case 5:
                     param = "pitch";
                     break;
-                  case 5:
+                  case 6:
                     param = "pan";
                     break;
                   default:
@@ -1336,8 +1360,8 @@ function patternClicked(event) {
           switch (c) {
             case 0:
             case 1:
-              case 2:
-                switch (c) {
+            case 2:
+              switch (c) {
                 case 0:
                   param = "mute";
                   val_b = false;
@@ -1348,12 +1372,12 @@ function patternClicked(event) {
                   val_b = false;
                   txt = "Disable solo for all instruments in this set?";
                   break;
-                  case 2:
-                    param = "reverb";
-                    val_b = true;
-                    txt = "Enable reverb for all instruments in this set?";
-                    break;
-                  default:
+                case 2:
+                  param = "reverb";
+                  val_b = true;
+                  txt = "Enable reverb for all instruments in this set?";
+                  break;
+                default:
                   param = "unknown";
                   break;
               }
@@ -1366,19 +1390,19 @@ function patternClicked(event) {
                 }
               }
               break;
-            case 3:
             case 4:
             case 5:
+            case 6:
               switch (c) {
-                case 3:
+                case 4:
                   param = "volume";
                   inputDefault = 100;
                   break;
-                case 4:
+                case 5:
                   param = "pitch";
                   inputDefault = 50;
                   break;
-                case 5:
+                case 6:
                   param = "pan";
                   inputDefault = 50;
                   break;
@@ -1442,7 +1466,7 @@ try {
       reverbTypeChanged();
       Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
       reverbWetChanged();
-      document.getElementById("message").style.visibility = "hidden";
+      Glob.settings.message.style.visibility = "hidden";
       document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
       document.getElementById("tempoSlider").value = Glob.settings.tempo;
       fillPatternInstruments();
@@ -1479,7 +1503,6 @@ try {
         tempoChanged();
         document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
         volumeChanged();
-        Instruments.initSettings();
         drawPattern();
       }
     }
@@ -1736,7 +1759,8 @@ try {
   });
 
   document.getElementById("message").addEventListener("click", (e) => {
-    document.getElementById("message").style.visibility = "hidden";
+    Glob.settings.message.innerText = "";
+    Glob.settings.message.style.visibility = "hidden";
   });
 
   document.getElementById("applyPresetPatternButton").addEventListener("click", (e) => {

@@ -24,24 +24,30 @@ class Instruments {
       {name: "Chinese cymbal", file: "wav/Chinese_cymbal.wav", key: "Z", property: "chineseCymbal"},
       {name: "Splash cymbal", file: "wav/Splash_cymbal.wav", key: "T", property: "splashCymbal"},
       {name: "Ride bell", file: "wav/Ride_bell.wav", key: "I", property: "rideBell"},
-      {name: "Ride cymbal", file: "wav/Ride_cymbal.wav", key: "U", property: "rideCymbal"},
+      {name: "Ride cymbal", file: "wav/Ride_cymbal_1.wav, wav/Ride_cymbal_2.wav", key: "U", property: "rideCymbal"},
       {name: "Open hi-hat", file: "wav/Open_hi-hat.wav", key: "L", property: "openHiHat"},
       {name: "Closed hi-hat", file: "wav/Closed_hi-hat.wav", key: "J", property: "closedHiHat"},
-      {name: "High tom", file: "wav/High_tom.wav", key: "A", property: "highTom"},
-      {name: "Mid tom", file: "wav/Mid_tom.wav", key: "S", property: "midTom"},
-      {name: "Low tom", file: "wav/Low_tom.wav", key: "D", property: "lowTom"},
+      {name: "High tom", file: "wav/High_tom_1.wav, wav/High_tom_2.wav", key: "A", property: "highTom"},
+      {name: "Mid tom", file: "wav/Mid_tom_1.wav, wav/Mid_tom_2.wav", key: "S", property: "midTom"},
+      {name: "Low tom", file: "wav/Low_tom_1.wav, wav/Low_tom_2.wav", key: "D", property: "lowTom"},
       {name: "Sd (snrs off)", file: "wav/Sd_(snrs_off).wav", key: "M", property: "sdSnaresOff"},
       {name: "Rimshot", file: "wav/Rimshot.wav", key: "V", property: "rimshot"},
       {name: "Cross stick", file: "wav/Cross_stick.wav", key: "N", property: "crossStick"},
-      {name: "Snare drum", file: "wav/Snare_drum.wav", key: "B", property: "snareDrum"},
-      {name: "Bass drum", file: "wav/Bass_drum.wav", key: "C", property: "bassDrum"},
+      {name: "Snare drum", file: "wav/Snare_drum_1.wav, wav/Snare_drum_2.wav", key: "B", property: "snareDrum"},
+      {name: "Bass drum", file: "wav/Bass_drum_1.wav, wav/Bass_drum_2.wav", key: "C", property: "bassDrum"},
       {name: "Pedal hi-hat", file: "wav/Pedal_hi-hat.wav", key: "K", property: "pedalHiHat"},
     ];
     this.initSettings();
 
     this.fileNames = [];
     for (let i = 0; i < this.instruments.length; i++) {
-      this.fileNames.push(this.instruments[i].file);
+      const file = this.instruments[i].file;
+      if (file.includes(",")) {
+        this.fileNames.push(Glob.getStringFromCommaDelimited(file, 0));
+        this.fileNames.push(Glob.getStringFromCommaDelimited(file, 1));
+      } else {
+        this.fileNames.push(file);
+      }
     }
     this.sets = [];
     for (let i = 0; i < 2; i++) {
@@ -70,6 +76,7 @@ class Instruments {
       this.instruments[i].mute = false;
       this.instruments[i].solo = false;
       this.instruments[i].reverb = true;
+      this.instruments[i].other = false;
       this.instruments[i].volume = 100;
       this.instruments[i].pitch = 50; // 50 = original pitch, 0 = octave lower, 100 = octave higher
       this.instruments[i].pan = 50; // 50 = center, 0 = left, 1 = right
@@ -78,6 +85,16 @@ class Instruments {
 
   static getCell(m, c, r) {
     return Measures.measures[m][this.sets[Glob.settings.instrumentSet][r].property][c];
+  }
+
+  static getInstrumentByProp(prop) {
+    let result = null;
+    for (let i = 0; i < this.instruments.length; i++) {
+      if (this.instruments[i].property === prop) {
+        result = this.instruments[i];
+      }
+    }
+    return result;
   }
 
   static setCell(c, r, value) {

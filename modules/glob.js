@@ -28,6 +28,15 @@ class Glob {
     }
   }
 
+  static getStringFromCommaDelimited(s, idx) {
+    const arr = s.split(",");
+    let result = "";
+    if ((idx >= 0) && (idx < arr.length)) {
+      result = arr[idx].trim();
+    }
+    return result;
+  }
+
   static initSettings() {
     Glob.currentMeasure = 0;
     Glob.settings.measuresToPlay = "";

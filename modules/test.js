@@ -54,6 +54,30 @@ class Test {
         ok = this.test("calculateMeasureAndColumn 01E", JSON.stringify({ measure: 0, column: 2 }), JSON.stringify(result));
         if (!ok) allOk = false;
 
+        result = Glob.getStringFromCommaDelimited("Test 1, Test 2", 1);
+        ok = this.test("getStringFromCommaDelimited 01A", "Test 2", result);
+        if (!ok) allOk = false;
+
+        result = Glob.getStringFromCommaDelimited("ABCD, abcd", 0);
+        ok = this.test("getStringFromCommaDelimited 01B", "ABCD", result);
+        if (!ok) allOk = false;
+
+        result = Glob.getStringFromCommaDelimited("A,B,C,D,E", 3);
+        ok = this.test("getStringFromCommaDelimited 01C", "D", result);
+        if (!ok) allOk = false;
+
+        result = Glob.getStringFromCommaDelimited("test", 0);
+        ok = this.test("getStringFromCommaDelimited 01D", "test", result);
+        if (!ok) allOk = false;
+
+        result = Glob.getStringFromCommaDelimited("One, Two, Three", 3);
+        ok = this.test("getStringFromCommaDelimited 02A", "", result);
+        if (!ok) allOk = false;
+
+        result = Glob.getStringFromCommaDelimited("One, Two, Three", -1);
+        ok = this.test("getStringFromCommaDelimited 02B", "", result);
+        if (!ok) allOk = false;
+
         Measures.measures = JSON.parse(saveMeasures);
         if (allOk) {
             console.log("No problems");

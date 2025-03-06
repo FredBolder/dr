@@ -60,27 +60,6 @@
         </select>
       </div>
       <fieldset>
-        <legend>Reverb</legend>
-        <div id="reverbType">
-          <label for="reverbTypeSelector">Type</label>
-          <select name="reverbTypeSelector" id="reverbTypeSelector">
-            <option value="0">Hall 1</option>
-            <option value="1">Hall 2</option>
-            <option value="2">Plate 1</option>
-            <option value="3">Plate 2</option>
-            <option value="4">Room 1</option>
-            <option value="5">Room 2</option>
-            <option value="6">Spring 1</option>
-            <option value="7">Spring 2</option>
-          </select>
-        </div>
-        <div id="reverbWet">
-          <label for="reverbWetSlider">Wet %</label>
-          <input type="range" min="0" max="100" value="15" id="reverbWetSlider">
-          <div id="reverbWetValue"></div>
-        </div>
-      </fieldset>
-      <fieldset>
         <legend>Measures to play (empty=all)</legend>
         <div id="measuresToPlay">
           <input type="text" id="measuresToPlayInput" name="measuresToPlayInput" value="">
@@ -157,6 +136,33 @@
       <div id="measureEndsWithFill" class="checkboxGroup">
         <label for="endsWithFill">Ends with fill</label>
         <input type="checkbox" id="endsWithFill" name="endsWithFill">
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Reverb</legend>
+      <div id="reverbType">
+        <label for="reverbTypeSelector">Type</label>
+        <select name="reverbTypeSelector" id="reverbTypeSelector">
+          <option value="0">Hall 1</option>
+          <option value="1">Hall 2</option>
+          <option value="2">Plate 1</option>
+          <option value="3">Plate 2</option>
+          <option value="4">Room 1</option>
+          <option value="5">Room 2</option>
+          <option value="6">Spring 1</option>
+          <option value="7">Spring 2</option>
+          <option value="8">Church 1</option>
+          <option value="9">Church 2</option>
+          <option value="10">Digital 1</option>
+          <option value="11">Digital 2</option>
+          <option value="12">Garage 1</option>
+          <option value="13">Garage 2</option>
+        </select>
+      </div>
+      <div id="reverbWet">
+        <label for="reverbWetSlider">Wet %</label>
+        <input type="range" min="0" max="100" value="15" id="reverbWetSlider">
+        <div id="reverbWetValue"></div>
       </div>
     </fieldset>
     <fieldset>

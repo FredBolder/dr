@@ -16,6 +16,7 @@ class Measures {
         let measure8 = [];
         this.measures = [];
         Glob.initSettings();
+        Instruments.initSettings();
         switch (rhythm) {
             case "Disco1":
                 Glob.settings.tempoSlider.value = 130;
@@ -63,6 +64,7 @@ class Measures {
                 break;
             case "Metal2":
                 Glob.settings.tempoSlider.value = 130;
+                Instruments.getInstrumentByProp("bassDrum").other = true;
                 measure1 = new Measure();
                 measure1.beats = 4;
                 measure1.divisions = 4;
