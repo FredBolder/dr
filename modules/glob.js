@@ -85,7 +85,7 @@ class Glob {
   }
 
   static percentToFilterQ(percentage) {
-    return (percentage / 100) * 10 + 0.0001;
+    return (percentage / 100) * 50 + 1;
   }
 
   static percentToPan(percentage) {

@@ -813,6 +813,14 @@ async function playPattern() {
       biquadFilters[idx].type = Glob.indexToFilterType(instrument.filterType);
       biquadFilters[idx].frequency.value = Glob.percentToFilterFreq(instrument.filterFreq);
       biquadFilters[idx].Q.value = Glob.percentToFilterQ(instrument.filterQ);
+      if (instrument.filterType > 0) {
+        biquadFilters[idx].connect(stereoNodes[idx]);
+      }
+      if (instrument.reverb) {
+        reverb.connectSource(stereoNodes[idx]);
+      } else {
+        stereoNodes[idx].connect(audioCtx.destination);
+      }
     });
 
     first = true;
@@ -975,14 +983,8 @@ async function playPattern() {
               source.connect(gainNode);
               if (instrument.filterType > 0) {
                 gainNode.connect(biquadFilter);
-                biquadFilter.connect(stereoNode);
               } else {
                 gainNode.connect(stereoNode);
-              }
-              if (instrument.reverb) {
-                reverb.connectSource(stereoNode);
-              } else {
-                stereoNode.connect(audioCtx.destination);
               }
             }
 
@@ -1017,14 +1019,8 @@ async function playPattern() {
               ghostNotes[g].source.connect(ghostNotes[g].gainNode);
               if (instrument.filterType > 0) {
                 ghostNotes[g].gainNode.connect(ghostNotes[g].biquadFilter);
-                ghostNotes[g].biquadFilter.connect(ghostNotes[g].stereoNode);
               } else {
                 ghostNotes[g].gainNode.connect(ghostNotes[g].stereoNode);
-              }
-              if (instrument.reverb) {
-                reverb.connectSource(ghostNotes[g].stereoNode);
-              } else {
-                ghostNotes[g].stereoNode.connect(audioCtx.destination);
               }
               ghostNotes[g].source.started = false;
               ghostNotes[g].source.isGhostNote = true;
