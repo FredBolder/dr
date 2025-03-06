@@ -16,7 +16,7 @@ const msgReverbNotLoaded = "Reverb is not loaded yet. Try again later.";
 let overlayContext;
 let patternContext;
 let reverb;
-const settingLabels = ["Mute", "Solo", "Reverb", "Other", "Volume", "Pitch", "Pan",];
+const settingLabels = ["Mute", "Solo", "Reverb", "Other sound", "Volume", "Pitch", "Pan",];
 
 Glob.init();
 

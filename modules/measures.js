@@ -88,6 +88,7 @@ class Measures {
                 break;
             case "Rock2":
                 Glob.settings.tempoSlider.value = 120;
+                Instruments.getInstrumentByProp("snareDrum").other = true;
                 measure1 = new Measure();
                 measure1.beats = 4;
                 measure1.divisions = 2;
@@ -647,6 +648,7 @@ class Measures {
                 break;
             case "Roumba1":
                 Glob.settings.tempoSlider.value = 100;
+                Instruments.getInstrumentByProp("snareDrum").other = true;
                 measure1 = new Measure();
                 measure1.beats = 2;
                 measure1.divisions = 4;
@@ -842,6 +844,7 @@ class Measures {
                 break;
             case "Tsifteteli2":
                 Glob.settings.tempoSlider.value = 120;
+                Instruments.getInstrumentByProp("snareDrum").other = true;
                 measure1 = new Measure();
                 measure1.beats = 4;
                 measure1.divisions = 4;
