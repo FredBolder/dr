@@ -1094,7 +1094,6 @@ async function preprocessInstrument(instrument) {
   //let cachedBuffer = Audio.getProcessedAudioBuffer(url);
   //if (cachedBuffer) return cachedBuffer;
 
-  // Load the original buffer
   if (!Audio.audioCache.has(url)) {
     await Audio.preloadAudioFiles([url]);
   }
@@ -1104,7 +1103,6 @@ async function preprocessInstrument(instrument) {
     return null;
   }
 
-  // Process using OfflineAudioContext
   const offlineCtx = new OfflineAudioContext(
     originalBuffer.numberOfChannels,
     originalBuffer.length,
@@ -1134,7 +1132,6 @@ async function preprocessInstrument(instrument) {
   lastNode.connect(offlineCtx.destination);
   source.start();
 
-  // Render and store in cache
   const processedBuffer = await offlineCtx.startRendering();
   Audio.storeProcessedAudioBuffer(url, processedBuffer);
 
@@ -1196,37 +1193,28 @@ function stopSounds(mode = 0) {
       }
     }
   });
-  activeSources.length = 0; // Reset after stopping
+  activeSources.length = 0;
 }
 
 function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
   const ratio = window.devicePixelRatio || 1;
-
-  // Desired display size based on updated column/row values
   const displayWidth = labelWidth + (columns * dx1);
   const displayHeight = (rows + 1) * dy1;
 
-  // Check if style dimensions need an update
   if (pattern.style.width !== `${displayWidth}px` || pattern.style.height !== `${displayHeight}px`) {
     pattern.style.width = `${displayWidth}px`;
     pattern.style.height = `${displayHeight}px`;
   }
 
-  // Use getBoundingClientRect AFTER updating style to get the latest size
   const rect = pattern.getBoundingClientRect();
   const desiredCanvasWidth = rect.width * ratio;
   const desiredCanvasHeight = rect.height * ratio;
 
-  // Only resize drawing buffer if needed
   if (pattern.width !== desiredCanvasWidth || pattern.height !== desiredCanvasHeight) {
     pattern.width = desiredCanvasWidth;
     pattern.height = desiredCanvasHeight;
-
-    // Re-fetch and rescale context after resizing
     patternContext = pattern.getContext('2d');
     patternContext.scale(ratio, ratio);
-
-    // Update the overlay
     overlay.width = desiredCanvasWidth;
     overlay.height = desiredCanvasHeight;
     overlay.style.width = pattern.style.width;
