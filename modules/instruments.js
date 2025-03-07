@@ -75,7 +75,6 @@ class Instruments {
     for (let i = 0; i < this.instruments.length; i++) {
       this.instruments[i].mute = false;
       this.instruments[i].solo = false;
-      this.instruments[i].reverb = true;
       this.instruments[i].other = false;
       this.instruments[i].volume = 100;
       this.instruments[i].pitch = 50; // 50 = original pitch, 0 = octave lower, 100 = octave higher
@@ -83,6 +82,8 @@ class Instruments {
       this.instruments[i].filterType = 0; // 0 = OFF, 1 = LP, 2 = HP, 3 = BP
       this.instruments[i].filterFreq = 50;
       this.instruments[i].filterQ = 0;
+      this.instruments[i].distortion = 0;
+      this.instruments[i].reverb = true;
     }
   }
 

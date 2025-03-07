@@ -1,11 +1,12 @@
-import { Glob } from "./glob.js";
-import { Settings } from "./settings.js";
 import { Audio } from "./audio.js";
+import { Distortion } from "./distortion.js";
+import { Glob } from "./glob.js";
 import { Instruments } from "./instruments.js";
 import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
 import { Presets } from "./presets.js";
 import { Reverb } from "./reverb.js";
+import { Settings } from "./settings.js";
 import { Test } from "./test.js";
 
 let activeSources = [];
@@ -16,7 +17,7 @@ const msgReverbNotLoaded = "Reverb is not loaded yet. Try again later.";
 let overlayContext;
 let patternContext;
 let reverb;
-const settingLabels = ["Mute", "Solo", "Reverb", "Other sound", "Volume", "Pitch", "Pan", "Filter", "Filter freq", "Filter Q"];
+const settingLabels = ["Mute", "Solo", "Other sound", "Volume", "Pitch", "Pan", "Filter", "Filter freq", "Filter Q", "Distortion", "Reverb"];
 
 Glob.init();
 
@@ -347,32 +348,35 @@ function drawPattern(currentColumn = -1) {
             text = Glob.boolToYesNo(set[i].solo);
             break;
           case 2:
-            text = Glob.boolToYesNo(set[i].reverb);
-            break;
-          case 3:
             if (set[i].file.includes(",")) {
               text = Glob.boolToYesNo(set[i].other);
             } else {
               text = "-";
             }
             break;
-          case 4:
+          case 3:
             text = set[i].volume.toString();
             break;
-          case 5:
+          case 4:
             text = set[i].pitch.toString();
             break;
-          case 6:
+          case 5:
             text = set[i].pan.toString();
             break;
-          case 7:
+          case 6:
             text = Glob.indexToFilterTypeText(set[i].filterType);
             break;
-          case 8:
+          case 7:
             text = set[i].filterFreq.toString();
             break;
-          case 9:
+          case 8:
             text = set[i].filterQ.toString();
+            break;
+          case 9:
+            text = Distortion.intToDistortion(set[i].distortion);
+            break;
+          case 10:
+            text = Glob.boolToYesNo(set[i].reverb);
             break;
           default:
             text = "?";
@@ -571,6 +575,7 @@ async function openTextFile() {
   // 4 Reverb added
   // 5 Other (instrument) added
   // 6 FilterType, FilterFreq and FilterQ added
+  // 7 Distortion added
   let measurePointer = 0;
 
   try {
@@ -630,6 +635,9 @@ async function openTextFile() {
               instrument.filterFreq = settings.filterFreq;
               instrument.filterQ = settings.filterQ;
             }
+            if (fileVersion >= 7) {
+              instrument.distortion = settings.distortion;
+            }
           }
         }
       }
@@ -677,7 +685,8 @@ async function playInstrument(instrument, volumeFactor = 0.7) {
         await audioCtx.resume();
       }
 
-      const audioBuffer = Audio.getCachedAudioBuffer(url);
+      //const audioBuffer = Audio.getCachedAudioBuffer(url);
+      const audioBuffer = await preprocessInstrument(instrument);
       if (!audioBuffer) {
         console.error('Audio buffer not found for URL:', url);
         return;
@@ -691,17 +700,7 @@ async function playInstrument(instrument, volumeFactor = 0.7) {
       pan = Glob.percentToPan(instrument.pan);
       const stereoNode = new StereoPannerNode(audioCtx, { pan })
       source.connect(gainNode);
-      let biquadFilter;
-      if (instrument.filterType > 0) {
-        biquadFilter = audioCtx.createBiquadFilter();
-        biquadFilter.type = Glob.indexToFilterType(instrument.filterType);
-        biquadFilter.frequency.value = Glob.percentToFilterFreq(instrument.filterFreq);
-        biquadFilter.Q.value = Glob.percentToFilterQ(instrument.filterQ);
-        gainNode.connect(biquadFilter);
-        biquadFilter.connect(stereoNode);
-      } else {
-        gainNode.connect(stereoNode);
-      }
+      gainNode.connect(stereoNode);
       if (instrument.reverb) {
         reverb.connectSource(stereoNode);
       } else {
@@ -713,9 +712,6 @@ async function playInstrument(instrument, volumeFactor = 0.7) {
         source.disconnect();
         gainNode.disconnect();
         stereoNode.disconnect();
-        if (biquadFilter) {
-          biquadFilter.disconnect();
-        }
       };
 
       source.start(0);
@@ -735,6 +731,7 @@ async function playInstrument(instrument, volumeFactor = 0.7) {
 }
 
 async function playPattern() {
+  let audioBuffers = [];
   let currentTempo = 0;
   let factor = 1;
   let first = true;
@@ -803,19 +800,14 @@ async function playPattern() {
       return totalTime;
     };
 
-    const stereoNodes = [];
-    const biquadFilters = [];
+    const audioBuffers = await Promise.all(
+      Instruments.sets[set].map((instrument) => preprocessInstrument(instrument))
+    );
 
+    const stereoNodes = [];
     Instruments.sets[set].forEach((instrument, idx) => {
       const pan = Glob.percentToPan(instrument.pan);
       stereoNodes.push(new StereoPannerNode(audioCtx, { pan }));
-      biquadFilters.push(audioCtx.createBiquadFilter());
-      biquadFilters[idx].type = Glob.indexToFilterType(instrument.filterType);
-      biquadFilters[idx].frequency.value = Glob.percentToFilterFreq(instrument.filterFreq);
-      biquadFilters[idx].Q.value = Glob.percentToFilterQ(instrument.filterQ);
-      if (instrument.filterType > 0) {
-        biquadFilters[idx].connect(stereoNodes[idx]);
-      }
       if (instrument.reverb) {
         reverb.connectSource(stereoNodes[idx]);
       } else {
@@ -878,13 +870,6 @@ async function playPattern() {
             if (!play) return;
 
             let pitch = Glob.percentToPitch(instrument.pitch);
-
-            let pan = 0;
-            if (instrument.pan < 50) {
-              pan = -((50 - instrument.pan) / 50);
-            } else {
-              pan = ((instrument.pan - 50) / 50);
-            }
             let url = Glob.getStringFromCommaDelimited(instrument.file, Glob.boolToInt(instrument.other));
 
             let cellValue = 0;
@@ -913,10 +898,9 @@ async function playPattern() {
 
             if ((cellValue === 0) && (cellValueFlam !== 6) && (cellValueFlam !== 14) && (cellValueFlam !== 15)) return;
 
-            const audioBuffer = Audio.getCachedAudioBuffer(url);
+            const audioBuffer = audioBuffers[idx];
             let source;
             let gainNode;
-            let biquadFilter;
             let stereoNode;
 
             if (cellValue > 0) {
@@ -926,7 +910,6 @@ async function playPattern() {
               source.isGhostNote = false;
               source.buffer = audioBuffer;
               gainNode = audioCtx.createGain();
-              biquadFilter = biquadFilters[idx];
               stereoNode = stereoNodes[idx];
 
               switch (cellValue) {
@@ -981,11 +964,8 @@ async function playPattern() {
             if (cellValue > 0) {
               gainNode.gain.value = factor * humanizeVolumeFactor * volume * (instrument.volume / 100);
               source.connect(gainNode);
-              if (instrument.filterType > 0) {
-                gainNode.connect(biquadFilter);
-              } else {
-                gainNode.connect(stereoNode);
-              }
+              // ERROR: Uncaught (in promise) TypeError: Failed to execute 'connect' on 'AudioNode': Overload resolution failed.
+              gainNode.connect(stereoNode);
             }
 
             let ghostNotes = [];
@@ -1011,17 +991,13 @@ async function playPattern() {
             }
 
             for (let g = 0; g < numberOfGhostNotes; g++) {
-              ghostNotes.push({ source: audioCtx.createBufferSource(), gainNode: audioCtx.createGain(), stereoNode: stereoNodes[idx], biquadFilter: biquadFilters[idx] });
+              ghostNotes.push({ source: audioCtx.createBufferSource(), gainNode: audioCtx.createGain(), stereoNode: stereoNodes[idx] });
               ghostNotes[g].source.buffer = audioBuffer;
               ghostNotes[g].gainNode.gain.value = 0.5 * humanizeVolumeFactor * volume * (instrument.volume / 100);
               ghostNotes[g].source.playbackRate.value = pitch;
 
               ghostNotes[g].source.connect(ghostNotes[g].gainNode);
-              if (instrument.filterType > 0) {
-                ghostNotes[g].gainNode.connect(ghostNotes[g].biquadFilter);
-              } else {
-                ghostNotes[g].gainNode.connect(ghostNotes[g].stereoNode);
-              }
+              ghostNotes[g].gainNode.connect(ghostNotes[g].stereoNode);
               ghostNotes[g].source.started = false;
               ghostNotes[g].source.isGhostNote = true;
             }
@@ -1103,13 +1079,68 @@ async function playPattern() {
       first = false;
     }
     stereoNodes.forEach(node => node.disconnect());
-    biquadFilters.forEach(node => node.disconnect());
   }
   Glob.playing = false;
   disableWhilePlaying();
   Glob.stop = false;
   drawPattern();
 }
+
+async function preprocessInstrument(instrument) {
+  let url = Glob.getStringFromCommaDelimited(instrument.file, Glob.boolToInt(instrument.other));
+  if (!url.length) return null;
+
+  // Check if already processed
+  //let cachedBuffer = Audio.getProcessedAudioBuffer(url);
+  //if (cachedBuffer) return cachedBuffer;
+
+  // Load the original buffer
+  if (!Audio.audioCache.has(url)) {
+    await Audio.preloadAudioFiles([url]);
+  }
+  const originalBuffer = Audio.getCachedAudioBuffer(url);
+  if (!originalBuffer) {
+    console.error('Audio buffer not found for URL:', url);
+    return null;
+  }
+
+  // Process using OfflineAudioContext
+  const offlineCtx = new OfflineAudioContext(
+    originalBuffer.numberOfChannels,
+    originalBuffer.length,
+    originalBuffer.sampleRate
+  );
+
+  const source = offlineCtx.createBufferSource();
+  source.buffer = originalBuffer;
+
+  let lastNode = source;
+  if (instrument.distortion > 0) {
+    const distortion = offlineCtx.createWaveShaper();
+    distortion.curve = Distortion.curves[instrument.distortion - 1];
+    distortion.oversample = "4x";
+    lastNode.connect(distortion);
+    lastNode = distortion;
+  }
+  if (instrument.filterType > 0) {
+    const filter = offlineCtx.createBiquadFilter();
+    filter.type = Glob.indexToFilterType(instrument.filterType);
+    filter.frequency.value = Glob.percentToFilterFreq(instrument.filterFreq);
+    filter.Q.value = Glob.percentToFilterQ(instrument.filterQ);
+    lastNode.connect(filter);
+    lastNode = filter;
+  }
+
+  lastNode.connect(offlineCtx.destination);
+  source.start();
+
+  // Render and store in cache
+  const processedBuffer = await offlineCtx.startRendering();
+  Audio.storeProcessedAudioBuffer(url, processedBuffer);
+
+  return processedBuffer;
+}
+
 
 function reverbTypeChanged() {
   Glob.settings.reverbType = Glob.tryParseInt(Glob.settings.reverbTypeSelector.value, 0);
@@ -1208,7 +1239,7 @@ function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
 
 
 async function saveTextFile() {
-  const fileVersion = 6;
+  const fileVersion = 7;
   let found = false;
   let saveMeasures = [];
   let saveSettings = [];
@@ -1262,14 +1293,15 @@ async function saveTextFile() {
         property: instrument.property,
         mute: instrument.mute,
         solo: instrument.solo,
-        reverb: instrument.reverb,
         other: instrument.other,
         volume: instrument.volume,
         pitch: instrument.pitch,
         pan: instrument.pan,
         filterType: instrument.filterType,
         filterFreq: instrument.filterFreq,
-        filterQ: instrument.filterQ
+        filterQ: instrument.filterQ,
+        distortion: instrument.distortion,
+        reverb: instrument.reverb
       };
       saveSettings.push(instrumentSettings);
     }
@@ -1347,22 +1379,38 @@ function patternClicked(event) {
             case 1:
               Instruments.sets[Glob.settings.instrumentSet][r - 1].solo = !Instruments.sets[Glob.settings.instrumentSet][r - 1].solo;
               break;
-            case 2:
+            case 9:
+              if (!Glob.playing) {
+                value = Instruments.sets[Glob.settings.instrumentSet][r - 1].distortion;
+                value++;
+                if (value > Distortion.curves.length) {
+                  value = 0;
+                }
+                Instruments.sets[Glob.settings.instrumentSet][r - 1].distortion = value;
+              } else {
+                showMessage(msgCanNotChangeWhilePlaying);
+              }
+              break;
+            case 10:
               if (!Glob.playing) {
                 Instruments.sets[Glob.settings.instrumentSet][r - 1].reverb = !Instruments.sets[Glob.settings.instrumentSet][r - 1].reverb;
               } else {
                 showMessage(msgCanNotChangeWhilePlaying);
               }
               break;
-            case 3:
+            case 2:
               if (Instruments.sets[Glob.settings.instrumentSet][r - 1].file.includes(",")) {
-                Instruments.sets[Glob.settings.instrumentSet][r - 1].other = !Instruments.sets[Glob.settings.instrumentSet][r - 1].other;
+                if (!Glob.playing) {
+                  Instruments.sets[Glob.settings.instrumentSet][r - 1].other = !Instruments.sets[Glob.settings.instrumentSet][r - 1].other;
+                } else {
+                  showMessage(msgCanNotChangeWhilePlaying);
+                }
               } else {
                 showMessage("There is no other file for this instrument.");
                 Instruments.sets[Glob.settings.instrumentSet][r - 1].other = false;
               }
               break;
-            case 7:
+            case 6:
               if (!Glob.playing) {
                 value = Instruments.sets[Glob.settings.instrumentSet][r - 1].filterType;
                 value++;
@@ -1374,30 +1422,30 @@ function patternClicked(event) {
                 showMessage(msgCanNotChangeWhilePlaying);
               }
               break;
+            case 3:
             case 4:
             case 5:
-            case 6:
+            case 7:
             case 8:
-            case 9:
               if (!Glob.playing) {
                 switch (c) {
-                  case 4:
+                  case 3:
                     param = "volume";
                     txt = "volume percentage";
                     break;
-                  case 5:
+                  case 4:
                     param = "pitch";
                     txt = "pitch percentage";
                     break;
-                  case 6:
+                  case 5:
                     param = "pan";
                     txt = "pan percentage (50% = center)";
                     break;
-                  case 8:
+                  case 7:
                     param = "filterFreq";
                     txt = "filter frequency percentage";
                     break;
-                  case 9:
+                  case 8:
                     param = "filterQ";
                     txt = "filter Q percentage";
                     break;
@@ -1414,6 +1462,8 @@ function patternClicked(event) {
                     Instruments.sets[Glob.settings.instrumentSet][r - 1][param] = value;
                   }
                 }
+              } else {
+                showMessage(msgCanNotChangeWhilePlaying);
               }
               break;
             default:
@@ -1427,101 +1477,112 @@ function patternClicked(event) {
           }
         }
       } else {
-        if (!Glob.playing && Glob.settings.showSettings) {
-          switch (c) {
-            case 0:
-            case 1:
-            case 2:
-            case 7:
-              switch (c) {
-                case 0:
-                  param = "mute";
-                  val_b = false;
-                  txt = "Unmute all instruments in this set?";
-                  break;
-                case 1:
-                  param = "solo";
-                  val_b = false;
-                  txt = "Disable solo for all instruments in this set?";
-                  break;
-                case 2:
-                  param = "reverb";
-                  val_b = true;
-                  txt = "Enable reverb for all instruments in this set?";
-                  break;
-                case 7:
-                  param = "filterType";
-                  val_b = false;
-                  value = 0;
-                  txt = "Disable filter for all instruments in this set?";
-                  break;
-                default:
-                  param = "unknown";
-                  txt = "?";
-                  break;
-              }
-              if (!Glob.settings.expert) {
-                userChoice = window.confirm(txt);
-              }
-              if (userChoice || Glob.settings.expert) {
-                for (let i = 0; i < Instruments.sets[Glob.settings.instrumentSet].length; i++) {
-                  if (c === 7) {
-                    Instruments.sets[Glob.settings.instrumentSet][i][param] = value;
-                  } else {
-                    Instruments.sets[Glob.settings.instrumentSet][i][param] = val_b;
-                  }
+        if (Glob.settings.showSettings) {
+          if (!Glob.playing) {
+            switch (c) {
+              case 0:
+              case 1:
+              case 6:
+              case 9:
+              case 10:
+                switch (c) {
+                  case 0:
+                    param = "mute";
+                    val_b = false;
+                    txt = "Unmute all instruments in this set?";
+                    break;
+                  case 1:
+                    param = "solo";
+                    val_b = false;
+                    txt = "Disable solo for all instruments in this set?";
+                    break;
+                  case 6:
+                    param = "filterType";
+                    val_b = false;
+                    value = 0;
+                    txt = "Disable filter for all instruments in this set?";
+                    break;
+                  case 9:
+                    param = "distortion";
+                    val_b = false;
+                    value = 0;
+                    txt = "Disable distortion for all instruments in this set?";
+                    break;
+                  case 10:
+                    param = "reverb";
+                    val_b = true;
+                    txt = "Enable reverb for all instruments in this set?";
+                    break;
+                  default:
+                    param = "unknown";
+                    txt = "?";
+                    break;
                 }
-              }
-              break;
-            case 4:
-            case 5:
-            case 6:
-            case 8:
-            case 9:
-              switch (c) {
-                case 4:
-                  param = "volume";
-                  inputDefault = 100;
-                  txt = "volume percentage";
-                  break;
-                case 5:
-                  param = "pitch";
-                  inputDefault = 50;
-                  txt = "pitch percentage";
-                  break;
-                case 6:
-                  param = "pan";
-                  inputDefault = 50;
-                  txt = "pan percentage (50% = center)";
-                  break;
-                case 8:
-                  param = "filterFreq";
-                  inputDefault = 50;
-                  txt = "filter frequency percentage";
-                  break;
-                case 9:
-                  param = "filterQ";
-                  inputDefault = 0;
-                  txt = "filter Q percentage";
-                  break;
-                default:
-                  param = "unknown";
-                  inputDefault = 0;
-                  txt = "?";
-                  break;
-              }
-              inputStr = prompt(`Enter new ${txt} for all instruments in this set`, inputDefault.toString());
-              if (inputStr !== null) {
-                value = Glob.tryParseInt(inputStr, inputDefault);
-                if ((value >= 0) && (value <= 100)) {
+                if (!Glob.settings.expert) {
+                  userChoice = window.confirm(txt);
+                }
+                if (userChoice || Glob.settings.expert) {
                   for (let i = 0; i < Instruments.sets[Glob.settings.instrumentSet].length; i++) {
-                    Instruments.sets[Glob.settings.instrumentSet][i][param] = value;
+                    if ((c === 6) || (c == 9)) {
+                      Instruments.sets[Glob.settings.instrumentSet][i][param] = value;
+                    } else {
+                      Instruments.sets[Glob.settings.instrumentSet][i][param] = val_b;
+                    }
                   }
                 }
-              }
-              break;
-            default:
-              break;
+                break;
+              case 3:
+              case 4:
+              case 5:
+              case 7:
+              case 8:
+                switch (c) {
+                  case 3:
+                    param = "volume";
+                    inputDefault = 100;
+                    txt = "volume percentage";
+                    break;
+                  case 4:
+                    param = "pitch";
+                    inputDefault = 50;
+                    txt = "pitch percentage";
+                    break;
+                  case 5:
+                    param = "pan";
+                    inputDefault = 50;
+                    txt = "pan percentage (50% = center)";
+                    break;
+                  case 7:
+                    param = "filterFreq";
+                    inputDefault = 50;
+                    txt = "filter frequency percentage";
+                    break;
+                  case 8:
+                    param = "filterQ";
+                    inputDefault = 0;
+                    txt = "filter Q percentage";
+                    break;
+                  default:
+                    param = "unknown";
+                    inputDefault = 0;
+                    txt = "?";
+                    break;
+                }
+                inputStr = prompt(`Enter new ${txt} for all instruments in this set`, inputDefault.toString());
+                if (inputStr !== null) {
+                  value = Glob.tryParseInt(inputStr, inputDefault);
+                  if ((value >= 0) && (value <= 100)) {
+                    for (let i = 0; i < Instruments.sets[Glob.settings.instrumentSet].length; i++) {
+                      Instruments.sets[Glob.settings.instrumentSet][i][param] = value;
+                    }
+                  }
+                }
+                break;
+              default:
+                break;
+            }
+          } else {
+            showMessage(msgCanNotChangeWhilePlaying);
           }
         }
       }
@@ -1915,6 +1976,7 @@ try {
 
   Instruments.init();
   Audio.init();
+  Distortion.init();
   reverb = new Reverb(Audio.audioContext, "wav/Reverb_Plate_2.wav");
 } catch (e) {
   if (typeof window !== 'undefined') {

@@ -94,3 +94,8 @@ fieldset {
     margin-bottom: 1em;
 }
 
+#curve {
+    width: 250px;
+    height: 250px;
+}
+
