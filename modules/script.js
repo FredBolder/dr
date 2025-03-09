@@ -268,11 +268,12 @@ function drawPads() {
   const pads = Glob.settings.canvasPlayScreen;
   const ratio = window.devicePixelRatio || 1;
   const padsContext = pads.getContext('2d');
+  const availableHeight = window.innerHeight * 0.9;
 
   //updateCanvasPlayScreenSize();
 
   pads.style.width = "100%";
-  pads.style.height = "90vh";
+  pads.style.height = availableHeight + "px";
 
   // Get actual size of the canvas
   const rect = pads.getBoundingClientRect();
@@ -1757,10 +1758,11 @@ function updateCanvasPlayScreenSize() {
   const pads = Glob.settings.canvasPlayScreen;
   const ratio = window.devicePixelRatio || 1;
   const padsContext = pads.getContext('2d');
+  const availableHeight = window.innerHeight * 0.9;
 
   // Set the canvas size to max
   pads.style.width = "100%";
-  pads.style.height = "90vh";
+  pads.style.height = availableHeight + "px";
 
   // Get actual size of the canvas
   const rect = pads.getBoundingClientRect();
