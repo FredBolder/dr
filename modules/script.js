@@ -292,6 +292,13 @@ function drawPads() {
 
   rows = 2;
   columns = 5;
+  if (logicalWidth > logicalHeight) {
+    rows = 2;
+    columns = 5;
+  } else{
+    rows = 5;
+    columns = 2;
+  }
   w = logicalWidth / columns;
   h = logicalHeight / rows;
   fontSize = h * 0.25;
@@ -1444,12 +1451,21 @@ function humanizeVolumesChanged() {
 }
 
 function padClicked(event) {
+  let columns = 0;
+  let rows = 0;
   const pads = Glob.settings.canvasPlayScreen;
   const rect = pads.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
-  const rows = 2;
-  const columns = 5;
+
+  if (rect.width > rect.height) {
+    rows = 2;
+    columns = 5;
+  } else{
+    rows = 5;
+    columns = 2;
+  }
+  
   const w = rect.width / columns;
   const h = rect.height / rows;
   const c = Math.trunc(x / w);
@@ -1895,7 +1911,8 @@ try {
     Glob.settings.playScreen.style.display = "none";
   });
 
-  document.getElementById("canvasPlayScreen").addEventListener("mousedown", (e) => {
+  document.getElementById("canvasPlayScreen").addEventListener("pointerdown", (e) => {
+    // The pointerdown event works faster than the mousedown event, since it does not wait to detect a double click
     padClicked(e)
   });
 
