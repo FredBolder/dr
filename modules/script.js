@@ -17,6 +17,7 @@ const msgReverbNotLoaded = "Reverb is not loaded yet. Try again later.";
 let overlayContext;
 let patternContext;
 let playPadsBuffers = null;
+let playPadsStereoNodes = [];
 let reverb;
 const settingLabels = ["Mute", "Solo", "Other sound", "Volume", "Pitch", "Pan", "Filter", "Filter freq", "Filter Q", "Distortion", "Reverb"];
 
@@ -803,7 +804,6 @@ async function playInstrument(instrument, volumeFactor = 0.7) {
 async function playInstrumentFast(instrumentIndex, volumeFactor) {
   let humanizeVolumes = 0;
   let humanizeVolumeFactor = 1;
-  let pan = 0;
   let urlLower = "";
   let volume = 75;
 
@@ -830,21 +830,14 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
     source.playbackRate.value = Glob.percentToPitch(instrument.pitch);
     const gainNode = audioCtx.createGain();
     gainNode.gain.value = volumeFactor * humanizeVolumeFactor * volume * (instrument.volume / 100);
-    pan = Glob.percentToPan(instrument.pan);
-    const stereoNode = new StereoPannerNode(audioCtx, { pan })
+    const stereoNode = playPadsStereoNodes[instrumentIndex];
     source.connect(gainNode);
     gainNode.connect(stereoNode);
-    if (instrument.reverb) {
-      reverb.connectSource(stereoNode);
-    } else {
-      stereoNode.connect(audioCtx.destination);
-    }
 
     source.onended = () => {
       Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== source);
       source.disconnect();
       gainNode.disconnect();
-      stereoNode.disconnect();
     };
 
     source.start(0);
@@ -886,7 +879,7 @@ async function playPattern() {
     alert(msgReverbNotLoaded);
     ok = false;
   }
-  if (!Audio.ready) {
+  if (ok && !Audio.ready) {
     alert(msgInstrumentsNotLoaded);
     ok = false;
   }
@@ -1924,21 +1917,39 @@ try {
   });
 
   document.getElementById("playPadsButton").addEventListener("click", async (e) => {
-    Glob.playingPads = true;
-    Glob.settings.mainScreen.style.display = "none";
-    Glob.settings.playScreen.style.display = "block";
+    const convolver = reverb.getConvolver();
+    if (convolver) {
+      Glob.playingPads = true;
+      Glob.settings.mainScreen.style.display = "none";
+      Glob.settings.playScreen.style.display = "block";
 
-    playPadsBuffers = await Promise.all(
-      Instruments.sets[Glob.settings.instrumentSet].map((instrument) => preprocessInstrument(instrument))
-    );
+      const audioCtx = Audio.audioContext;
+      const set = Glob.settings.instrumentSet;
 
-    drawPads();
+      playPadsBuffers = await Promise.all(
+        Instruments.sets[set].map((instrument) => preprocessInstrument(instrument))
+      );
+      playPadsStereoNodes = [];
+      Instruments.sets[set].forEach((instrument, idx) => {
+        const pan = Glob.percentToPan(instrument.pan);
+        playPadsStereoNodes.push(new StereoPannerNode(audioCtx, { pan }));
+        if (instrument.reverb) {
+          reverb.connectSource(playPadsStereoNodes[idx]);
+        } else {
+          playPadsStereoNodes[idx].connect(audioCtx.destination);
+        }
+      });
+      drawPads();
+    } else {
+      alert(msgReverbNotLoaded);
+    }
   });
 
   document.getElementById("playScreenToMainScreenButton").addEventListener("click", (e) => {
     Glob.playingPads = false;
     Glob.settings.mainScreen.style.display = "block";
     Glob.settings.playScreen.style.display = "none";
+    playPadsStereoNodes.forEach(node => node.disconnect());
   });
 
   document.getElementById("canvasPlayScreen").addEventListener("pointerdown", (e) => {
