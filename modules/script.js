@@ -1458,7 +1458,7 @@ function padClicked(event) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
 
-  if (rect.width > rect.height) {
+  if (Glob.isLandscape()) {
     rows = 2;
     columns = 5;
   } else {
