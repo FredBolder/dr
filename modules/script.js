@@ -803,7 +803,7 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
   let humanizeVolumes = 0;
   let humanizeVolumeFactor = 1;
   let pan = 0;
-  let url = "";
+  let urlLower = "";
   let volume = 75;
 
   const convolver = reverb.getConvolver();
@@ -848,12 +848,13 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
 
     source.start(0);
     source.started = true;
-    if (url.toLowerCase().includes("open_hi-hat")) {
+    urlLower = instrument.file.toLowerCase();
+    if (urlLower.includes("open_hi-hat")) {
       setTimeout(() => {
         Glob.openHiHat.push({ source, gainNode });
       }, 0);
     }
-    if (url.toLowerCase().includes("closed_hi-hat") || url.toLowerCase().includes("pedal_hi-hat")) {
+    if (urlLower.includes("closed_hi-hat") || urlLower.includes("pedal_hi-hat")) {
       Instruments.stopOpenHiHat(0);
     }
   } else {

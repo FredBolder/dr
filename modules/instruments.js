@@ -103,16 +103,30 @@ class Instruments {
 
   static playPadsList() {
     let result;
-    switch (Glob.settings.instrumentSet) {
-      case 0:
-        result = [10, 11, 12, 7, 2, 17, 16, 15, 9, 8];
-        break;
-      case 1:
-        result = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]; // TODO
-        break;
-      default:
-        result = [10, 11, 12, 7, 2, 17, 16, 15, 9, 8];
-        break;
+    if (Glob.isLandscape()) {
+      switch (Glob.settings.instrumentSet) {
+        case 0:
+          result = [10, 11, 12, 7, 2, 17, 16, 15, 9, 8];
+          break;
+        case 1:
+          result = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]; // TODO
+          break;
+        default:
+          result = [10, 11, 12, 7, 2, 17, 16, 15, 9, 8];
+          break;
+      }
+    } else {
+      switch (Glob.settings.instrumentSet) {
+        case 0:
+          result = [10, 11, 12, 2, 7, 8, 15, 9, 17, 16];
+          break;
+        case 1:
+          result = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]; // TODO
+          break;
+        default:
+          result = [10, 11, 12, 2, 7, 8, 15, 9, 17, 16];
+          break;
+      }
     }
     return result;
   }
