@@ -295,7 +295,7 @@ function drawPads() {
   if (Glob.isLandscape()) {
     rows = 2;
     columns = 5;
-  } else{
+  } else {
     rows = 5;
     columns = 2;
   }
@@ -1461,11 +1461,11 @@ function padClicked(event) {
   if (rect.width > rect.height) {
     rows = 2;
     columns = 5;
-  } else{
+  } else {
     rows = 5;
     columns = 2;
   }
-  
+
   const w = rect.width / columns;
   const h = rect.height / rows;
   const c = Math.trunc(x / w);
@@ -2139,6 +2139,12 @@ try {
   document.getElementById("testButton").addEventListener("click", (e) => {
     Test.runTests();
     drawPattern();
+  });
+
+  window.addEventListener("resize", () => {
+    if (playingPads) {
+      setTimeout(drawPads, 50);
+    }
   });
 
   Instruments.init();
