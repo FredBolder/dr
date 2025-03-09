@@ -28,6 +28,10 @@ class Settings {
     this.volumeSlider = document.getElementById("volumeSlider");
     this.volumeValue = document.getElementById("volumeValue");
 
+    this.canvasPlayScreen = document.getElementById("canvasPlayScreen");
+    this.mainScreen = document.getElementById("mainScreen");
+    this.playScreen = document.getElementById("playScreen");
+    this.playPadsButton = document.getElementById("playPadsButton");
     this.previousMeasureButton = document.getElementById("previousMeasureButton");
     this.nextMeasureButton = document.getElementById("nextMeasureButton");
     this.clearMeasureButton = document.getElementById("clearMeasureButton");

@@ -10,248 +10,254 @@
 </head>
 
 <body id="body">
-  <header>
-    <h1>DR by Fred Bolder</h1>
-  </header>
-  <main>
-    <div id="message"></div>
-    <!-- Only for developing -->
-    <!-- <canvas id="curve"></canvas> -->
-    <p>
-      This is the online version of <a href="https://www.dansblad.nl/dr/" target="_blank">DR for windows</a>.
-      Keep in mind that there are many differences including the file format. If you are interested in Greek rhythms,
-      make sure to
-      check out my ebook <a href="https://www.dansblad.nl/grdrums/" target="_blank">Greek Dance Rhythms for Drums</a>
-      with
-      more than 1080 patterns.
-      Send an e-mail to <a href="mailto:fgh.bolder@gmail.com">fgh.bolder@gmail.com</a> for
-      questions or feedback.
-    </p>
-    <div class="flex">
-      <div id="rhythm">
-        <select name="categorySelector" id="categorySelector">
-          <option value="PopRock">Pop/Rock</option>
-          <option value="BallroomLatin">Ballroom/Latin</option>
-          <option value="Greek">Greek</option>
-        </select>
-        <select name="rhythmSelector" id="rhythmSelector">
-          <option value="init">init</option>
-        </select>
-        <button type="button" id="loadRhythmButton">Load</button>
+  <div id="mainScreen">
+    <header>
+      <h1>DR by Fred Bolder</h1>
+    </header>
+    <main>
+      <div id="message"></div>
+      <!-- Only for developing -->
+      <!-- <canvas id="curve"></canvas> -->
+      <p>
+        This is the online version of <a href="https://www.dansblad.nl/dr/" target="_blank">DR for windows</a>.
+        Keep in mind that there are many differences including the file format. If you are interested in Greek rhythms,
+        make sure to
+        check out my ebook <a href="https://www.dansblad.nl/grdrums/" target="_blank">Greek Dance Rhythms for Drums</a>
+        with
+        more than 1080 patterns.
+        Send an e-mail to <a href="mailto:fgh.bolder@gmail.com">fgh.bolder@gmail.com</a> for
+        questions or feedback.
+      </p>
+      <div class="flex">
+        <div id="rhythm">
+          <select name="categorySelector" id="categorySelector">
+            <option value="PopRock">Pop/Rock</option>
+            <option value="BallroomLatin">Ballroom/Latin</option>
+            <option value="Greek">Greek</option>
+          </select>
+          <select name="rhythmSelector" id="rhythmSelector">
+            <option value="init">init</option>
+          </select>
+          <button type="button" id="loadRhythmButton">Load</button>
+        </div>
+        <div>
+          <button type="button" id="newButton">New</button>
+          <button type="button" id="openButton">Open</button>
+          <button type="button" id="saveButton">Save</button>
+        </div>
+        <div id="tempo">
+          <label for="tempoSlider">Tempo</label>
+          <input type="range" min="10" max="750" value="100" id="tempoSlider">
+          <div id="tempoValue"></div>
+        </div>
+        <div id="volume">
+          <label for="volumeSlider">Volume</label>
+          <input type="range" min="0" max="100" value="75" id="volumeSlider">
+          <div id="volumeValue"></div>
+        </div>
+        <div>
+          <label for="instrumentSetSelector">Instrument set</label>
+          <select name="instrumentSetSelector" id="instrumentSetSelector">
+            <option value="0">Drums</option>
+            <option value="1">Greek percussion</option>
+          </select>
+        </div>
+        <fieldset>
+          <legend>Measures to play (empty=all)</legend>
+          <div id="measuresToPlay">
+            <input type="text" id="measuresToPlayInput" name="measuresToPlayInput" value="">
+            <label for="measuresToPlayInput">Example: 1, 1, 1, 3, 2, 2, 2, 4</label>
+          </div>
+        </fieldset>
       </div>
-      <div>
-        <button type="button" id="newButton">New</button>
-        <button type="button" id="openButton">Open</button>
-        <button type="button" id="saveButton">Save</button>
+      <div style="position: relative; display: inline-block;">
+        <canvas id="pattern"></canvas>
+        <canvas id="overlay" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
       </div>
-      <div id="tempo">
-        <label for="tempoSlider">Tempo</label>
-        <input type="range" min="10" max="750" value="100" id="tempoSlider">
-        <div id="tempoValue"></div>
+      <div id="keyInfo">
+        You can also play an instrument by pressing the key that is indicated behind it (shift=louder) or by clicking on
+        the name.
       </div>
-      <div id="volume">
-        <label for="volumeSlider">Volume</label>
-        <input type="range" min="0" max="100" value="75" id="volumeSlider">
-        <div id="volumeValue"></div>
+      <div class="flex">
+        <div id="input">
+          <label for="inputSelector">Input</label>
+          <select name="inputSelector" id="inputSelector">
+            <optgroup label="Always played">
+              <option value="1">Normal hit</option>
+              <option value="2">Soft hit</option>
+              <option value="3">Hard hit</option>
+              <option value="4">Very soft hit</option>
+              <option value="5">Very hard hit</option>
+              <option value="6">Flam</option>
+              <option value="14">3 stroke ruff</option>
+              <option value="15">4 stroke ruff</option>
+            </optgroup>
+            <optgroup label="Depends on Preferences">
+              <option value="7">Additional normal hit</option>
+              <option value="8">Additional soft hit</option>
+              <option value="9">Additional hard hit</option>
+            </optgroup>
+            <optgroup label="Only played when condition is true">
+              <option value="10">Normal hit when measure is even</option>
+              <option value="11">Normal hit when measure is not even</option>
+              <option value="12">Previous measure ends with fill</option>
+              <option value="13">Prev measure doesn't end with fill</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="checkboxGroup">
+          <label for="loop">Loop</label>
+          <input type="checkbox" id="loop" name="loop" checked>
+        </div>
+        <div class="checkboxGroup">
+          <label for="showSettings">Show settings</label>
+          <input type="checkbox" id="showSettings" name="showSettings">
+        </div>
+        <button type="button" id="startStopButton">Start/Stop</button>
+        <button type="button" id="playPadsButton">Play pads</button>
+        <button type="button" id="testButton" hidden>TEST</button>
       </div>
-      <div>
-        <label for="instrumentSetSelector">Instrument set</label>
-        <select name="instrumentSetSelector" id="instrumentSetSelector">
-          <option value="0">Drums</option>
-          <option value="1">Greek percussion</option>
-        </select>
-      </div>
+
       <fieldset>
-        <legend>Measures to play (empty=all)</legend>
-        <div id="measuresToPlay">
-          <input type="text" id="measuresToPlayInput" name="measuresToPlayInput" value="">
-          <label for="measuresToPlayInput">Example: 1, 1, 1, 3, 2, 2, 2, 4</label>
+        <legend>Measure</legend>
+        <div class="group">
+          <button type="button" id="previousMeasureButton">Previous</button>
+          <button type="button" id="nextMeasureButton">Next</button>
+          <button type="button" id="clearMeasureButton">Clear</button>
+          <button type="button" id="addMeasureButton">Add</button>
+          <button type="button" id="deleteMeasureButton">Delete</button>
+          <button type="button" id="addBeatButton">Add beat</button>
+          <button type="button" id="deleteBeatButton">Delete beat</button>
+          <button type="button" id="incDivisionButton">Inc div</button>
+          <button type="button" id="decDivisionButton">Dec div</button>
+        </div>
+        <div id="copyMeasure">
+          <button type="button" id="copyMeasureButton">Copy</button>
+          <input type="text" id="copyMeasureFrom" name="copyMeasureFrom" value="1">
+          <label for="copyMeasureTo">to</label>
+          <input type="text" id="copyMeasureTo" name="copyMeasureTo" value="1">
+        </div>
+        <div id="measureEndsWithFill" class="checkboxGroup">
+          <label for="endsWithFill">Ends with fill</label>
+          <input type="checkbox" id="endsWithFill" name="endsWithFill">
         </div>
       </fieldset>
-    </div>
-    <div style="position: relative; display: inline-block;">
-      <canvas id="pattern"></canvas>
-      <canvas id="overlay" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
-    </div>
-    <div id="keyInfo">
-      You can also play an instrument by pressing the key that is indicated behind it (shift=louder) or by clicking on
-      the name.
-    </div>
-    <div class="flex">
-      <div id="input">
-        <label for="inputSelector">Input</label>
-        <select name="inputSelector" id="inputSelector">
-          <optgroup label="Always played">
-            <option value="1">Normal hit</option>
-            <option value="2">Soft hit</option>
-            <option value="3">Hard hit</option>
-            <option value="4">Very soft hit</option>
-            <option value="5">Very hard hit</option>
-            <option value="6">Flam</option>
-            <option value="14">3 stroke ruff</option>
-            <option value="15">4 stroke ruff</option>
-          </optgroup>
-          <optgroup label="Depends on Preferences">
-            <option value="7">Additional normal hit</option>
-            <option value="8">Additional soft hit</option>
-            <option value="9">Additional hard hit</option>
-          </optgroup>
-          <optgroup label="Only played when condition is true">
-            <option value="10">Normal hit when measure is even</option>
-            <option value="11">Normal hit when measure is not even</option>
-            <option value="12">Previous measure ends with fill</option>
-            <option value="13">Prev measure doesn't end with fill</option>
-          </optgroup>
-        </select>
-      </div>
-      <div class="checkboxGroup">
-        <label for="loop">Loop</label>
-        <input type="checkbox" id="loop" name="loop" checked>
-      </div>
-      <div class="checkboxGroup">
-        <label for="showSettings">Show settings</label>
-        <input type="checkbox" id="showSettings" name="showSettings">
-      </div>
-      <button type="button" id="startStopButton">Start/Stop</button>
-      <button type="button" id="testButton" hidden>TEST</button>
-    </div>
-
-    <fieldset>
-      <legend>Measure</legend>
-      <div class="group">
-        <button type="button" id="previousMeasureButton">Previous</button>
-        <button type="button" id="nextMeasureButton">Next</button>
-        <button type="button" id="clearMeasureButton">Clear</button>
-        <button type="button" id="addMeasureButton">Add</button>
-        <button type="button" id="deleteMeasureButton">Delete</button>
-        <button type="button" id="addBeatButton">Add beat</button>
-        <button type="button" id="deleteBeatButton">Delete beat</button>
-        <button type="button" id="incDivisionButton">Inc div</button>
-        <button type="button" id="decDivisionButton">Dec div</button>
-      </div>
-      <div id="copyMeasure">
-        <button type="button" id="copyMeasureButton">Copy</button>
-        <input type="text" id="copyMeasureFrom" name="copyMeasureFrom" value="1">
-        <label for="copyMeasureTo">to</label>
-        <input type="text" id="copyMeasureTo" name="copyMeasureTo" value="1">
-      </div>
-      <div id="measureEndsWithFill" class="checkboxGroup">
-        <label for="endsWithFill">Ends with fill</label>
-        <input type="checkbox" id="endsWithFill" name="endsWithFill">
-      </div>
-    </fieldset>
-    <fieldset>
-      <legend>Reverb</legend>
-      <div id="reverbType">
-        <label for="reverbTypeSelector">Type</label>
-        <select name="reverbTypeSelector" id="reverbTypeSelector">
-          <option value="0">Hall 1</option>
-          <option value="1">Hall 2</option>
-          <option value="2">Plate 1</option>
-          <option value="3">Plate 2</option>
-          <option value="4">Room 1</option>
-          <option value="5">Room 2</option>
-          <option value="6">Spring 1</option>
-          <option value="7">Spring 2</option>
-          <option value="8">Church 1</option>
-          <option value="9">Church 2</option>
-          <option value="10">Digital 1</option>
-          <option value="11">Digital 2</option>
-          <option value="12">Garage 1</option>
-          <option value="13">Garage 2</option>
-        </select>
-      </div>
-      <div id="reverbWet">
-        <label for="reverbWetSlider">Wet %</label>
-        <input type="range" min="0" max="100" value="15" id="reverbWetSlider">
-        <div id="reverbWetValue"></div>
-      </div>
-    </fieldset>
-    <fieldset>
-      <legend>Preferences</legend>
-      <div id="additional">
-        <select name="additionalSelector" id="additionalSelector">
-          <option value="0">Never</option>
-          <option value="1">Always</option>
-          <option value="2" selected="selected">Random</option>
-        </select>
-        <label for="additionalSelector">play additional hits</label>
-      </div>
-      <div id="humanizeVolumes">
-        <label for="humanizeVolumesSelector">Humanize volumes</label>
-        <select name="humanizeVolumesSelector" id="humanizeVolumesSelector">
-          <option value="0">No</option>
-          <option value="1">1</option>
-          <option value="2" selected="selected">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-        </select>
-      </div>
-      <div id="humanizeTiming">
-        <label for="humanizeTimingSelector">Humanize timing</label>
-        <select name="humanizeTimingSelector" id="humanizeTimingSelector">
-          <option value="0">No</option>
-          <option value="1" selected="selected">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-        </select>
-      </div>
-      <div class="checkboxGroup">
-        <label for="expert">Expert</label>
-        <input type="checkbox" id="expert" name="expert">
-      </div>
-    </fieldset>
-    <fieldset>
-      <legend>Tools</legend>
-      <div id="presetPattern" class="group">
-        <select name="presetPatternInstrument" id="presetPatternInstrument">
-          <option value="0">Closed hi-hat</option>
-        </select>
-        <select name="presetPatternSelector" id="presetPatternSelector">
-          <option value="0">Never (clear row)</option>
-          <option value="1" selected="selected">Every beat</option>
-          <option value="2">Every column</option>
-          <option value="3">Odd columns</option>
-          <option value="4">Even columns</option>
-          <option value="5">Random</option>
-          <option value="6">Every column of last beat</option>
-          <option value="7">Every column of last beat (soft to hard)</option>
-          <option value="8">Every column of last beat (hard to soft)</option>
-          <option value="9">3 per measure with equal times inbetween</option>
-          <option value="10">6 per measure with equal times inbetween</option>
-          <option value="11">3 per measure (3-3-2)</option>
-          <option value="12">6 per measure (2 x 3-3-2)</option>
-          <option value="13">3 per measure (2-1-1)</option>
-          <option value="14">6 per measure (2 x 2-1-1)</option>
-          <option value="15">3 per beat (2-1-1)</option>
-          <option value="16">3 per measure (1-1-2)</option>
-          <option value="17">6 per measure (2 x 1-1-2)</option>
-          <option value="18">3 per beat (1-1-2)</option>
-        </select>
-        <div class="checkboxGroup">
-          <label for="presetPatternClear">Clear other columns</label>
-          <input type="checkbox" id="presetPatternClear" name="presetPatternClear" checked>
+      <fieldset>
+        <legend>Reverb</legend>
+        <div id="reverbType">
+          <label for="reverbTypeSelector">Type</label>
+          <select name="reverbTypeSelector" id="reverbTypeSelector">
+            <option value="0">Hall 1</option>
+            <option value="1">Hall 2</option>
+            <option value="2">Plate 1</option>
+            <option value="3">Plate 2</option>
+            <option value="4">Room 1</option>
+            <option value="5">Room 2</option>
+            <option value="6">Spring 1</option>
+            <option value="7">Spring 2</option>
+            <option value="8">Church 1</option>
+            <option value="9">Church 2</option>
+            <option value="10">Digital 1</option>
+            <option value="11">Digital 2</option>
+            <option value="12">Garage 1</option>
+            <option value="13">Garage 2</option>
+          </select>
+        </div>
+        <div id="reverbWet">
+          <label for="reverbWetSlider">Wet %</label>
+          <input type="range" min="0" max="100" value="15" id="reverbWetSlider">
+          <div id="reverbWetValue"></div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Preferences</legend>
+        <div id="additional">
+          <select name="additionalSelector" id="additionalSelector">
+            <option value="0">Never</option>
+            <option value="1">Always</option>
+            <option value="2" selected="selected">Random</option>
+          </select>
+          <label for="additionalSelector">play additional hits</label>
+        </div>
+        <div id="humanizeVolumes">
+          <label for="humanizeVolumesSelector">Humanize volumes</label>
+          <select name="humanizeVolumesSelector" id="humanizeVolumesSelector">
+            <option value="0">No</option>
+            <option value="1">1</option>
+            <option value="2" selected="selected">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+          </select>
+        </div>
+        <div id="humanizeTiming">
+          <label for="humanizeTimingSelector">Humanize timing</label>
+          <select name="humanizeTimingSelector" id="humanizeTimingSelector">
+            <option value="0">No</option>
+            <option value="1" selected="selected">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+          </select>
         </div>
         <div class="checkboxGroup">
-          <label for="presetPatternAllMeasures">All measures</label>
-          <input type="checkbox" id="presetPatternAllMeasures" name="presetPatternAllMeasures">
+          <label for="expert">Expert</label>
+          <input type="checkbox" id="expert" name="expert">
         </div>
-        <button type="button" id="applyPresetPatternButton">Apply</button>
-      </div>
-      <div>
-        <button type="button" id="multiplyDivisionsByTwo">Div x 2</button>
-        <button type="button" id="divideDivisionsByTwo">Div / 2</button>
-      </div>
-    </fieldset>
-  </main>
-
+      </fieldset>
+      <fieldset>
+        <legend>Tools</legend>
+        <div id="presetPattern" class="group">
+          <select name="presetPatternInstrument" id="presetPatternInstrument">
+            <option value="0">Closed hi-hat</option>
+          </select>
+          <select name="presetPatternSelector" id="presetPatternSelector">
+            <option value="0">Never (clear row)</option>
+            <option value="1" selected="selected">Every beat</option>
+            <option value="2">Every column</option>
+            <option value="3">Odd columns</option>
+            <option value="4">Even columns</option>
+            <option value="5">Random</option>
+            <option value="6">Every column of last beat</option>
+            <option value="7">Every column of last beat (soft to hard)</option>
+            <option value="8">Every column of last beat (hard to soft)</option>
+            <option value="9">3 per measure with equal times inbetween</option>
+            <option value="10">6 per measure with equal times inbetween</option>
+            <option value="11">3 per measure (3-3-2)</option>
+            <option value="12">6 per measure (2 x 3-3-2)</option>
+            <option value="13">3 per measure (2-1-1)</option>
+            <option value="14">6 per measure (2 x 2-1-1)</option>
+            <option value="15">3 per beat (2-1-1)</option>
+            <option value="16">3 per measure (1-1-2)</option>
+            <option value="17">6 per measure (2 x 1-1-2)</option>
+            <option value="18">3 per beat (1-1-2)</option>
+          </select>
+          <div class="checkboxGroup">
+            <label for="presetPatternClear">Clear other columns</label>
+            <input type="checkbox" id="presetPatternClear" name="presetPatternClear" checked>
+          </div>
+          <div class="checkboxGroup">
+            <label for="presetPatternAllMeasures">All measures</label>
+            <input type="checkbox" id="presetPatternAllMeasures" name="presetPatternAllMeasures">
+          </div>
+          <button type="button" id="applyPresetPatternButton">Apply</button>
+        </div>
+        <div>
+          <button type="button" id="multiplyDivisionsByTwo">Div x 2</button>
+          <button type="button" id="divideDivisionsByTwo">Div / 2</button>
+        </div>
+      </fieldset>
+    </main>
+  </div>
+  <div id="playScreen">
+    <button type="button" id="playScreenToMainScreenButton">Back to main screen</button>
+    <canvas id="canvasPlayScreen"></canvas>
+    </div>
   <script type="module" src="./modules/script.js"></script>
 </body>
 

@@ -99,3 +99,13 @@ fieldset {
     height: 250px;
 }
 
+#canvasPlayScreen {
+    background-color: lightblue;
+    color: gray;
+    border: 1px solid black;
+    margin: 0%;
+    padding: 0%;
+    height: 100%;
+    width: 100%;
+}
+

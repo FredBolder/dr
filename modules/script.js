@@ -16,6 +16,7 @@ const msgInstrumentsNotLoaded = "The instruments are not loaded yet. Try again l
 const msgReverbNotLoaded = "Reverb is not loaded yet. Try again later.";
 let overlayContext;
 let patternContext;
+let playPadsBuffers = null;
 let reverb;
 const settingLabels = ["Mute", "Solo", "Other sound", "Volume", "Pitch", "Pan", "Filter", "Filter freq", "Filter Q", "Distortion", "Reverb"];
 
@@ -255,6 +256,62 @@ function disableWhilePlaying() {
   Glob.settings.applyPresetPatternButton.disabled = Glob.playing;
   Glob.settings.multiplyDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.divideDivisionsByTwo.disabled = Glob.playing;
+}
+
+function drawPads() {
+  let columns = 0;
+  let fontSize = 0;
+  let h = 0;
+  let n = 0;
+  let rows = 0;
+  let w = 0;
+  const pads = Glob.settings.canvasPlayScreen;
+  const ratio = window.devicePixelRatio || 1;
+  const padsContext = pads.getContext('2d');
+
+  // Get actual size of the canvas
+  const rect = pads.getBoundingClientRect();
+
+  // Set the canvas resolution based on device pixel ratio
+  pads.width = rect.width * ratio;
+  pads.height = rect.height * ratio;
+
+  // Store logical (CSS) size for drawing
+  const logicalWidth = rect.width;
+  const logicalHeight = rect.height;
+
+  // Scale to normalize drawing operations
+  padsContext.scale(ratio, ratio);
+
+  // Fix stroke and fill properties
+  padsContext.strokeStyle = "black";
+  padsContext.fillStyle = "white";
+
+  // Clear canvas using logical size
+  padsContext.clearRect(0, 0, logicalWidth, logicalHeight);
+
+  rows = 2;
+  columns = 5;
+  w = logicalWidth / columns;
+  h = logicalHeight / rows;
+  fontSize = h * 0.25;
+  padsContext.font = `${fontSize}px arial`;
+  padsContext.textAlign = "center";
+  padsContext.strokeStyle = "black";
+  padsContext.fillStyle = "black";
+  let instrList = Instruments.playPadsList();
+  n = 0;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      padsContext.strokeRect(col * w, row * h, w, h);
+      if (n < instrList.length) {
+        const instrument = Instruments.sets[Glob.settings.instrumentSet][instrList[n]];
+        padsContext.fillText(instrument.shortName, (col * w) + (w * 0.5), (row * h) + (h * 0.45), w);
+        padsContext.fillText(instrument.key, (col * w) + (w * 0.5), (row * h) + (h * 0.75), w);
+      }
+      n++;
+    }
+  }
 }
 
 function drawPattern(currentColumn = -1) {
@@ -730,8 +787,69 @@ async function playInstrument(instrument, volumeFactor = 0.7) {
   }
 }
 
+async function playInstrumentFast(instrumentIndex, volumeFactor) {
+  let humanizeVolumes = 0;
+  let humanizeVolumeFactor = 1;
+  let pan = 0;
+  let url = "";
+  let volume = 75;
+
+  const convolver = reverb.getConvolver();
+  if (convolver) {
+    volume = Glob.settings.volume / 100;
+    humanizeVolumes = Glob.settings.humanizeVolumes / 10;
+    if (humanizeVolumes > 0) {
+      humanizeVolumeFactor = 1 + (0.5 * humanizeVolumes) - (Math.random() * humanizeVolumes);
+    } else {
+      humanizeVolumeFactor = 1;
+    }
+
+    const audioCtx = Audio.audioContext;
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
+
+    const audioBuffer = playPadsBuffers[instrumentIndex];
+    const instrument = Instruments.sets[Glob.settings.instrumentSet][instrumentIndex];
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.playbackRate.value = Glob.percentToPitch(instrument.pitch);
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = volumeFactor * humanizeVolumeFactor * volume * (instrument.volume / 100);
+    pan = Glob.percentToPan(instrument.pan);
+    const stereoNode = new StereoPannerNode(audioCtx, { pan })
+    source.connect(gainNode);
+    gainNode.connect(stereoNode);
+    if (instrument.reverb) {
+      reverb.connectSource(stereoNode);
+    } else {
+      stereoNode.connect(audioCtx.destination);
+    }
+
+    source.onended = () => {
+      Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== source);
+      source.disconnect();
+      gainNode.disconnect();
+      stereoNode.disconnect();
+    };
+
+    source.start(0);
+    source.started = true;
+    if (url.toLowerCase().includes("open_hi-hat")) {
+      setTimeout(() => {
+        Glob.openHiHat.push({ source, gainNode });
+      }, 0);
+    }
+    if (url.toLowerCase().includes("closed_hi-hat") || url.toLowerCase().includes("pedal_hi-hat")) {
+      Instruments.stopOpenHiHat(0);
+    }
+  } else {
+    alert(msgReverbNotLoaded);
+  }
+}
+
 async function playPattern() {
-  let audioBuffers = [];
   let currentTempo = 0;
   let factor = 1;
   let first = true;
@@ -1325,11 +1443,31 @@ function humanizeVolumesChanged() {
   Glob.settings.humanizeVolumes = Glob.tryParseInt(document.getElementById("humanizeVolumesSelector").value, 0);
 }
 
+function padClicked(event) {
+  const pads = Glob.settings.canvasPlayScreen;
+  const rect = pads.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  const rows = 2;
+  const columns = 5;
+  const w = rect.width / columns;
+  const h = rect.height / rows;
+  const c = Math.trunc(x / w);
+  const r = Math.trunc(y / h);
+  //alert(`${c}, ${r}`);
+  const n = (r * columns) + c;
+  const instrList = Instruments.playPadsList();
+  if (n < instrList.length) {
+    const instrumentIndex = instrList[n];
+    playInstrumentFast(instrumentIndex, 0.7);
+  }
+}
+
 function patternClicked(event) {
   let columns = 0;
   const rows = Instruments.sets[Glob.settings.instrumentSet].length;
   const pattern = Glob.settings.pattern;
-  const rect = pattern.getBoundingClientRect()
+  const rect = pattern.getBoundingClientRect();
   let c = 0;
   let dx = 0;
   let dx1 = 25;
@@ -1737,6 +1875,28 @@ try {
     } else {
       playPattern();
     }
+  });
+
+  document.getElementById("playPadsButton").addEventListener("click", async (e) => {
+    Glob.playingPads = true;
+    Glob.settings.mainScreen.style.display = "none";
+    Glob.settings.playScreen.style.display = "block";
+
+    playPadsBuffers = await Promise.all(
+      Instruments.sets[Glob.settings.instrumentSet].map((instrument) => preprocessInstrument(instrument))
+    );
+
+    drawPads();
+  });
+
+  document.getElementById("playScreenToMainScreenButton").addEventListener("click", (e) => {
+    Glob.playingPads = false;
+    Glob.settings.mainScreen.style.display = "block";
+    Glob.settings.playScreen.style.display = "none";
+  });
+
+  document.getElementById("canvasPlayScreen").addEventListener("mousedown", (e) => {
+    padClicked(e)
   });
 
   document.getElementById("pattern").addEventListener("mousedown", (e) => {

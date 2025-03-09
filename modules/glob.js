@@ -1,6 +1,7 @@
 class Glob {
   static currentMeasure;
   static playing;
+  static playingPads;
   static settings;
   static stop;
 
@@ -8,6 +9,7 @@ class Glob {
     this.currentMeasure = 0;
     this.openHiHat = [];
     this.playing = false;
+    this.playingPads = false;
     this.settings = null;
     this.stop = false;
   }
