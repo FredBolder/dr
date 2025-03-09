@@ -69,6 +69,10 @@ class Glob {
     return (i === 1);
   }
 
+  static isLandscape() {
+    return window.innerWidth > window.innerHeight;
+  }
+  
   static minMax(value, min, max) {
     let result = value;
     if (max >= min) {

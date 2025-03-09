@@ -290,10 +290,9 @@ function drawPads() {
   // Clear canvas using logical size
   padsContext.clearRect(0, 0, logicalWidth, logicalHeight);
 
-  alert(`${logicalWidth}, ${logicalHeight}`);
   rows = 2;
   columns = 5;
-  if (logicalWidth > logicalHeight) {
+  if (Glob.isLandscape()) {
     rows = 2;
     columns = 5;
   } else{
