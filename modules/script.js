@@ -356,8 +356,9 @@ function drawPattern(currentColumn = -1) {
   } else {
     resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1);
   }
-
-  overlayContext.clearRect(0, 0, overlay.width, overlay.height);
+  overlayContext.clearRect(0, 0, overlay.width, overlay.height);  
+  overlayContext.fillStyle = 'rgba(0, 0, 0, 0)';  
+  overlayContext.fillRect(0, 0, overlay.width, overlay.height);
   if ((currentColumn !== -1) && (!Glob.settings.showSettings)) {
     overlayContext.fillStyle = 'rgba(255, 0, 0, 0.3)';
     overlayContext.fillRect(currentColumn * dx1 + labelWidth, 0, dx1, overlay.height);
