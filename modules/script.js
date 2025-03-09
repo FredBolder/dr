@@ -290,6 +290,7 @@ function drawPads() {
   // Clear canvas using logical size
   padsContext.clearRect(0, 0, logicalWidth, logicalHeight);
 
+  alert(`${logicalWidth}, ${logicalHeight}`);
   rows = 2;
   columns = 5;
   if (logicalWidth > logicalHeight) {
@@ -1759,6 +1760,8 @@ try {
       Glob.settings = new Settings();
       Glob.initSettings();
       //console.log("Settings loaded");
+      Glob.settings.mainScreen.style.display = "block";
+      Glob.settings.playScreen.style.display = "none";
       Presets.fillRhythmSelect();
       document.getElementById("rhythmSelector").value = "Rock3";
       Measures.load("Rock3");
