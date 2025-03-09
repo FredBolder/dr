@@ -269,6 +269,11 @@ function drawPads() {
   const ratio = window.devicePixelRatio || 1;
   const padsContext = pads.getContext('2d');
 
+  //updateCanvasPlayScreenSize();
+
+  pads.style.width = "100%";
+  pads.style.height = "90vh";
+
   // Get actual size of the canvas
   const rect = pads.getBoundingClientRect();
 
@@ -1747,6 +1752,26 @@ function tempoChanged() {
   Glob.settings.tempoValue.innerText = Glob.settings.tempo.toString();
 }
 
+function updateCanvasPlayScreenSize() {
+  const pads = Glob.settings.canvasPlayScreen;
+  const ratio = window.devicePixelRatio || 1;
+  const padsContext = pads.getContext('2d');
+
+  // Set the canvas size to max
+  pads.style.width = "100%";
+  pads.style.height = "90vh";
+
+  // Get actual size of the canvas
+  const rect = pads.getBoundingClientRect();
+
+  // Set the canvas resolution based on device pixel ratio
+  pads.width = rect.width * ratio;
+  pads.height = rect.height * ratio;
+
+  // Scale to normalize drawing operations
+  padsContext.scale(ratio, ratio);
+}
+
 function volumeChanged() {
   Glob.settings.volume = Glob.settings.volumeSlider.value;
   Glob.settings.volumeValue.innerText = Glob.settings.volume.toString();
@@ -2142,8 +2167,9 @@ try {
   });
 
   window.addEventListener("resize", () => {
-    if (playingPads) {
-      setTimeout(drawPads, 50);
+    updateCanvasPlayScreenSize();
+    if (Glob.playingPads) {
+      setTimeout(drawPads, 200);
     }
   });
 
