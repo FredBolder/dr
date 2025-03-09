@@ -899,7 +899,7 @@ async function playPattern() {
     }
 
     let nextNoteTime = audioCtx.currentTime;
-    nextNoteTime += 0.2;
+    nextNoteTime += 0.5;
 
     playMeasures = [];
     if (Glob.settings.measuresToPlay.trim() === "") {
