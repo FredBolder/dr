@@ -1752,7 +1752,7 @@ function updateCanvasPlayScreenSize() {
   const pads = Glob.settings.canvasPlayScreen;
   const ratio = window.devicePixelRatio || 1;
   const padsContext = pads.getContext('2d');
-  const availableHeight = window.innerHeight * 0.9;
+  const availableHeight = window.innerHeight * 0.85;
 
   // Set the canvas size to max
   pads.style.width = "100%";
