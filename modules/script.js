@@ -898,7 +898,8 @@ async function playPattern() {
       await audioCtx.resume();
     }
 
-    let nextNoteTime = audioCtx.currentTime;  // Start at current time
+    let nextNoteTime = audioCtx.currentTime;
+    nextNoteTime += 0.1;
 
     playMeasures = [];
     if (Glob.settings.measuresToPlay.trim() === "") {
@@ -1752,7 +1753,7 @@ function updateCanvasPlayScreenSize() {
   const pads = Glob.settings.canvasPlayScreen;
   const ratio = window.devicePixelRatio || 1;
   const padsContext = pads.getContext('2d');
-  const availableHeight = window.innerHeight * 0.85;
+  const availableHeight = window.innerHeight * 0.8;
 
   // Set the canvas size to max
   pads.style.width = "100%";
