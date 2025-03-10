@@ -898,9 +898,6 @@ async function playPattern() {
       await audioCtx.resume();
     }
 
-    let nextNoteTime = audioCtx.currentTime;
-    nextNoteTime += 0.5;
-
     playMeasures = [];
     if (Glob.settings.measuresToPlay.trim() === "") {
       for (let i = 0; i < Measures.measures.length; i++) {
@@ -941,6 +938,8 @@ async function playPattern() {
         stereoNodes[idx].connect(audioCtx.destination);
       }
     });
+
+    let nextNoteTime = audioCtx.currentTime + 0.1;
 
     first = true;
     prevEndsWithFill = false;
@@ -1941,6 +1940,7 @@ try {
           playPadsStereoNodes[idx].connect(audioCtx.destination);
         }
       });
+      document.documentElement.requestFullscreen();
       drawPads();
     } else {
       alert(msgReverbNotLoaded);
@@ -1952,6 +1952,8 @@ try {
     Glob.settings.mainScreen.style.display = "block";
     Glob.settings.playScreen.style.display = "none";
     playPadsStereoNodes.forEach(node => node.disconnect());
+    document.exitFullscreen();
+    scheduleDraw();
   });
 
   document.getElementById("canvasPlayScreen").addEventListener("pointerdown", (e) => {

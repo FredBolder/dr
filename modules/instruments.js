@@ -109,7 +109,7 @@ class Instruments {
           result = [10, 11, 12, 7, 2, 17, 16, 15, 9, 8];
           break;
         case 1:
-          result = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]; // TODO
+          result = [8, 6, 4, 2, 0, 9, 7, 5, 3, 1];
           break;
         default:
           result = [10, 11, 12, 7, 2, 17, 16, 15, 9, 8];
@@ -121,7 +121,7 @@ class Instruments {
           result = [10, 11, 12, 2, 7, 8, 15, 9, 17, 16];
           break;
         case 1:
-          result = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]; // TODO
+          result = [1, 0, 3, 2, 5, 4, 7, 6, 9, 8];
           break;
         default:
           result = [10, 11, 12, 2, 7, 8, 15, 9, 17, 16];
