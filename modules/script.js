@@ -30,9 +30,9 @@ function initializeAudioNodes(poolSize = 10) {
   for (let i = 0; i < poolSize; i++) {
     const source = audioCtx.createBufferSource();
     const gainNode = audioCtx.createGain();
-    
+
     source.connect(gainNode);
-    
+
     audioNodePool.push({ source, gainNode, inUse: false });
   }
 }
@@ -53,7 +53,7 @@ function createNewNode(inUse) {
   const audioCtx = Audio.audioContext;
   const source = audioCtx.createBufferSource();
   const gainNode = audioCtx.createGain();
-  
+
   source.connect(gainNode);
 
   const newNode = { source, gainNode, inUse };
@@ -394,8 +394,8 @@ function drawPattern(currentColumn = -1) {
   } else {
     resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1);
   }
-  overlayContext.clearRect(0, 0, overlay.width, overlay.height);  
-  overlayContext.fillStyle = 'rgba(0, 0, 0, 0)';  
+  overlayContext.clearRect(0, 0, overlay.width, overlay.height);
+  overlayContext.fillStyle = 'rgba(0, 0, 0, 0)';
   overlayContext.fillRect(0, 0, overlay.width, overlay.height);
   if ((currentColumn !== -1) && (!Glob.settings.showSettings)) {
     overlayContext.fillStyle = 'rgba(255, 0, 0, 0.3)';
@@ -872,7 +872,7 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
 
     source.onended = () => {
       Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== source);
-      
+
       // Instead of resetting, remove and replace
       const index = audioNodePool.findIndex(n => n.source === source);
       if (index !== -1) {
@@ -884,7 +884,7 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
     };
 
     source.start(0);
-    
+
     if (instrument.file.toLowerCase().includes("open_hi-hat")) {
       setTimeout(() => {
         Glob.openHiHat.push({ source, gainNode });
@@ -897,7 +897,9 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
     alert(msgReverbNotLoaded);
   }
   const endTime = performance.now();
-  alert(`playInstrumentFast executed in ${endTime - startTime}ms`);
+  if ((endTime - startTime) > 10) {
+    alert(`playInstrumentFast executed in ${endTime - startTime}ms`);
+  }
 }
 
 async function playPattern() {
