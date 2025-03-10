@@ -1835,6 +1835,7 @@ try {
       additionalChanged();
       humanizeVolumesChanged();
       humanizeTimingChanged();
+      initializeAudioNodes();
     }
   });
 
