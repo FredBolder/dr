@@ -44,14 +44,19 @@ function getAvailableNode() {
       return node;
     }
   }
-  
-  // If no free nodes, create a new one dynamically
+
+  // Create a new node if no free ones
+  return createNewNode(true);
+}
+
+function createNewNode(inUse) {
   const audioCtx = Audio.audioContext;
   const source = audioCtx.createBufferSource();
   const gainNode = audioCtx.createGain();
-  source.connect(gainNode);
   
-  const newNode = { source, gainNode, inUse: true };
+  source.connect(gainNode);
+
+  const newNode = { source, gainNode, inUse };
   audioNodePool.push(newNode);
   return newNode;
 }
@@ -848,31 +853,33 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
       humanizeVolumeFactor = 1 + (0.5 * humanizeVolumes) - (Math.random() * humanizeVolumes);
     }
 
-    const audioCtx = Audio.audioContext;
-    if (audioCtx.state === "suspended") {
-      await audioCtx.resume();
-    }
+    //const audioCtx = Audio.audioContext;
+    // if (audioCtx.state === "suspended") {
+    //   await audioCtx.resume();
+    // }
 
     const audioBuffer = playPadsBuffers[instrumentIndex];
     const instrument = Instruments.sets[Glob.settings.instrumentSet][instrumentIndex];
 
-    const { source, gainNode } = getAvailableNode();
+    let { source, gainNode } = getAvailableNode();
     source.buffer = audioBuffer;
     source.playbackRate.value = Glob.percentToPitch(instrument.pitch);
     gainNode.gain.value = volumeFactor * humanizeVolumeFactor * volume * (instrument.volume / 100);
-    
+
     const stereoNode = playPadsStereoNodes[instrumentIndex];
     gainNode.connect(stereoNode);
 
     source.onended = () => {
       Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== source);
+      
+      // Instead of resetting, remove and replace
+      const index = audioNodePool.findIndex(n => n.source === source);
+      if (index !== -1) {
+        audioNodePool[index] = createNewNode(false); // Replace with a fresh node
+      }
+
       gainNode.disconnect();
       source.disconnect();
-      source.buffer = null;  // Reset buffer
-      source.onended = null;  // Clear event
-      source.playbackRate.value = 1; // Reset playback rate
-      gainNode.gain.value = 1; // Reset gain
-      source.inUse = false;
     };
 
     source.start(0);
