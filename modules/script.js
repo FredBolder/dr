@@ -24,14 +24,6 @@ const settingLabels = ["Mute", "Solo", "Other sound", "Volume", "Pitch", "Pan", 
 
 Glob.init();
 
-
-const worker = new Worker("inputWorker.js");
-
-worker.onmessage = function (event) {
-  const { x, y } = event.data;
-  padClicked({ clientX: x, clientY: y }); // Simulate original event
-};
-
 function initializeAudioNodes(poolSize = 10) {
   const audioCtx = Audio.audioContext;
 
@@ -2011,8 +2003,7 @@ try {
   // });
 
   document.getElementById("canvasPlayScreen").addEventListener("pointerdown", (e) => {
-    // The pointerdown event works faster than the mousedown event, since it does not wait to detect a double click
-    worker.postMessage({ x: e.clientX, y: e.clientY });
+    requestAnimationFrame(() => padClicked(e)); // Prioritize before UI updates
   });
 
   document.getElementById("pattern").addEventListener("mousedown", (e) => {
