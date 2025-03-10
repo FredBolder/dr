@@ -845,6 +845,7 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
   let humanizeVolumeFactor = 1;
   let volume = 75;
 
+  const startTime = performance.now();
   const convolver = reverb.getConvolver();
   if (convolver) {
     volume = Glob.settings.volume / 100;
@@ -853,10 +854,10 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
       humanizeVolumeFactor = 1 + (0.5 * humanizeVolumes) - (Math.random() * humanizeVolumes);
     }
 
-    //const audioCtx = Audio.audioContext;
-    // if (audioCtx.state === "suspended") {
-    //   await audioCtx.resume();
-    // }
+    const audioCtx = Audio.audioContext;
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
 
     const audioBuffer = playPadsBuffers[instrumentIndex];
     const instrument = Instruments.sets[Glob.settings.instrumentSet][instrumentIndex];
@@ -895,6 +896,8 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
   } else {
     alert(msgReverbNotLoaded);
   }
+  const endTime = performance.now();
+  alert(`playInstrumentFast executed in ${endTime - startTime}ms`);
 }
 
 async function playPattern() {
