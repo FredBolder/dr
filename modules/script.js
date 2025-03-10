@@ -1492,6 +1492,7 @@ function humanizeVolumesChanged() {
 }
 
 function padClicked(event) {
+  const startTime = performance.now();
   let columns = 0;
   let rows = 0;
   const pads = Glob.settings.canvasPlayScreen;
@@ -1518,6 +1519,8 @@ function padClicked(event) {
     const instrumentIndex = instrList[n];
     playInstrumentFast(instrumentIndex, 0.7);
   }
+  const endTime = performance.now();
+  alert(`playInstrumentFast executed in ${endTime - startTime}ms`);
 }
 
 function patternClicked(event) {
