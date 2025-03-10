@@ -9,7 +9,7 @@ class Audio {
     static init() {
         this.ready = false;
         this.audioCache = new Map();
-        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: "interactive" });
         this.processedCache = new Map();
         this.preloadAudioFiles(Instruments.fileNames);
     }

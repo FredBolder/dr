@@ -845,7 +845,6 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
   let humanizeVolumeFactor = 1;
   let volume = 75;
 
-  const startTime = performance.now();
   const convolver = reverb.getConvolver();
   if (convolver) {
     volume = Glob.settings.volume / 100;
@@ -895,10 +894,6 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
     }
   } else {
     alert(msgReverbNotLoaded);
-  }
-  const endTime = performance.now();
-  if ((endTime - startTime) > 10) {
-    alert(`playInstrumentFast executed in ${endTime - startTime}ms`);
   }
 }
 
