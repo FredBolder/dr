@@ -10,6 +10,7 @@ import { Settings } from "./settings.js";
 import { Test } from "./test.js";
 
 let activeSources = [];
+const audioNodePool = [];
 const labelWidth = 170;
 const msgCanNotChangeWhilePlaying = "This setting can not be changed while playing.";
 const msgInstrumentsNotLoaded = "The instruments are not loaded yet. Try again later.";
@@ -22,6 +23,38 @@ let reverb;
 const settingLabels = ["Mute", "Solo", "Other sound", "Volume", "Pitch", "Pan", "Filter", "Filter freq", "Filter Q", "Distortion", "Reverb"];
 
 Glob.init();
+
+function initializeAudioNodes(poolSize = 10) {
+  const audioCtx = Audio.audioContext;
+
+  for (let i = 0; i < poolSize; i++) {
+    const source = audioCtx.createBufferSource();
+    const gainNode = audioCtx.createGain();
+    
+    source.connect(gainNode);
+    
+    audioNodePool.push({ source, gainNode, inUse: false });
+  }
+}
+
+function getAvailableNode() {
+  for (const node of audioNodePool) {
+    if (!node.inUse) {
+      node.inUse = true;
+      return node;
+    }
+  }
+  
+  // If no free nodes, create a new one dynamically
+  const audioCtx = Audio.audioContext;
+  const source = audioCtx.createBufferSource();
+  const gainNode = audioCtx.createGain();
+  source.connect(gainNode);
+  
+  const newNode = { source, gainNode, inUse: true };
+  audioNodePool.push(newNode);
+  return newNode;
+}
 
 function applyPresetPattern() {
   let column = 0;
@@ -805,7 +838,6 @@ async function playInstrument(instrument, volumeFactor = 0.7) {
 async function playInstrumentFast(instrumentIndex, volumeFactor) {
   let humanizeVolumes = 0;
   let humanizeVolumeFactor = 1;
-  let urlLower = "";
   let volume = 75;
 
   const convolver = reverb.getConvolver();
@@ -814,8 +846,6 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
     humanizeVolumes = Glob.settings.humanizeVolumes / 10;
     if (humanizeVolumes > 0) {
       humanizeVolumeFactor = 1 + (0.5 * humanizeVolumes) - (Math.random() * humanizeVolumes);
-    } else {
-      humanizeVolumeFactor = 1;
     }
 
     const audioCtx = Audio.audioContext;
@@ -826,30 +856,33 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
     const audioBuffer = playPadsBuffers[instrumentIndex];
     const instrument = Instruments.sets[Glob.settings.instrumentSet][instrumentIndex];
 
-    const source = audioCtx.createBufferSource();
+    const { source, gainNode } = getAvailableNode();
     source.buffer = audioBuffer;
     source.playbackRate.value = Glob.percentToPitch(instrument.pitch);
-    const gainNode = audioCtx.createGain();
     gainNode.gain.value = volumeFactor * humanizeVolumeFactor * volume * (instrument.volume / 100);
+    
     const stereoNode = playPadsStereoNodes[instrumentIndex];
-    source.connect(gainNode);
     gainNode.connect(stereoNode);
 
     source.onended = () => {
       Glob.openHiHat = Glob.openHiHat.filter(oh => oh.source !== source);
-      source.disconnect();
       gainNode.disconnect();
+      source.disconnect();
+      source.buffer = null;  // Reset buffer
+      source.onended = null;  // Clear event
+      source.playbackRate.value = 1; // Reset playback rate
+      gainNode.gain.value = 1; // Reset gain
+      source.inUse = false;
     };
 
     source.start(0);
-    source.started = true;
-    urlLower = instrument.file.toLowerCase();
-    if (urlLower.includes("open_hi-hat")) {
+    
+    if (instrument.file.toLowerCase().includes("open_hi-hat")) {
       setTimeout(() => {
         Glob.openHiHat.push({ source, gainNode });
       }, 0);
     }
-    if (urlLower.includes("closed_hi-hat") || urlLower.includes("pedal_hi-hat")) {
+    if (instrument.file.toLowerCase().includes("closed_hi-hat") || instrument.file.toLowerCase().includes("pedal_hi-hat")) {
       Instruments.stopOpenHiHat(0);
     }
   } else {
