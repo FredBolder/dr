@@ -79,6 +79,7 @@ fieldset {
     margin-bottom: 1em;
     background: transparent;
     z-index: 1;
+    opacity: 0.5;
 }
 
 #copyMeasureFrom, #copyMeasureTo {
