@@ -30,7 +30,10 @@ class Presets {
                     "Tsifteteli 2", "Zeibekiko 1", "Zeibekiko 2","Random Zeibekiko", "Zonaradiko 1", "Zonaradiko 2"
                 ];
                 break;
-            default:
+                case "Bulgarian":
+                    options = ["Daichovo 1", "Kopanitsa 1", "Kopanitsa 2", "Sedi Donka 1"];
+                    break;
+                default:
                 break;
         }
         let rhythmSelector = document.getElementById("rhythmSelector");
