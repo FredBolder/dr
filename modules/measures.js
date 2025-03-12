@@ -1028,6 +1028,9 @@ class Measures {
                 Glob.settings.tempoSlider.value = 400;
                 measure1 = new Measure();
                 measure1.beats = 11;
+                measure1.touberlekiKa = [0, 2, 0, 2, 0, 0, 2, 0, 2, 0, 0];
+                measure1.touberlekiTek = [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0];
+                measure1.touberlekiDoum = [1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0];
                 measure1.divisions = 1;
                 measure1.rideCymbal = [1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0];
                 measure1.snareDrum = [0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0];
