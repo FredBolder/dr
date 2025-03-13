@@ -31,7 +31,7 @@ class Presets {
                 ];
                 break;
                 case "Bulgarian":
-                    options = ["Daichovo 1", "Kopanitsa 1", "Kopanitsa 2", "Sedi Donka 1"];
+                    options = ["Daichovo 1", "Kopanitsa 1", "Kopanitsa 2", "Paidushko 1", "Pravo 1", "Sedi Donka 1"];
                     break;
                 default:
                 break;
