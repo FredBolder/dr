@@ -1105,6 +1105,32 @@ class Measures {
                 Measure.fixMeasure(measure2);
                 this.measures.push(measure2);
                 break;
+            case "Rachenitsa1":
+                Glob.settings.instrumentSet = 1;
+                Glob.settings.measuresToPlay = "1, 1, 1, 2";
+                Instruments.getInstrumentByProp("snareDrum").other = true;
+                Glob.settings.tempoSlider.value = 400;
+                measure1 = new Measure();
+                measure1.beats = 7;
+                measure1.divisions = 1;
+                measure1.daouliTek = [0, 0, 1, 0, 0, 0, 2];
+                measure1.daouliDoum = [1, 0, 0, 0, 1, 0, 0];
+                measure1.rideCymbal = [1, 0, 1, 0, 1, 0, 0];
+                measure1.snareDrum = [0, 0, 1, 0, 0, 0, 2];
+                measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                measure2 = new Measure();
+                measure2.beats = 7;
+                measure2.divisions = 1;
+                measure2.daouliTek = [0, 0, 1, 0, 0, 2, 2];
+                measure2.daouliDoum = [1, 0, 0, 0, 1, 0, 0];
+                measure2.rideCymbal = [1, 0, 1, 0, 1, 0, 0];
+                measure2.snareDrum = [0, 0, 1, 0, 0, 2, 2];
+                measure2.bassDrum = [1, 0, 0, 0, 1, 0, 0];
+                Measure.fixMeasure(measure2);
+                this.measures.push(measure2);
+                break;
             case "SediDonka1":
                 Glob.settings.tempoSlider.value = 400;
                 measure1 = new Measure();
