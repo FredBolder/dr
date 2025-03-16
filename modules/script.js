@@ -399,7 +399,7 @@ function drawPattern(currentColumn = -1) {
   }
   if ((currentColumn !== -1) && (!Glob.settings.showSettings)) {
     Glob.settings.overlay.style.display = "block";
-    Glob.settings.overlay.style.height = `${pattern.height}px`;
+    Glob.settings.overlay.style.height = `${(rows + 1) * dy1}px`;
     Glob.settings.overlay.style.width = `${dx1}px`;
     Glob.settings.overlay.style.left = `${currentColumn * dx1 + labelWidth}px`;
     return;
@@ -2230,6 +2230,8 @@ try {
     updateCanvasPlayScreenSize();
     if (Glob.playingPads) {
       setTimeout(drawPads, 200);
+    } else {
+      setTimeout(drawPattern, 200);
     }
   });
 
