@@ -1395,7 +1395,11 @@ function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
     dbPattern.width = desiredCanvasWidth;
     dbPattern.height = desiredCanvasHeight;
     dbPatternCtx = dbPattern.getContext("2d");
-    dbPatternCtx.scale(ratio, ratio);
+  
+    // Check if scale is necessary
+    if (dbPatternCtx.getTransform().a === 1) { // Default scale is 1
+      dbPatternCtx.scale(ratio, ratio);
+    }
   }
 }
 
