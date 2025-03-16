@@ -399,6 +399,7 @@ function drawPattern(currentColumn = -1) {
   }
   if ((currentColumn !== -1) && (!Glob.settings.showSettings)) {
     Glob.settings.overlay.style.display = "block";
+    Glob.settings.overlay.style.height = `${pattern.height}px`;
     Glob.settings.overlay.style.width = `${dx1}px`;
     Glob.settings.overlay.style.left = `${currentColumn * dx1 + labelWidth}px`;
     return;
@@ -1383,7 +1384,6 @@ function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
     pattern.height = desiredCanvasHeight;
     patternContext = pattern.getContext('2d');
     patternContext.scale(ratio, ratio);
-    Glob.settings.overlay.style.height = `${pattern.height}px`;
   }
 }
 
