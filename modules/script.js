@@ -1386,20 +1386,15 @@ function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
     pattern.height = desiredCanvasHeight;
     patternCtx = pattern.getContext("2d");
     patternCtx.scale(ratio, ratio);
-  }
 
-  // Also resize the offscreen buffer to match
-  //dbPattern = createDbPattern(desiredCanvasWidth, desiredCanvasHeight);
-  //dbPatternCtx = dbPattern.getContext("2d");
-  if (dbPattern.width !== desiredCanvasWidth || dbPattern.height !== desiredCanvasHeight) {
-    dbPattern.width = desiredCanvasWidth;
-    dbPattern.height = desiredCanvasHeight;
-    dbPatternCtx = dbPattern.getContext("2d");
-  
-    // Check if scale is necessary
-    if (dbPatternCtx.getTransform().a === 1) { // Default scale is 1
-      dbPatternCtx.scale(ratio, ratio);
+    if (dbPattern) {
+      dbPattern.width = 1;
+      dbPattern.height = 1;
+      dbPatternCtx = null;
+      dbPattern = null;
     }
+    dbPattern = createDbPattern(desiredCanvasWidth, desiredCanvasHeight);
+    dbPatternCtx = dbPattern.getContext("2d");
   }
 }
 
