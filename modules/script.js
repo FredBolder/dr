@@ -15,13 +15,28 @@ const labelWidth = 170;
 const msgCanNotChangeWhilePlaying = "This setting can not be changed while playing.";
 const msgInstrumentsNotLoaded = "The instruments are not loaded yet. Try again later.";
 const msgReverbNotLoaded = "Reverb is not loaded yet. Try again later.";
-let patternContext;
+let patternCtx;
 let playPadsBuffers = null;
 let playPadsStereoNodes = [];
 let reverb;
 const settingLabels = ["Mute", "Solo", "Other sound", "Volume", "Pitch", "Pan", "Filter", "Filter freq", "Filter Q", "Distortion", "Reverb"];
 
 Glob.init();
+
+// Create an offscreen canvas
+let dbPattern = createDbPattern(document.getElementById("pattern").width, document.getElementById("pattern").height);
+let dbPatternCtx = dbPattern.getContext("2d");
+
+function createDbPattern(width, height) {
+  let ratio = window.devicePixelRatio || 1;
+  let offscreenCanvas = document.createElement("canvas");
+  offscreenCanvas.width = width * ratio;
+  offscreenCanvas.height = height * ratio;
+  let ctx = offscreenCanvas.getContext("2d");
+  ctx.scale(ratio, ratio); // Scale so drawing operations remain sharp
+  return offscreenCanvas;
+}
+
 
 function initializeAudioNodes(poolSize = 10) {
   const audioCtx = Audio.audioContext;
@@ -390,74 +405,55 @@ function drawPattern(currentColumn = -1) {
   const rows = Instruments.sets[Glob.settings.instrumentSet].length;
   columns = divisionsPerMeasure;
 
-  const pattern = Glob.settings.pattern;
-
   if (Glob.settings.showSettings) {
-    resizeCanvasIfNeeded(pattern, settingLabels.length, dx2, rows, dy1);
+    resizeCanvasIfNeeded(Glob.settings.pattern, settingLabels.length, dx2, rows, dy1);
   } else {
-    resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1);
+    resizeCanvasIfNeeded(Glob.settings.pattern, columns, dx1, rows, dy1);
   }
-  if ((currentColumn !== -1) && (!Glob.settings.showSettings)) {
-    //Glob.settings.overlay.style.display = "block";
-    //Glob.settings.overlay.style.opacity = "1"; // or set visibility to "visible"
-    Glob.settings.overlay.style.visibility = "visible";
-    Glob.settings.overlay.style.height = `${(rows + 1) * dy1}px`;
-    Glob.settings.overlay.style.width = `${dx1}px`;
-    //Glob.settings.overlay.style.left = `${currentColumn * dx1 + labelWidth}px`;
-    Glob.settings.overlay.style.transform = `translateX(${currentColumn * dx1 + labelWidth}px)`;
-    return;
-  }
-  //Glob.settings.overlay.style.display = "none";
-  //Glob.settings.overlay.style.opacity = "0"; // or set visibility to "hidden"
-  Glob.settings.overlay.style.visibility = "hidden";
 
-  patternContext.clearRect(0, 0, pattern.width, pattern.height);
-
-  // console.log(
-  //   `Width: ${pattern.width}, Height: ${pattern.height}, ClientWidth: ${pattern.clientWidth}, ClientHeight: ${pattern.clientHeight}`
-  // );
+  dbPatternCtx.clearRect(0, 0, dbPattern.width, dbPattern.height);
 
   // Labels
-  patternContext.lineWidth = 2;
-  patternContext.strokeStyle = "white";
+  dbPatternCtx.lineWidth = 2;
+  dbPatternCtx.strokeStyle = "white";
   fontSize = dy1 * 0.6;
-  patternContext.font = `${fontSize}px arial`;
-  patternContext.textAlign = "left";
-  patternContext.beginPath;
+  dbPatternCtx.font = `${fontSize}px arial`;
+  dbPatternCtx.textAlign = "left";
+  dbPatternCtx.beginPath;
   measureStatus = `Measure ${Glob.currentMeasure + 1}/${Measures.measures.length}`;
-  patternContext.fillStyle = "black";
-  patternContext.fillText(measureStatus, 10, dy1 * 0.75);
-  patternContext.strokeStyle = "white";
+  dbPatternCtx.fillStyle = "black";
+  dbPatternCtx.fillText(measureStatus, 10, dy1 * 0.75);
+  dbPatternCtx.strokeStyle = "white";
   for (let i = 0; i < rows; i++) {
-    patternContext.beginPath;
-    patternContext.fillStyle = "blue";
-    patternContext.fillRect(0, i * dy1 + dy1, labelWidth, dy1);
-    patternContext.strokeRect(0, i * dy1 + dy1, labelWidth, dy1);
-    patternContext.fillStyle = "white";
-    patternContext.fillText(Instruments.sets[Glob.settings.instrumentSet][i].name, 10, i * dy1 + (dy1 * 1.75));
-    patternContext.fillText(Instruments.sets[Glob.settings.instrumentSet][i].key, 150, i * dy1 + (dy1 * 1.75));
+    dbPatternCtx.beginPath;
+    dbPatternCtx.fillStyle = "blue";
+    dbPatternCtx.fillRect(0, i * dy1 + dy1, labelWidth, dy1);
+    dbPatternCtx.strokeRect(0, i * dy1 + dy1, labelWidth, dy1);
+    dbPatternCtx.fillStyle = "white";
+    dbPatternCtx.fillText(Instruments.sets[Glob.settings.instrumentSet][i].name, 10, i * dy1 + (dy1 * 1.75));
+    dbPatternCtx.fillText(Instruments.sets[Glob.settings.instrumentSet][i].key, 150, i * dy1 + (dy1 * 1.75));
   }
   if (Glob.settings.showSettings) {
     // Setting labels
-    patternContext.textAlign = "center";
+    dbPatternCtx.textAlign = "center";
     for (let i = 0; i < settingLabels.length; i++) {
-      patternContext.beginPath;
-      patternContext.fillStyle = "blue";
-      patternContext.fillRect(i * dx2 + labelWidth, 0, dx2, dy1);
-      patternContext.strokeRect(i * dx2 + labelWidth, 0, dx2, dy1);
-      patternContext.fillStyle = "white";
-      patternContext.fillText(settingLabels[i], i * dx2 + labelWidth + (dx2 / 2), dy1 * 0.75, dx2 * 0.9);
+      dbPatternCtx.beginPath;
+      dbPatternCtx.fillStyle = "blue";
+      dbPatternCtx.fillRect(i * dx2 + labelWidth, 0, dx2, dy1);
+      dbPatternCtx.strokeRect(i * dx2 + labelWidth, 0, dx2, dy1);
+      dbPatternCtx.fillStyle = "white";
+      dbPatternCtx.fillText(settingLabels[i], i * dx2 + labelWidth + (dx2 / 2), dy1 * 0.75, dx2 * 0.9);
     }
     // Settings
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < settingLabels.length; j++) {
-        patternContext.lineWidth = 2;
-        patternContext.fillStyle = "white";
-        patternContext.strokeStyle = "black";
-        patternContext.beginPath;
-        patternContext.fillRect(j * dx2 + labelWidth, i * dy1 + dy1, dx2, dy1);
-        patternContext.strokeRect(j * dx2 + labelWidth, i * dy1 + dy1, dx2, dy1);
-        patternContext.fillStyle = "black";
+        dbPatternCtx.lineWidth = 2;
+        dbPatternCtx.fillStyle = "white";
+        dbPatternCtx.strokeStyle = "black";
+        dbPatternCtx.beginPath;
+        dbPatternCtx.fillRect(j * dx2 + labelWidth, i * dy1 + dy1, dx2, dy1);
+        dbPatternCtx.strokeRect(j * dx2 + labelWidth, i * dy1 + dy1, dx2, dy1);
+        dbPatternCtx.fillStyle = "black";
         switch (j) {
           case 0:
             text = Glob.boolToYesNo(set[i].mute);
@@ -500,22 +496,22 @@ function drawPattern(currentColumn = -1) {
             text = "?";
             break;
         }
-        patternContext.fillText(text, j * dx2 + labelWidth + (dx2 / 2), i * dy1 + dy1 * 1.75, dx2 * 0.9);
+        dbPatternCtx.fillText(text, j * dx2 + labelWidth + (dx2 / 2), i * dy1 + dy1 * 1.75, dx2 * 0.9);
 
       }
     }
   } else {
     // Count labels
-    patternContext.textAlign = "center";
+    dbPatternCtx.textAlign = "center";
     n = 1;
     for (let i = 0; i < columns; i++) {
-      patternContext.beginPath;
-      patternContext.fillStyle = "blue";
-      patternContext.fillRect(i * dx1 + labelWidth, 0, dx1, dy1);
-      patternContext.strokeRect(i * dx1 + labelWidth, 0, dx1, dy1);
-      patternContext.fillStyle = "white";
+      dbPatternCtx.beginPath;
+      dbPatternCtx.fillStyle = "blue";
+      dbPatternCtx.fillRect(i * dx1 + labelWidth, 0, dx1, dy1);
+      dbPatternCtx.strokeRect(i * dx1 + labelWidth, 0, dx1, dy1);
+      dbPatternCtx.fillStyle = "white";
       if ((i % divisionsPerBeat) === 0) {
-        patternContext.fillText(n.toString(), i * dx1 + labelWidth + (dx1 / 2), dy1 * 0.75, dx1 * 0.9);
+        dbPatternCtx.fillText(n.toString(), i * dx1 + labelWidth + (dx1 / 2), dy1 * 0.75, dx1 * 0.9);
         n++;
       }
     }
@@ -524,13 +520,13 @@ function drawPattern(currentColumn = -1) {
       for (let j = 0; j < columns; j++) {
         const cellValue = Instruments.getCell(Glob.currentMeasure, j, i);
 
-        patternContext.lineWidth = 2;
-        patternContext.fillStyle = "white";
-        patternContext.strokeStyle = "black";
-        patternContext.beginPath;
-        patternContext.fillRect(j * dx1 + labelWidth, i * dy1 + dy1, dx1, dy1);
-        patternContext.strokeRect(j * dx1 + labelWidth, i * dy1 + dy1, dx1, dy1);
-        patternContext.fillStyle = "black";
+        dbPatternCtx.lineWidth = 2;
+        dbPatternCtx.fillStyle = "white";
+        dbPatternCtx.strokeStyle = "black";
+        dbPatternCtx.beginPath;
+        dbPatternCtx.fillRect(j * dx1 + labelWidth, i * dy1 + dy1, dx1, dy1);
+        dbPatternCtx.strokeRect(j * dx1 + labelWidth, i * dy1 + dy1, dx1, dy1);
+        dbPatternCtx.fillStyle = "black";
 
         if ((cellValue >= 7) && (cellValue <= 9)) {
           // Additional hit
@@ -548,13 +544,13 @@ function drawPattern(currentColumn = -1) {
               factor = 0.2;
               break;
           }
-          patternContext.lineWidth = 4;
-          patternContext.beginPath();
-          patternContext.moveTo(j * dx1 + labelWidth + (dx1 * factor), i * dy1 + (1.5 * dy1));
-          patternContext.lineTo(j * dx1 + labelWidth + (dx1 * (1 - factor)), i * dy1 + (1.5 * dy1));
-          patternContext.moveTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + factor) * dy1));
-          patternContext.lineTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + (1 - factor)) * dy1));
-          patternContext.stroke();
+          dbPatternCtx.lineWidth = 4;
+          dbPatternCtx.beginPath();
+          dbPatternCtx.moveTo(j * dx1 + labelWidth + (dx1 * factor), i * dy1 + (1.5 * dy1));
+          dbPatternCtx.lineTo(j * dx1 + labelWidth + (dx1 * (1 - factor)), i * dy1 + (1.5 * dy1));
+          dbPatternCtx.moveTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + factor) * dy1));
+          dbPatternCtx.lineTo(j * dx1 + labelWidth + (dx1 * 0.5), i * dy1 + ((1 + (1 - factor)) * dy1));
+          dbPatternCtx.stroke();
         } else if ((cellValue >= 10) && (cellValue <= 15)) {
           switch (cellValue) {
             case 10:
@@ -579,7 +575,7 @@ function drawPattern(currentColumn = -1) {
               text = "-";
               break;
           }
-          patternContext.fillText(text, j * dx1 + labelWidth + (dx1 / 2), i * dy1 + dy1 * 1.75, dx1 * 0.9);
+          dbPatternCtx.fillText(text, j * dx1 + labelWidth + (dx1 / 2), i * dy1 + dy1 * 1.75, dx1 * 0.9);
         } else if (cellValue > 0) {
           switch (cellValue) {
             case 1:
@@ -604,21 +600,22 @@ function drawPattern(currentColumn = -1) {
           radius = dx1 * 0.4 * factor;
           if (cellValue === 6) {
             // Flam
-            patternContext.beginPath();
-            patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.65), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
-            patternContext.fill();
+            dbPatternCtx.beginPath();
+            dbPatternCtx.ellipse(j * dx1 + labelWidth + (dx1 * 0.65), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
+            dbPatternCtx.fill();
             radius = dx1 * 0.4 * 0.35;
-            patternContext.ellipse(j * dx1 + labelWidth + (dx1 * 0.2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
-            patternContext.fill();
+            dbPatternCtx.ellipse(j * dx1 + labelWidth + (dx1 * 0.2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
+            dbPatternCtx.fill();
           } else {
-            patternContext.beginPath();
-            patternContext.ellipse(j * dx1 + labelWidth + (dx1 / 2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
-            patternContext.fill();
+            dbPatternCtx.beginPath();
+            dbPatternCtx.ellipse(j * dx1 + labelWidth + (dx1 / 2), i * dy1 + (1.5 * dy1), radius, radius, 0, 0, 2 * Math.PI);
+            dbPatternCtx.fill();
           }
         }
       }
     }
   }
+  updatePattern(currentColumn);
   updateEndsWithFill();
 }
 
@@ -1371,27 +1368,30 @@ function stopSounds(mode = 0) {
 }
 
 function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
-  const ratio = window.devicePixelRatio || 1;
+  let ratio = window.devicePixelRatio || 1;
+
   const displayWidth = labelWidth + (columns * dx1);
   const displayHeight = (rows + 1) * dy1;
 
-  if (pattern.style.width !== `${displayWidth}px` || pattern.style.height !== `${displayHeight}px`) {
-    pattern.style.width = `${displayWidth}px`;
-    pattern.style.height = `${displayHeight}px`;
-  }
+  // Set CSS size (logical size)
+  pattern.style.width = `${displayWidth}px`;
+  pattern.style.height = `${displayHeight}px`;
 
-  const rect = pattern.getBoundingClientRect();
-  const desiredCanvasWidth = rect.width * ratio;
-  const desiredCanvasHeight = rect.height * ratio;
+  // Set actual pixel size
+  let desiredCanvasWidth = displayWidth * ratio;
+  let desiredCanvasHeight = displayHeight * ratio;
 
   if (pattern.width !== desiredCanvasWidth || pattern.height !== desiredCanvasHeight) {
     pattern.width = desiredCanvasWidth;
     pattern.height = desiredCanvasHeight;
-    patternContext = pattern.getContext('2d');
-    patternContext.scale(ratio, ratio);
+    patternCtx = pattern.getContext("2d");
+    patternCtx.scale(ratio, ratio);
   }
-}
 
+  // Also resize the offscreen buffer to match
+  dbPattern = createDbPattern(desiredCanvasWidth, desiredCanvasHeight);
+  dbPatternCtx = dbPattern.getContext("2d");
+}
 
 
 async function saveTextFile() {
@@ -1810,6 +1810,21 @@ function updateCanvasPlayScreenSize() {
   // Scale to normalize drawing operations
   padsContext.scale(ratio, ratio);
 }
+
+function updatePattern(currentColumn = -1) {
+  let dx = 25;
+  const pattern = Glob.settings.pattern;
+  const patternCtx = pattern.getContext("2d");
+
+  patternCtx.clearRect(0, 0, pattern.width, pattern.height);
+  patternCtx.drawImage(dbPattern, 0, 0, pattern.width, pattern.height);
+
+  if ((currentColumn !== -1) && (!Glob.settings.showSettings)) {
+    patternCtx.fillStyle = "rgba(255, 0, 0, 0.5)";
+    patternCtx.fillRect(currentColumn * dx + labelWidth, 0, dx, pattern.height);
+  }
+}
+
 
 function volumeChanged() {
   Glob.settings.volume = Glob.settings.volumeSlider.value;

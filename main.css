@@ -76,26 +76,7 @@ fieldset {
     border: 1px solid black;
     height: 400px;
     width: 1000px;
-    z-index: 0;
-
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    /* Optionally, */
-    will-change: transform;
 }
-
-#overlay {
-    position: absolute;
-    background-color: rgba(255, 0, 0, 0.5);
-    width: 1px;
-    height: 1px;
-    z-index: 1000;
-    pointer-events: none;
-    border: 2px solid blue; /* Debug border */
-    /* contain: strict; */
-    transform: translateZ(0);
-}
-
 
 #copyMeasureFrom, #copyMeasureTo {
     width: 3em;
