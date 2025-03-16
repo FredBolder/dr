@@ -401,7 +401,8 @@ function drawPattern(currentColumn = -1) {
     Glob.settings.overlay.style.display = "block";
     Glob.settings.overlay.style.height = `${(rows + 1) * dy1}px`;
     Glob.settings.overlay.style.width = `${dx1}px`;
-    Glob.settings.overlay.style.left = `${currentColumn * dx1 + labelWidth}px`;
+    //Glob.settings.overlay.style.left = `${currentColumn * dx1 + labelWidth}px`;
+    Glob.settings.overlay.style.transform = `translateX(${currentColumn * dx1 + labelWidth}px)`;
     return;
   }
   Glob.settings.overlay.style.display = "none";
