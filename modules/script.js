@@ -29,6 +29,9 @@ let dbPatternCtx = dbPattern.getContext("2d");
 
 function createDbPattern(width, height) {
   let ratio = window.devicePixelRatio || 1;
+  if (/Mobi|Android/i.test(navigator.userAgent)) {
+    ratio = 1; // Force scaling to 1 on mobile to prevent double scaling
+  }
   let offscreenCanvas = document.createElement("canvas");
   offscreenCanvas.width = width * ratio;
   offscreenCanvas.height = height * ratio;
@@ -1369,6 +1372,9 @@ function stopSounds(mode = 0) {
 
 function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
   let ratio = window.devicePixelRatio || 1;
+  if (/Mobi|Android/i.test(navigator.userAgent)) {
+    ratio = 1; // Force scaling to 1 on mobile to prevent double scaling
+  }
 
   const displayWidth = labelWidth + (columns * dx1);
   const displayHeight = (rows + 1) * dy1;
@@ -1386,15 +1392,13 @@ function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
     pattern.height = desiredCanvasHeight;
     patternCtx = pattern.getContext("2d");
     patternCtx.scale(ratio, ratio);
+  }
 
-    if (dbPattern) {
-      dbPattern.width = 1;
-      dbPattern.height = 1;
-      dbPatternCtx = null;
-      dbPattern = null;
-    }
-    dbPattern = createDbPattern(desiredCanvasWidth, desiredCanvasHeight);
+  if (dbPattern.width !== desiredCanvasWidth || dbPattern.height !== desiredCanvasHeight) {
+    dbPattern.width = desiredCanvasWidth;
+    dbPattern.height = desiredCanvasHeight;
     dbPatternCtx = dbPattern.getContext("2d");
+    dbPatternCtx.scale(ratio, ratio);
   }
 }
 
