@@ -15,7 +15,6 @@ const labelWidth = 170;
 const msgCanNotChangeWhilePlaying = "This setting can not be changed while playing.";
 const msgInstrumentsNotLoaded = "The instruments are not loaded yet. Try again later.";
 const msgReverbNotLoaded = "Reverb is not loaded yet. Try again later.";
-let overlayContext;
 let patternContext;
 let playPadsBuffers = null;
 let playPadsStereoNodes = [];
@@ -398,12 +397,13 @@ function drawPattern(currentColumn = -1) {
   } else {
     resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1);
   }
-  overlayContext.clearRect(0, 0, overlay.width, overlay.height);
   if ((currentColumn !== -1) && (!Glob.settings.showSettings)) {
-    overlayContext.fillStyle = 'rgba(255, 0, 0)';
-    overlayContext.fillRect(currentColumn * dx1 + labelWidth, 0, dx1, overlay.height);
+    Glob.settings.overlay.style.display = "block";
+    Glob.settings.overlay.style.width = `${dx1}px`;
+    Glob.settings.overlay.style.left = `${currentColumn * dx1 + labelWidth}px`;
     return;
   }
+  Glob.settings.overlay.style.display = "none";
 
   patternContext.clearRect(0, 0, pattern.width, pattern.height);
 
@@ -1383,12 +1383,7 @@ function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
     pattern.height = desiredCanvasHeight;
     patternContext = pattern.getContext('2d');
     patternContext.scale(ratio, ratio);
-    overlay.width = desiredCanvasWidth;
-    overlay.height = desiredCanvasHeight;
-    overlay.style.width = pattern.style.width;
-    overlay.style.height = pattern.style.height;
-    overlayContext = overlay.getContext('2d');
-    overlayContext.scale(ratio, ratio);
+    Glob.settings.overlay.style.height = `${pattern.height}px`;
   }
 }
 

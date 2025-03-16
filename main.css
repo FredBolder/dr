@@ -73,13 +73,15 @@ fieldset {
 }
 
 #overlay {
+    background-color: red;
+    color: red;
     height: 400px;
     width: 1000px;
     margin-top: 1em;
     margin-bottom: 1em;
-    background: transparent;
     z-index: 1;
     opacity: 0.5;
+    filter: alpha(opacity=50); /* For IE8 and earlier */
 }
 
 #copyMeasureFrom, #copyMeasureTo {
