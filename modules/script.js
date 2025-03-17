@@ -1846,9 +1846,11 @@ try {
 
       Glob.settings.mainScreen.style.display = "block";
       Glob.settings.playScreen.style.display = "none";
-      document.getElementById("categorySelector").value = "PopRock";
-      Presets.fillRhythmSelect();
-      document.getElementById("rhythmSelector").value = "Rock3";
+      setTimeout(() => {
+        document.getElementById("categorySelector").value = "PopRock";
+        Presets.fillRhythmSelect();
+        document.getElementById("rhythmSelector").value = "Rock3";
+        }, 100);
       Measures.load("Rock3");
       Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
       instrumentSetChanged();
@@ -1868,12 +1870,6 @@ try {
       humanizeTimingChanged();
       initializeAudioNodes();
     }
-  });
-
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("categorySelector").value = "PopRock";
-    Presets.fillRhythmSelect();
-    document.getElementById("rhythmSelector").value = "Rock3";
   });
 
   document.getElementById("categorySelector").addEventListener("change", (e) => {
