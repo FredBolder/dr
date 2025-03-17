@@ -1846,6 +1846,7 @@ try {
 
       Glob.settings.mainScreen.style.display = "block";
       Glob.settings.playScreen.style.display = "none";
+      document.getElementById("categorySelector").value = "PopRock";
       Presets.fillRhythmSelect();
       document.getElementById("rhythmSelector").value = "Rock3";
       Measures.load("Rock3");
