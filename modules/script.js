@@ -15,6 +15,8 @@ const labelWidth = 170;
 const msgCanNotChangeWhilePlaying = "This setting can not be changed while playing.";
 const msgInstrumentsNotLoaded = "The instruments are not loaded yet. Try again later.";
 const msgReverbNotLoaded = "Reverb is not loaded yet. Try again later.";
+let dbPattern;
+let dbPatternCtx;
 let patternCtx;
 let playPadsBuffers = null;
 let playPadsStereoNodes = [];
@@ -22,61 +24,6 @@ let reverb;
 const settingLabels = ["Mute", "Solo", "Other sound", "Volume", "Pitch", "Pan", "Filter", "Filter freq", "Filter Q", "Distortion", "Reverb"];
 
 Glob.init();
-
-// Create an offscreen canvas
-let dbPattern = createDbPattern(document.getElementById("pattern").width, document.getElementById("pattern").height);
-let dbPatternCtx = dbPattern.getContext("2d");
-
-function createDbPattern(width, height) {
-  let ratio = window.devicePixelRatio || 1;
-  if (/Mobi|Android/i.test(navigator.userAgent)) {
-    ratio = 1; // Force scaling to 1 on mobile to prevent double scaling
-  }
-  let offscreenCanvas = document.createElement("canvas");
-  offscreenCanvas.width = width * ratio;
-  offscreenCanvas.height = height * ratio;
-  let ctx = offscreenCanvas.getContext("2d");
-  ctx.scale(ratio, ratio); // Scale so drawing operations remain sharp
-  return offscreenCanvas;
-}
-
-
-function initializeAudioNodes(poolSize = 10) {
-  const audioCtx = Audio.audioContext;
-
-  for (let i = 0; i < poolSize; i++) {
-    const source = audioCtx.createBufferSource();
-    const gainNode = audioCtx.createGain();
-
-    source.connect(gainNode);
-
-    audioNodePool.push({ source, gainNode, inUse: false });
-  }
-}
-
-function getAvailableNode() {
-  for (const node of audioNodePool) {
-    if (!node.inUse) {
-      node.inUse = true;
-      return node;
-    }
-  }
-
-  // Create a new node if no free ones
-  return createNewNode(true);
-}
-
-function createNewNode(inUse) {
-  const audioCtx = Audio.audioContext;
-  const source = audioCtx.createBufferSource();
-  const gainNode = audioCtx.createGain();
-
-  source.connect(gainNode);
-
-  const newNode = { source, gainNode, inUse };
-  audioNodePool.push(newNode);
-  return newNode;
-}
 
 function applyPresetPattern() {
   let column = 0;
@@ -289,6 +236,29 @@ function applyPresetPattern() {
     }
   }
   drawPattern();
+}
+
+function createDbPattern(width, height) {
+  let ratio = window.devicePixelRatio || 1;
+  if (/Mobi|Android/i.test(navigator.userAgent)) {
+    ratio = 1;
+  }
+  let offscreenCanvas = document.createElement("canvas");
+  offscreenCanvas.width = width * ratio;
+  offscreenCanvas.height = height * ratio;
+  let ctx = offscreenCanvas.getContext("2d");
+  ctx.scale(ratio, ratio); // Scale so drawing operations remain sharp
+  return offscreenCanvas;
+}
+
+function createNewNode(inUse) {
+  const audioCtx = Audio.audioContext;
+  const source = audioCtx.createBufferSource();
+  const gainNode = audioCtx.createGain();
+  source.connect(gainNode);
+  const newNode = { source, gainNode, inUse };
+  audioNodePool.push(newNode);
+  return newNode;
 }
 
 function disableWhilePlaying() {
@@ -654,6 +624,17 @@ function fillPatternInstruments() {
   }
 }
 
+function getAvailableNode() {
+  for (const node of audioNodePool) {
+    if (!node.inUse) {
+      node.inUse = true;
+      return node;
+    }
+  }
+  // Create a new node if there is no free one
+  return createNewNode(true);
+}
+
 function handleKeyDown(e) {
   let found = null;
   let volumeFactor = 0.7;
@@ -671,6 +652,17 @@ function handleKeyDown(e) {
       }
       playInstrument(found, volumeFactor);
     }
+  }
+}
+
+function initializeAudioNodes(poolSize = 10) {
+  const audioCtx = Audio.audioContext;
+
+  for (let i = 0; i < poolSize; i++) {
+    const source = audioCtx.createBufferSource();
+    const gainNode = audioCtx.createGain();
+    source.connect(gainNode);
+    audioNodePool.push({ source, gainNode, inUse: false });
   }
 }
 
@@ -1373,7 +1365,7 @@ function stopSounds(mode = 0) {
 function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
   let ratio = window.devicePixelRatio || 1;
   if (/Mobi|Android/i.test(navigator.userAgent)) {
-    ratio = 1; // Force scaling to 1 on mobile to prevent double scaling
+    ratio = 1;
   }
 
   const displayWidth = labelWidth + (columns * dx1);
@@ -1847,6 +1839,11 @@ try {
       Glob.settings = new Settings();
       Glob.initSettings();
       //console.log("Settings loaded");
+
+      // Create an offscreen canvas
+      dbPattern = createDbPattern(document.getElementById("pattern").width, document.getElementById("pattern").height);
+      dbPatternCtx = dbPattern.getContext("2d");
+
       Glob.settings.mainScreen.style.display = "block";
       Glob.settings.playScreen.style.display = "none";
       Presets.fillRhythmSelect();
@@ -2023,13 +2020,8 @@ try {
     scheduleDraw();
   });
 
-  // document.getElementById("canvasPlayScreen").addEventListener("pointerdown", (e) => {
-  //   // The pointerdown event works faster than the mousedown event, since it does not wait to detect a double click
-  //   padClicked(e)
-  // });
-
   document.getElementById("canvasPlayScreen").addEventListener("pointerdown", (e) => {
-    requestAnimationFrame(() => padClicked(e)); // Prioritize before UI updates
+    requestAnimationFrame(() => padClicked(e));
   });
 
   document.getElementById("pattern").addEventListener("mousedown", (e) => {
