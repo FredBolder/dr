@@ -1870,6 +1870,12 @@ try {
     }
   });
 
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("categorySelector").value = "PopRock";
+    Presets.fillRhythmSelect();
+    document.getElementById("rhythmSelector").value = "Rock3";
+  });
+
   document.getElementById("categorySelector").addEventListener("change", (e) => {
     Presets.fillRhythmSelect();
   });
