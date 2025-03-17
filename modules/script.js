@@ -1879,21 +1879,23 @@ try {
 
     if (!Glob.playing) {
       rhythm = document.getElementById("rhythmSelector").value;
-      if (!Glob.settings.expert) {
-        userChoice = window.confirm(`Load rhythm?`);
-      }
-      if (userChoice || Glob.settings.expert) {
-        Measures.load(rhythm);
-        Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
-        instrumentSetChanged();
-        Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
-        reverbTypeChanged();
-        Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
-        reverbWetChanged();
-        tempoChanged();
-        document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
-        volumeChanged();
-        drawPattern();
+      if ((typeof rhythm === "string") && (rhythm !== "")) {
+        if (!Glob.settings.expert) {
+          userChoice = window.confirm(`Load rhythm?`);
+        }
+        if (userChoice || Glob.settings.expert) {
+          Measures.load(rhythm);
+          Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
+          instrumentSetChanged();
+          Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+          reverbTypeChanged();
+          Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
+          reverbWetChanged();
+          tempoChanged();
+          document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
+          volumeChanged();
+          drawPattern();
+        }
       }
     }
   });

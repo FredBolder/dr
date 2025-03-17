@@ -1,14 +1,14 @@
 class Presets {
     static textToValue(s) {
-      let result = "";
-      for (let i = 0; i < s.length; i++) {
-        let c = s[i];
-        if (c === " ") {
-            c = "";
+        let result = "";
+        for (let i = 0; i < s.length; i++) {
+            let c = s[i];
+            if (c === " ") {
+                c = "";
+            }
+            result += c;
         }
-        result += c;
-      }
-      return result;
+        return result;
     }
 
     static fillRhythmSelect() {
@@ -24,16 +24,16 @@ class Presets {
                 ];
                 break;
             case "Greek":
-                options = ["Aptaliko 1", "Berati 1", "Dipat 1", "Hasapiko1", "Hasaposerviko 1", "Kalamatianos 1", "Kalamatianos 2", "Kalamatianos 3",  
-                    "Kamilierikos 1", "Kamilierikos 2", "Karsilamas 1", "Karsilamas 2", "Palio Zeibekiko 1", "Pogonisios 1", "Roumba 1", "Syrtos 1", 
-                    "Tik 1", "Tik tromachton 1", "Tik tromachton 2","Tsakonikos 1", "Tsakonikos 2", "Tsamikos 1", "Tsamikos 2", "Tsifteteli 1",   
-                    "Tsifteteli 2", "Zeibekiko 1", "Zeibekiko 2","Random Zeibekiko", "Zonaradiko 1", "Zonaradiko 2"
+                options = ["Aptaliko 1", "Berati 1", "Dipat 1", "Hasapiko1", "Hasaposerviko 1", "Kalamatianos 1", "Kalamatianos 2", "Kalamatianos 3",
+                    "Kamilierikos 1", "Kamilierikos 2", "Karsilamas 1", "Karsilamas 2", "Palio Zeibekiko 1", "Pogonisios 1", "Roumba 1", "Syrtos 1",
+                    "Tik 1", "Tik tromachton 1", "Tik tromachton 2", "Tsakonikos 1", "Tsakonikos 2", "Tsamikos 1", "Tsamikos 2", "Tsifteteli 1",
+                    "Tsifteteli 2", "Zeibekiko 1", "Zeibekiko 2", "Random Zeibekiko", "Zonaradiko 1", "Zonaradiko 2"
                 ];
                 break;
-                case "Bulgarian":
-                    options = ["Daichovo 1", "Kopanitsa 1", "Kopanitsa 2", "Paidushko 1", "Pravo 1", "Rachenitsa 1", "Sedi Donka 1"];
-                    break;
-                default:
+            case "Bulgarian":
+                options = ["Bucimis 1", "Daichovo 1", "Kopanitsa 1", "Kopanitsa 2", "Paidushko 1", "Pravo 1", "Rachenitsa 1", "Sedi Donka 1"];
+                break;
+            default:
                 break;
         }
         let rhythmSelector = document.getElementById("rhythmSelector");

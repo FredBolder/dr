@@ -1010,6 +1010,22 @@ class Measures {
                 Measure.fixMeasure(measure8);
                 this.measures.push(measure8);
                 break;
+            case "Bucimis1":
+                Glob.settings.instrumentSet = 1;
+                Instruments.getInstrumentByProp("snareDrum").other = true;
+                Glob.settings.tempoSlider.value = 480;
+                measure1 = new Measure();
+                measure1.beats = 15;
+                measure1.divisions = 1;
+                measure1.touberlekiKa = [0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 2, 0];
+                measure1.touberlekiTek = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                measure1.touberlekiDoum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0];
+                measure1.rideCymbal = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0];
+                measure1.snareDrum = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+                measure1.bassDrum = [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
             case "Daichovo1":
                 Glob.settings.instrumentSet = 1;
                 Instruments.getInstrumentByProp("snareDrum").other = true;
