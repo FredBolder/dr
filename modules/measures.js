@@ -528,7 +528,6 @@ class Measures {
                 this.measures.push(measure2);
                 break;
             case "Kalamatianos2":
-                Glob.settings.measuresToPlay = "1, 1, 1, 2";
                 Glob.settings.tempoSlider.value = 240;
                 measure1 = new Measure();
                 measure1.beats = 7;
