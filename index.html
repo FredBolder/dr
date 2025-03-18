@@ -9,13 +9,13 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>DR by Fred Bolder</title>
-  <link rel="stylesheet" href="./main.css?v=22">
+  <link rel="stylesheet" href="./main.css?v=24">
 </head>
 
 <body id="body">
   <div id="mainScreen">
     <header>
-      <h1>DR 2 by Fred Bolder</h1>
+      <h1>DR by Fred Bolder</h1>
     </header>
     <main>
       <div id="message"></div>
@@ -51,12 +51,12 @@
         </div>
         <div id="tempo">
           <label for="tempoSlider">Tempo</label>
-          <input type="range" min="10" max="750" value="100" id="tempoSlider">
+          <input type="range" min="10" max="750" value="100" id="tempoSlider" autocomplete="off">
           <div id="tempoValue"></div>
         </div>
         <div id="volume">
           <label for="volumeSlider">Volume</label>
-          <input type="range" min="0" max="100" value="75" id="volumeSlider">
+          <input type="range" min="0" max="100" value="75" id="volumeSlider" autocomplete="off">
           <div id="volumeValue"></div>
         </div>
         <div>
@@ -168,7 +168,7 @@
         </div>
         <div id="reverbWet">
           <label for="reverbWetSlider">Wet %</label>
-          <input type="range" min="0" max="100" value="15" id="reverbWetSlider">
+          <input type="range" min="0" max="100" value="15" id="reverbWetSlider" autocomplete="off">
           <div id="reverbWetValue"></div>
         </div>
       </fieldset>
@@ -261,7 +261,7 @@
     <button type="button" id="playScreenToMainScreenButton">Back to main screen</button>
     <canvas id="canvasPlayScreen"></canvas>
   </div>
-  <script type="module" src="./modules/script.js?v=22"></script>
+  <script type="module" src="./modules/script.js?v=24"></script>
 </body>
 
 </html>

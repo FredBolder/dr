@@ -660,10 +660,15 @@ function init() {
   if (!initExecuted) {
     initExecuted = true;
 
+    if (Glob.settings) Glob.settings = null;
     Glob.settings = new Settings();
     Glob.initSettings();
 
     // Create an offscreen canvas
+    if (dbPattern) {
+      dbPattern = null;
+      dbPatternCtx = null;
+    }
     dbPattern = createDbPattern(document.getElementById("pattern").width, document.getElementById("pattern").height);
     dbPatternCtx = dbPattern.getContext("2d");
 
@@ -695,6 +700,16 @@ function init() {
 
 function initializeAudioNodes(poolSize = 10) {
   const audioCtx = Audio.audioContext;
+
+  for (let i = 0; i < audioNodePool.length; i++) {
+    if (audioNodePool[i].source) {
+      audioNodePool[i].source.disconnect();
+    }
+    if (audioNodePool[i].gainNode) {
+      audioNodePool[i].gainNode.disconnect();
+    }
+  }
+  audioNodePool.length = 0;
 
   for (let i = 0; i < poolSize; i++) {
     const source = audioCtx.createBufferSource();
@@ -1873,6 +1888,12 @@ function volumeChanged() {
 // To prevent error when using node
 try {
   window.addEventListener("load", (e) => {
+    init();
+  });
+  window.addEventListener("pageshow", (e) => {
+    if (e.persisted) {
+      initExecuted = false;
+    }
     init();
   });
 
