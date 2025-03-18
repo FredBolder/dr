@@ -9,13 +9,13 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>DR by Fred Bolder</title>
-  <link rel="stylesheet" href="./main.css?v=21">
+  <link rel="stylesheet" href="./main.css?v=22">
 </head>
 
 <body id="body">
   <div id="mainScreen">
     <header>
-      <h1>DR by Fred Bolder</h1>
+      <h1>DR 2 by Fred Bolder</h1>
     </header>
     <main>
       <div id="message"></div>
@@ -33,13 +33,13 @@
       </p>
       <div class="flex">
         <div id="rhythm">
-          <select name="categorySelector" id="categorySelector">
+          <select name="categorySelector" id="categorySelector" autocomplete="off">
             <option value="PopRock">Pop/Rock</option>
             <option value="BallroomLatin">Ballroom/Latin</option>
             <option value="Greek">Greek</option>
             <option value="Bulgarian">Bulgarian</option>
           </select>
-          <select name="rhythmSelector" id="rhythmSelector">
+          <select name="rhythmSelector" id="rhythmSelector" autocomplete="off">
             <option value="init">init</option>
           </select>
           <button type="button" id="loadRhythmButton">Load</button>
@@ -61,7 +61,7 @@
         </div>
         <div>
           <label for="instrumentSetSelector">Instrument set</label>
-          <select name="instrumentSetSelector" id="instrumentSetSelector">
+          <select name="instrumentSetSelector" id="instrumentSetSelector" autocomplete="off">
             <option value="0">Drums</option>
             <option value="1">Greek percussion</option>
           </select>
@@ -69,7 +69,7 @@
         <fieldset>
           <legend>Measures to play (empty=all)</legend>
           <div id="measuresToPlay">
-            <input type="text" id="measuresToPlayInput" name="measuresToPlayInput" value="">
+            <input type="text" id="measuresToPlayInput" name="measuresToPlayInput" value="" autocomplete="off">
             <label for="measuresToPlayInput">Example: 1, 1, 1, 3, 2, 2, 2, 4</label>
           </div>
         </fieldset>
@@ -84,7 +84,7 @@
       <div class="flex">
         <div id="input">
           <label for="inputSelector">Input</label>
-          <select name="inputSelector" id="inputSelector">
+          <select name="inputSelector" id="inputSelector" autocomplete="off">
             <optgroup label="Always played">
               <option value="1">Normal hit</option>
               <option value="2">Soft hit</option>
@@ -136,9 +136,9 @@
         </div>
         <div id="copyMeasure">
           <button type="button" id="copyMeasureButton">Copy</button>
-          <input type="text" id="copyMeasureFrom" name="copyMeasureFrom" value="1">
+          <input type="text" id="copyMeasureFrom" name="copyMeasureFrom" value="1" autocomplete="off">
           <label for="copyMeasureTo">to</label>
-          <input type="text" id="copyMeasureTo" name="copyMeasureTo" value="1">
+          <input type="text" id="copyMeasureTo" name="copyMeasureTo" value="1" autocomplete="off">
         </div>
         <div id="measureEndsWithFill" class="checkboxGroup">
           <label for="endsWithFill">Ends with fill</label>
@@ -149,7 +149,7 @@
         <legend>Reverb</legend>
         <div id="reverbType">
           <label for="reverbTypeSelector">Type</label>
-          <select name="reverbTypeSelector" id="reverbTypeSelector">
+          <select name="reverbTypeSelector" id="reverbTypeSelector" autocomplete="off">
             <option value="0">Hall 1</option>
             <option value="1">Hall 2</option>
             <option value="2">Plate 1</option>
@@ -175,7 +175,7 @@
       <fieldset>
         <legend>Preferences</legend>
         <div id="additional">
-          <select name="additionalSelector" id="additionalSelector">
+          <select name="additionalSelector" id="additionalSelector" autocomplete="off">
             <option value="0">Never</option>
             <option value="1">Always</option>
             <option value="2" selected="selected">Random</option>
@@ -184,7 +184,7 @@
         </div>
         <div id="humanizeVolumes">
           <label for="humanizeVolumesSelector">Humanize volumes</label>
-          <select name="humanizeVolumesSelector" id="humanizeVolumesSelector">
+          <select name="humanizeVolumesSelector" id="humanizeVolumesSelector" autocomplete="off">
             <option value="0">No</option>
             <option value="1">1</option>
             <option value="2" selected="selected">2</option>
@@ -197,7 +197,7 @@
         </div>
         <div id="humanizeTiming">
           <label for="humanizeTimingSelector">Humanize timing</label>
-          <select name="humanizeTimingSelector" id="humanizeTimingSelector">
+          <select name="humanizeTimingSelector" id="humanizeTimingSelector" autocomplete="off">
             <option value="0">No</option>
             <option value="1" selected="selected">1</option>
             <option value="2">2</option>
@@ -216,10 +216,10 @@
       <fieldset>
         <legend>Tools</legend>
         <div id="presetPattern" class="group">
-          <select name="presetPatternInstrument" id="presetPatternInstrument">
+          <select name="presetPatternInstrument" id="presetPatternInstrument" autocomplete="off">
             <option value="0">Closed hi-hat</option>
           </select>
-          <select name="presetPatternSelector" id="presetPatternSelector">
+          <select name="presetPatternSelector" id="presetPatternSelector" autocomplete="off">
             <option value="0">Never (clear row)</option>
             <option value="1" selected="selected">Every beat</option>
             <option value="2">Every column</option>
@@ -261,7 +261,7 @@
     <button type="button" id="playScreenToMainScreenButton">Back to main screen</button>
     <canvas id="canvasPlayScreen"></canvas>
   </div>
-  <script type="module" src="./modules/script.js?v=21"></script>
+  <script type="module" src="./modules/script.js?v=22"></script>
 </body>
 
 </html>

@@ -9,6 +9,7 @@ import { Reverb } from "./reverb.js";
 import { Settings } from "./settings.js";
 import { Test } from "./test.js";
 
+let initExecuted = false;
 let activeSources = [];
 const audioNodePool = [];
 const labelWidth = 170;
@@ -652,6 +653,43 @@ function handleKeyDown(e) {
       }
       playInstrument(found, volumeFactor);
     }
+  }
+}
+
+function init() {
+  if (!initExecuted) {
+    initExecuted = true;
+
+    Glob.settings = new Settings();
+    Glob.initSettings();
+
+    // Create an offscreen canvas
+    dbPattern = createDbPattern(document.getElementById("pattern").width, document.getElementById("pattern").height);
+    dbPatternCtx = dbPattern.getContext("2d");
+
+    Glob.settings.message.style.visibility = "hidden";
+    Glob.settings.mainScreen.style.display = "block";
+    Glob.settings.playScreen.style.display = "none";
+    document.getElementById("categorySelector").value = "PopRock";
+    Presets.fillRhythmSelect();
+    document.getElementById("rhythmSelector").value = "Rock3";
+    Measures.load("Rock3");
+    Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
+    instrumentSetChanged();
+    Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+    reverbTypeChanged();
+    Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
+    reverbWetChanged();
+    document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
+    document.getElementById("tempoSlider").value = Glob.settings.tempo;
+    fillPatternInstruments();
+    tempoChanged();
+    volumeChanged();
+    drawPattern();
+    additionalChanged();
+    humanizeVolumesChanged();
+    humanizeTimingChanged();
+    initializeAudioNodes();
   }
 }
 
@@ -1835,41 +1873,7 @@ function volumeChanged() {
 // To prevent error when using node
 try {
   window.addEventListener("load", (e) => {
-    if (Glob.settings === null) {
-      Glob.settings = new Settings();
-      Glob.initSettings();
-      //console.log("Settings loaded");
-
-      // Create an offscreen canvas
-      dbPattern = createDbPattern(document.getElementById("pattern").width, document.getElementById("pattern").height);
-      dbPatternCtx = dbPattern.getContext("2d");
-
-      Glob.settings.mainScreen.style.display = "block";
-      Glob.settings.playScreen.style.display = "none";
-      setTimeout(() => {
-        document.getElementById("categorySelector").value = "PopRock";
-        Presets.fillRhythmSelect();
-        document.getElementById("rhythmSelector").value = "Rock3";
-        }, 100);
-      Measures.load("Rock3");
-      Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
-      instrumentSetChanged();
-      Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
-      reverbTypeChanged();
-      Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
-      reverbWetChanged();
-      Glob.settings.message.style.visibility = "hidden";
-      document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
-      document.getElementById("tempoSlider").value = Glob.settings.tempo;
-      fillPatternInstruments();
-      tempoChanged();
-      volumeChanged();
-      drawPattern();
-      additionalChanged();
-      humanizeVolumesChanged();
-      humanizeTimingChanged();
-      initializeAudioNodes();
-    }
+    init();
   });
 
   document.getElementById("categorySelector").addEventListener("change", (e) => {
