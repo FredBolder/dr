@@ -33,6 +33,9 @@ class Presets {
             case "Bulgarian":
                 options = ["Bucimis 1", "Daichovo 1", "Kopanitsa 1", "Kopanitsa 2", "Paidushko 1", "Pravo 1", "Rachenitsa 1", "Sedi Donka 1"];
                 break;
+            case "Tahitian":
+                options = ["Ami 1", "Ami 2", "Faatere 1", "Hitoto 1", "Pahae 1", "Pahae 2", "Toma 1", "Toma 2"];
+                break;
             default:
                 break;
         }

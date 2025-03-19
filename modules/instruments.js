@@ -17,6 +17,7 @@ class Instruments {
       { name: "Bendir Doum", shortName: "BED", file: "wav/Bendir_Doum.wav", key: "Q", property: "bendirDoum" },
       { name: "Daouli Tek", shortName: "DAT", file: "wav/Daouli_Tek.wav", key: "", property: "daouliTek" },
       { name: "Daouli Doum", shortName: "DAD", file: "wav/Daouli_Doum.wav", key: "", property: "daouliDoum" },
+      { name: "Wood block", shortName: "WB", file: "wav/Wood_block_1.wav, wav/Pate_1.wav", key: "", property: "woodBlock" },
       { name: "Claves", shortName: "CL", file: "wav/Claves_1.wav, wav/Claves_2.wav", key: "E", property: "claves" },
       { name: "Cowbell", shortName: "CB", file: "wav/Cowbell_1.wav, wav/Cowbell_2.wav", key: "R", property: "cowbell" },
       { name: "Crash cymbal 1", shortName: "CC1", file: "wav/Crash_cymbal_1.wav", key: "O", property: "crashCymbal1" },
@@ -55,7 +56,7 @@ class Instruments {
       switch (i) {
         case 0:
           // Drums
-          for (let j = 0; j < 19; j++) {
+          for (let j = 0; j < 20; j++) {
             this.sets[i].push(this.instruments[j + 10]);
           }
           break;
@@ -106,25 +107,25 @@ class Instruments {
     if (Glob.isLandscape()) {
       switch (Glob.settings.instrumentSet) {
         case 0:
-          result = [10, 11, 12, 7, 2, 17, 16, 15, 9, 8];
+          result = [11, 12, 13, 8, 3, 18, 17, 16, 10, 9];
           break;
         case 1:
           result = [8, 6, 4, 2, 0, 9, 7, 5, 3, 1];
           break;
         default:
-          result = [10, 11, 12, 7, 2, 17, 16, 15, 9, 8];
+          result = [11, 12, 13, 8, 3, 18, 17, 16, 10, 9];
           break;
       }
     } else {
       switch (Glob.settings.instrumentSet) {
         case 0:
-          result = [10, 11, 12, 2, 7, 8, 15, 9, 17, 16];
+          result = [11, 12, 13, 3, 8, 9, 16, 10, 18, 17];
           break;
         case 1:
           result = [1, 0, 3, 2, 5, 4, 7, 6, 9, 8];
           break;
         default:
-          result = [10, 11, 12, 2, 7, 8, 15, 9, 17, 16];
+          result = [11, 12, 13, 3, 8, 9, 16, 10, 18, 17];
           break;
       }
     }

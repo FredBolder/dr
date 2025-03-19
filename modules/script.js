@@ -1890,6 +1890,7 @@ try {
   window.addEventListener("load", (e) => {
     init();
   });
+  
   window.addEventListener("pageshow", (e) => {
     if (e.persisted) {
       initExecuted = false;
