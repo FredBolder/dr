@@ -649,7 +649,7 @@ function handleKeyDown(e) {
     }
     if (found !== null) {
       if (e.shiftKey) {
-        volumeFactor = 0.8;
+        volumeFactor = 0.9;
       }
       playInstrument(found, volumeFactor);
     }
@@ -1089,7 +1089,6 @@ async function playPattern() {
             if (!play) return;
 
             let pitch = Glob.percentToPitch(instrument.pitch);
-            let url = Glob.getStringFromCommaDelimited(instrument.file, Glob.boolToInt(instrument.other));
 
             let cellValue = 0;
             if (j >= 0) {
@@ -1183,7 +1182,6 @@ async function playPattern() {
             if (cellValue > 0) {
               gainNode.gain.value = factor * humanizeVolumeFactor * volume * (instrument.volume / 100);
               source.connect(gainNode);
-              // ERROR: Uncaught (in promise) TypeError: Failed to execute 'connect' on 'AudioNode': Overload resolution failed.
               gainNode.connect(stereoNode);
             }
 
@@ -1221,7 +1219,7 @@ async function playPattern() {
               ghostNotes[g].source.isGhostNote = true;
             }
 
-            if ((set === 0) && (idx === 8)) {
+            if ((set === 0) && (idx === 9)) {
               // Open hi-hat
               if (cellValue > 0) {
                 setTimeout(() => {
@@ -1278,7 +1276,7 @@ async function playPattern() {
               activeSources.push({ source: ghostNotes[g].source, gainNode: ghostNotes[g].gainNode });
             }
 
-            if ((set === 0) && (idx === 9 || idx === 18)) {
+            if ((set === 0) && (idx === 10 || idx === 19)) {
               // Closed Hi-Hat or Pedal Hi-Hat
               Instruments.stopOpenHiHat((nextNoteTime + humanizeDeltaTime - audioCtx.currentTime) * 1000);
             }

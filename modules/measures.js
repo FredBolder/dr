@@ -335,6 +335,28 @@ class Measures {
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
+            case "Slowwaltz2":
+                Glob.settings.tempoSlider.value = 90;
+                measure1 = new Measure();
+                measure1.beats = 3;
+                measure1.divisions = 2;
+                measure1.closedHiHat = [1, 2, 1, 2, 1, 2];
+                measure1.crossStick = [0, 0, 0, 0, 1, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 11];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
+            case "RandomSlowwaltz":
+                Glob.settings.tempoSlider.value = 90;
+                measure1 = new Measure();
+                measure1.beats = 3;
+                measure1.divisions = 3;
+                measure1.rideCymbal = [1, 0, 8, 1, 0, 8, 1, 0, 8];
+                measure1.crossStick = [0, 0, 0, 0, 0, 0, 1, 0, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 0, 8, 0, 0, 8];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
             case "Slowfox1":
                 Glob.settings.tempoSlider.value = 120;
                 measure1 = new Measure();
@@ -1255,6 +1277,26 @@ class Measures {
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
+            case "Tikatika1":
+                Instruments.getInstrumentByProp("woodBlock").other = true;
+                Glob.settings.tempoSlider.value = 130;
+                measure1 = new Measure();
+                measure1.beats = 8;
+                measure1.divisions = 4;
+                measure1.crossStick = [3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0];
+                measure1.woodBlock = [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
+                measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                measure2 = new Measure();
+                measure2.beats = 8;
+                measure2.divisions = 4;
+                measure2.crossStick = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0];
+                measure2.woodBlock = [1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0];
+                measure2.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
+                Measure.fixMeasure(measure2);
+                this.measures.push(measure2);
+                break;
             case "Toma1":
                 Instruments.getInstrumentByProp("woodBlock").other = true;
                 Glob.settings.tempoSlider.value = 130;
@@ -1274,6 +1316,18 @@ class Measures {
                 measure1.divisions = 4;
                 measure1.woodBlock = [1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0];
                 measure1.bassDrum = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0];
+                Measure.fixMeasure(measure1);
+                this.measures.push(measure1);
+                break;
+            case "Vahine1":
+                Instruments.getInstrumentByProp("woodBlock").other = true;
+                Glob.settings.tempoSlider.value = 100;
+                measure1 = new Measure();
+                measure1.beats = 8;
+                measure1.divisions = 4;
+                measure1.crossStick = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0];
+                measure1.woodBlock = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0];
+                measure1.bassDrum = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
                 Measure.fixMeasure(measure1);
                 this.measures.push(measure1);
                 break;
