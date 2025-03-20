@@ -936,6 +936,7 @@ async function playInstrumentFast(instrumentIndex, volumeFactor) {
     };
 
     source.start(0);
+    source.started = true;
 
     if (instrument.file.toLowerCase().includes("open_hi-hat")) {
       setTimeout(() => {
