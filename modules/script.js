@@ -350,8 +350,10 @@ function createRhythm() {
   Measures.measures.push(measure1);
   Glob.settings.instrumentSetSelector.selectedIndex = 0;
   instrumentSetChanged();
-  Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
-  reverbTypeChanged();
+  if (Glob.settings.reverbTypeSelector.selectedIndex !== Glob.settings.reverbType) {
+    Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+    reverbTypeChanged();
+  }
   Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
   reverbWetChanged();
   tempoChanged();
@@ -964,8 +966,10 @@ async function openTextFile() {
     }
     Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
     instrumentSetChanged();
-    Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
-    reverbTypeChanged();
+    if (Glob.settings.reverbTypeSelector.selectedIndex !== Glob.settings.reverbType) {
+      Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+      reverbTypeChanged();
+    }
     Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
     reverbWetChanged();
     drawPattern();
@@ -2072,8 +2076,10 @@ try {
           Measures.load(rhythm);
           Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
           instrumentSetChanged();
-          Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
-          reverbTypeChanged();
+          if (Glob.settings.reverbTypeSelector.selectedIndex !== Glob.settings.reverbType) {
+            Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+            reverbTypeChanged();
+          }
           Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
           reverbWetChanged();
           tempoChanged();
@@ -2102,8 +2108,10 @@ try {
         Measures.measures.push(measure1);
         Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
         instrumentSetChanged();
-        Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
-        reverbTypeChanged();
+        if (Glob.settings.reverbTypeSelector.selectedIndex !== Glob.settings.reverbType) {
+          Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+          reverbTypeChanged();
+        }
         Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
         reverbWetChanged();
         tempoChanged();

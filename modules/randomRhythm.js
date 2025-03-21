@@ -371,7 +371,7 @@ class RandomRhythm {
         let groupInfo = null;
         const instrument = Glob.randomInt(1, 2);
         let odd = false;
-        let pattern = Glob.randomInt(1, 5);
+        let pattern = Glob.randomInt(1, 8);
         let row1 = 0;
         let row2 = 0;
 
@@ -431,12 +431,37 @@ class RandomRhythm {
                         break;
                     case 4:
                         // Every column
-                        Instruments.setCell(column, row1, 1);
+                        if ((Math.random() > 0.4) && (measure.divisions === 2) && (i === (measure.beats - 1)) && 
+                        (j === 1) && (row1 === Instruments.closedHiHat)) {
+                            // Last hit open hi-hat
+                            Instruments.setCell(column, row2, 1);
+                        } else {
+                            Instruments.setCell(column, row1, 1);
+                        }
                         break;
                     case 5:
                         // Odd columns
                         if (odd) {
                             Instruments.setCell(column, row1, 1);
+                        }
+                        break;
+                    case 6:
+                    case 7:
+                    case 8:
+                        // 6: Division 1 and 3 of every beat
+                        // 7: Division 1, 3 and 4 of every beat
+                        // 8: Division 1, 2 and 3 of every beat
+                        if (j === 0) {
+                            Instruments.setCell(column, row1, 1);
+                        }
+                        if ((pattern === 8) && (j === 1)) {
+                            Instruments.setCell(column, row1, 2);
+                        }
+                        if (j === 2) {
+                            Instruments.setCell(column, row1, 2);
+                        }
+                        if ((pattern === 7) && (j === 3)) {
+                            Instruments.setCell(column, row1, 2);
                         }
                         break;
                     default:
