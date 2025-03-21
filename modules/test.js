@@ -1,6 +1,7 @@
 import { Glob } from "./glob.js";
 import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
+import { RandomRhythm } from "./randomRhythm.js";
 
 class Test {
     static test(name, expected, received) {
@@ -14,6 +15,7 @@ class Test {
 
     static runTests() {
         let allOk = true;
+        let error = false;
         let ok = true;
         const saveMeasures = JSON.stringify(Measures.measures);
         let measure1 = [];
@@ -76,6 +78,52 @@ class Test {
 
         result = Glob.getStringFromCommaDelimited("One, Two, Three", -1);
         ok = this.test("getStringFromCommaDelimited 02B", "", result);
+        if (!ok) allOk = false;
+
+        for (let i = 0; i < 50; i++) {
+            error = false;
+            result = Glob.randomInt(0, 5);
+            if ((result < 0) || (result > 5)) {
+                console.log(`Result from randomInt(0, 5): ${result}`);
+                error = true;
+            }
+            ok = this.test("randomInt (0,5)", false, error);
+            if (!ok) allOk = false;
+        }
+
+        for (let i = 0; i < 50; i++) {
+            error = false;
+            result = Glob.randomInt(-10, 10);
+            if ((result < -10) || (result > 10)) {
+                console.log(`Result from randomInt(-10, 10): ${result}`);
+                error = true;
+            }
+            ok = this.test("randomInt(-10, 10)", false, error);
+            if (!ok) allOk = false;
+        }
+
+        result = RandomRhythm.groupInfo(4, [3, 2, 2]);
+        ok = this.test("groupInfo 01A", JSON.stringify({ group: 2, countInGroup: 1 }), JSON.stringify(result));
+        if (!ok) allOk = false;
+
+        result = RandomRhythm.groupInfo(5, [3, 2, 2]);
+        ok = this.test("groupInfo 01B", JSON.stringify({ group: 2, countInGroup: 2 }), JSON.stringify(result));
+        if (!ok) allOk = false;
+
+        result = RandomRhythm.groupInfo(7, [3, 2, 2]);
+        ok = this.test("groupInfo 01C", JSON.stringify({ group: 3, countInGroup: 2 }), JSON.stringify(result));
+        if (!ok) allOk = false;
+
+        result = RandomRhythm.groupInfo(1, [3, 2, 2]);
+        ok = this.test("groupInfo 01D", JSON.stringify({ group: 1, countInGroup: 1 }), JSON.stringify(result));
+        if (!ok) allOk = false;
+
+        result = RandomRhythm.groupInfo(8, [2, 2, 2, 3]);
+        ok = this.test("groupInfo 02A", JSON.stringify({ group: 4, countInGroup: 2 }), JSON.stringify(result));
+        if (!ok) allOk = false;
+
+        result = RandomRhythm.groupInfo(10, [2, 2, 2, 3]);
+        ok = this.test("groupInfo 02B", JSON.stringify({ group: 0, countInGroup: 0 }), JSON.stringify(result));
         if (!ok) allOk = false;
 
         Measures.measures = JSON.parse(saveMeasures);

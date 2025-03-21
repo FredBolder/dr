@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>DR by Fred Bolder</title>
-  <link rel="stylesheet" href="./main.css?v=27">
+  <link rel="stylesheet" href="./main.css?v=28">
 </head>
 
 <body id="body">
@@ -256,13 +256,46 @@
           <button type="button" id="divideDivisionsByTwo">Div / 2</button>
         </div>
       </fieldset>
+      <fieldset>
+        <legend>Create random rhythm</legend>
+        <div id="randomRhythmMaxGroups">
+          <label for="randomRhythmMaxGroupsSelector">Max groups</label>
+          <select name="randomRhythmMaxGroupsSelector" id="randomRhythmMaxGroupsSelector" autocomplete="off">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected="selected">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+          </select>
+        </div>
+        <div id="randomRhythmGrouping">
+          <label for="randomRhythmGroupingInput">Grouping</label>
+          <input type="text" id="randomRhythmGroupingInput" name="randomRhythmGroupingInput" value=""
+            autocomplete="off">
+          <label for="randomRhythmGroupingInput">Example: 2-2-3 (empty=random)</label>
+        </div>
+        <div id="randomRhythmDivisions">
+          <label for="randomRhythmDivisionsSelector">Divisions</label>
+          <select name="randomRhythmDivisionsSelector" id="randomRhythmDivisionsSelector" autocomplete="off">
+            <option value="0">Random</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+        <button type="button" id="randomRhythmButton">Create</button>
+      </fieldset>
     </main>
   </div>
   <div id="playScreen">
     <button type="button" id="playScreenToMainScreenButton">Back to main screen</button>
     <canvas id="canvasPlayScreen"></canvas>
   </div>
-  <script type="module" src="./modules/script.js?v=27"></script>
+  <script type="module" src="./modules/script.js?v=28"></script>
 </body>
 
 </html>

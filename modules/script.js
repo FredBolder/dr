@@ -5,6 +5,7 @@ import { Instruments } from "./instruments.js";
 import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
 import { Presets } from "./presets.js";
+import { RandomRhythm } from "./randomRhythm.js";
 import { Reverb } from "./reverb.js";
 import { Settings } from "./settings.js";
 import { Test } from "./test.js";
@@ -260,6 +261,162 @@ function createNewNode(inUse) {
   const newNode = { source, gainNode, inUse };
   audioNodePool.push(newNode);
   return newNode;
+}
+
+function createRhythm() {
+  let column = 0;
+  let count = 0;
+  let counts = 0;
+  let countsInGroup = 0;
+  let divisions = 0;
+  let divisionsInput = "";
+  let error = false;
+  let maxDivisions = 4;
+  let maxGroups = 8;
+  let maxGroupsInput = "";
+  let n1 = 0;
+  let tempo = 100;
+  let groups = null;
+
+  maxGroups = 8;
+  maxGroupsInput = document.getElementById("randomRhythmMaxGroupsSelector").value;
+  if (maxGroupsInput === null) {
+    maxGroupsInput = "";
+  }
+  if (maxGroupsInput !== "") {
+    maxGroups = parseInt(maxGroupsInput);
+  }
+
+  let groupsInput = document.getElementById("randomRhythmGroupingInput").value;
+  if (groupsInput === null) {
+    groupsInput = "";
+  }
+  groupsInput = groupsInput.trim();
+  if (groupsInput !== "") {
+    groups = groupsInput.split("-");
+    error = false;
+    for (let i = 0; i < groups.length; i++) {
+      if ((groups[i] !== "2") && (groups[i] !== "3")) {
+        error = true;
+      } else {
+        groups[i] = parseInt(groups[i]);
+      }
+    }
+    if (error) {
+      groups = null;
+    }
+  }
+  if (groups === null) {
+    n1 = Glob.randomInt(1, maxGroups);
+    groups = [];
+    for (let i = 0; i < n1; i++) {
+      if (Math.random() > 0.5) {
+        groups.push(2);
+      } else {
+        groups.push(3);
+      }
+    }
+  }
+  counts = 0;
+  for (let i = 0; i < groups.length; i++) {
+    counts += groups[i];
+  }
+  if (groups.length > 4) {
+    maxDivisions = 2;
+  } else {
+    maxDivisions = 4;
+  }
+  divisionsInput = document.getElementById("randomRhythmDivisionsSelector").value;
+  switch (divisionsInput) {
+    case "1":
+    case "2":
+    case "3":
+    case "4":
+      divisions = parseInt(divisionsInput);
+      break;
+    default:
+      divisions = Glob.randomInt(1, maxDivisions);
+      break;
+  }
+
+  Glob.initSettings();
+  tempo = Math.trunc((counts * 1.5 / divisions) * 10 + 70);
+  Glob.settings.tempoSlider.value = tempo;
+  const measure1 = new Measure();
+  measure1.beats = counts;
+  measure1.divisions = divisions;
+  Measure.fixMeasure(measure1);
+  Measures.measures = [];
+  Measures.measures.push(measure1);
+  Glob.settings.instrumentSetSelector.selectedIndex = 0;
+  instrumentSetChanged();
+  Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+  reverbTypeChanged();
+  Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
+  reverbWetChanged();
+  tempoChanged();
+  document.getElementById("measuresToPlayInput").value = "";
+  Instruments.initSettings();
+
+  RandomRhythm.applyHiHatOrRide(groups);
+
+  column = 0;
+  count = 1;
+  for (let i = 0; i < groups.length; i++) {
+    let arr = null;
+    let data = null;
+    let idx = 0;
+    countsInGroup = groups[i];
+    if (countsInGroup === 2) {
+      switch (divisions) {
+        case 1:
+          arr = RandomRhythm.oneDivision2;
+          break;
+        case 2:
+          arr = RandomRhythm.twoDivisions2;
+          break;
+        case 3:
+          arr = RandomRhythm.threeDivisions2;
+          break;
+        case 4:
+          arr = RandomRhythm.fourDivisions2;
+          break;
+        default:
+          break;
+      }
+    } else {
+      switch (divisions) {
+        case 1:
+          arr = RandomRhythm.oneDivision3;
+          break;
+        case 2:
+          arr = RandomRhythm.twoDivisions3;
+          break;
+        case 3:
+          arr = RandomRhythm.threeDivisions3;
+          break;
+        case 4:
+          arr = RandomRhythm.fourDivisions3;
+          break;
+        default:
+          break;
+      }
+    }
+    idx = Glob.randomInt(0, arr.length - 1);
+    data = arr[idx];
+    for (let j = 0; j < data.bassDrum.length; j++) {
+      Instruments.setCell(column + j, Instruments.snareDrum, data.snareDrum[j]);
+      Instruments.setCell(column + j, Instruments.bassDrum, data.bassDrum[j]);
+    }
+    count += countsInGroup;
+    column = (count - 1) * divisions;
+  }
+
+  // On count 1 alway a bass drum and never a snare drum
+  Instruments.setCell(0, Instruments.snareDrum, 0);
+  Instruments.setCell(0, Instruments.bassDrum, 1);
+
+  drawPattern();
 }
 
 function disableWhilePlaying() {
@@ -1220,7 +1377,7 @@ async function playPattern() {
               ghostNotes[g].source.isGhostNote = true;
             }
 
-            if ((set === 0) && (idx === 9)) {
+            if ((set === 0) && (idx === Instruments.openHiHat)) {
               // Open hi-hat
               if (cellValue > 0) {
                 setTimeout(() => {
@@ -1277,7 +1434,7 @@ async function playPattern() {
               activeSources.push({ source: ghostNotes[g].source, gainNode: ghostNotes[g].gainNode });
             }
 
-            if ((set === 0) && (idx === 10 || idx === 19)) {
+            if ((set === 0) && (idx === Instruments.closedHiHat || idx === Instruments.pedalHiHat)) {
               // Closed Hi-Hat or Pedal Hi-Hat
               Instruments.stopOpenHiHat((nextNoteTime + humanizeDeltaTime - audioCtx.currentTime) * 1000);
             }
@@ -1889,7 +2046,7 @@ try {
   window.addEventListener("load", (e) => {
     init();
   });
-  
+
   window.addEventListener("pageshow", (e) => {
     if (e.persisted) {
       initExecuted = false;
@@ -2264,6 +2421,18 @@ try {
         }
       } else {
         alert("Divisions of current measure can not be divided by 2.");
+      }
+    }
+  });
+
+  document.getElementById("randomRhythmButton").addEventListener("click", (e) => {
+    let userChoice = false;
+    if (!Glob.playing) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`The current rhythm will be deleted! Create a random rhythm?`);
+      }
+      if (userChoice || Glob.settings.expert) {
+        createRhythm();
       }
     }
   });

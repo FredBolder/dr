@@ -3,6 +3,14 @@ import { Glob } from "./glob.js";
 import { Measures } from "./measures.js";
 
 class Instruments {
+  static bassDrum = 18;
+  static openHiHat = 9;
+  static closedHiHat = 10;
+  static pedalHiHat = 19;
+  static rideBell = 7;
+  static rideCymbal = 8;
+  static snareDrum = 17;
+
   static names;
 
   static init() {

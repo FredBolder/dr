@@ -110,6 +110,12 @@ class Glob {
     }
   }
 
+  static randomInt(min, max) {
+    min = Math.trunc(min);
+    max = Math.trunc(max);
+    return Math.floor((Math.random() * (max - min + 1))) + min;
+  }
+
   static removeChars(input, chars) {
     let result = "";
     for (let i = 0; i < input.length; i++) {
