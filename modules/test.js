@@ -15,11 +15,13 @@ class Test {
 
     static runTests() {
         let allOk = true;
+        let arr = [];
         let error = false;
         let ok = true;
         const saveMeasures = JSON.stringify(Measures.measures);
         let measure1 = [];
         let measure2 = [];
+        let msg = "";
         let result;
 
         Measures.measures = [];
@@ -125,6 +127,26 @@ class Test {
         result = RandomRhythm.groupInfo(10, [2, 2, 2, 3]);
         ok = this.test("groupInfo 02B", JSON.stringify({ group: 0, countInGroup: 0 }), JSON.stringify(result));
         if (!ok) allOk = false;
+
+        const arrayNames = [
+            "oneDivision2", "twoDivisions2", "threeDivisions2", "fourDivisions2",
+            "oneDivision3", "twoDivisions3", "threeDivisions3", "fourDivisions3"
+        ];
+        for (let i = 0; i < arrayNames.length; i++) {
+            arr = null;
+            arr = [];
+            for (let j = 0; j < RandomRhythm[arrayNames[i]].length; j++) {
+                arr.push(JSON.stringify(RandomRhythm[arrayNames[i]][j]));
+            }
+            msg = "";
+            for (let j = 0; j < arr.length; j++) {
+                if (arr.indexOf(arr[j]) !== arr.lastIndexOf(arr[j])) {
+                    msg = `Duplicate at index ${j}`;
+                }
+            }
+            ok = this.test(arrayNames[i], "", msg);
+            if (!ok) allOk = false;
+        }
 
         Measures.measures = JSON.parse(saveMeasures);
         if (allOk) {

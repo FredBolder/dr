@@ -5,375 +5,559 @@ import { Measures } from "./measures.js";
 class RandomRhythm {
 
     static oneDivision2 = [
+        // Only bass drum used
         {
+            oneGroup: false,
             snareDrum: [0, 0],
             bassDrum: [1, 0]
         },
         {
-            snareDrum: [0, 1],
-            bassDrum: [1, 0]
-        },
-        {
+            oneGroup: false,
             snareDrum: [0, 0],
             bassDrum: [1, 1]
         },
+        // Both drums used
         {
+            oneGroup: true,
+            snareDrum: [0, 1],
+            bassDrum: [1, 0]
+        },
+        // Only snare drum used
+        {
+            oneGroup: false,
             snareDrum: [1, 0],
             bassDrum: [0, 0]
         },
         {
+            oneGroup: false,
             snareDrum: [1, 1],
             bassDrum: [0, 0]
-        },
+        }
     ];
 
     static twoDivisions2 = [
+        // Only bass drum used
         {
+            oneGroup: false,
             snareDrum: [0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0]
         },
         {
-            snareDrum: [0, 0, 1, 0],
-            bassDrum: [1, 0, 0, 0]
-        },
-        {
+            oneGroup: false,
             snareDrum: [0, 0, 0, 0],
             bassDrum: [1, 0, 1, 0]
         },
         {
-            snareDrum: [1, 0, 0, 0],
-            bassDrum: [0, 0, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 1, 0],
-            bassDrum: [0, 0, 0, 0]
-        },
-        {
+            oneGroup: false,
             snareDrum: [0, 0, 0, 0],
             bassDrum: [1, 1, 0, 0]
         },
         {
-            snareDrum: [0, 1, 0, 0],
-            bassDrum: [1, 0, 0, 0]
-        },
-        {
+            oneGroup: false,
             snareDrum: [0, 0, 0, 0],
             bassDrum: [1, 0, 0, 1]
         },
         {
-            snareDrum: [1, 0, 0, 1],
-            bassDrum: [0, 0, 0, 0]
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0],
+            bassDrum: [1, 1, 0, 1]
+        },
+        // Both drums used
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 1, 0],
+            bassDrum: [1, 0, 0, 0]
         },
         {
+            oneGroup: true,
+            snareDrum: [0, 1, 0, 0],
+            bassDrum: [1, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
             snareDrum: [0, 0, 0, 1],
             bassDrum: [1, 0, 0, 0]
         },
         {
+            oneGroup: true,
             snareDrum: [0, 0, 1, 1],
             bassDrum: [1, 0, 0, 0]
         },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 1],
+            bassDrum: [1, 1, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 1, 0, 1],
+            bassDrum: [1, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 1, 0, 0],
+            bassDrum: [1, 0, 0, 1]
+        },
+        // Only snare drum used
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0],
+            bassDrum: [0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 1, 0],
+            bassDrum: [0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 1],
+            bassDrum: [0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 1, 1, 1],
+            bassDrum: [0, 0, 0, 0]
+        }
     ];
 
     static threeDivisions2 = [
+        // Only bass drum used
         {
+            oneGroup: false,
             snareDrum: [0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0]
         },
         {
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 1, 0, 0]
+        },
+        // Both drums used
+        {
+            oneGroup: true,
             snareDrum: [0, 0, 0, 1, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0]
         },
         {
-            snareDrum: [0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 0, 1, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 0, 0, 0, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 0, 1, 0, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0]
-        },
-        {
+            oneGroup: true,
             snareDrum: [1, 0, 0, 0, 0, 0],
             bassDrum: [0, 0, 1, 0, 1, 0]
         },
         {
+            oneGroup: true,
             snareDrum: [0, 0, 0, 0, 1, 0],
             bassDrum: [1, 0, 1, 0, 0, 0]
         },
         {
+            oneGroup: true,
             snareDrum: [0, 0, 1, 0, 1, 0],
             bassDrum: [1, 0, 0, 0, 0, 0]
         },
         {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 1, 0, 0],
+            bassDrum: [1, 0, 1, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 1, 0, 0],
+            bassDrum: [1, 0, 1, 0, 0, 1]
+        },
+        {
+            oneGroup: true,
             snareDrum: [0, 0, 0, 1, 0, 0],
             bassDrum: [1, 1, 1, 0, 0, 0]
         },
+        // Only snare drum used
         {
-            snareDrum: [0, 0, 0, 1, 0, 0],
-            bassDrum: [1, 0, 1, 0, 0, 0]
-        },
-    ];
-
-    static fourDivisions2 = [
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 1, 0, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 1, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 1, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 1, 0]
-        },
-        {
-            snareDrum: [1, 0, 0, 0, 0, 0, 1, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 1, 0, 1, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 1, 1, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 1, 1, 1, 0, 0, 0]
-        },
-    ];
-
-
-    static oneDivision3 = [
-        {
-            snareDrum: [0, 0, 0],
-            bassDrum: [1, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 1],
-            bassDrum: [1, 0, 0]
-        },
-        {
-            snareDrum: [0, 1, 1],
-            bassDrum: [1, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 0],
-            bassDrum: [0, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 1],
-            bassDrum: [0, 0, 0]
-        },
-        {
-            snareDrum: [1, 1, 1],
-            bassDrum: [0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 1],
-            bassDrum: [1, 1, 0]
-        },
-        {
-            snareDrum: [0, 1, 0],
-            bassDrum: [1, 0, 0]
-        },
-    ];
-
-    static twoDivisions3 = [
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 1, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 1, 0, 1, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0]
-        },
-        {
+            oneGroup: false,
             snareDrum: [1, 0, 0, 0, 0, 0],
             bassDrum: [0, 0, 0, 0, 0, 0]
         },
         {
-            snareDrum: [1, 0, 0, 0, 1, 0],
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 1, 0, 0],
             bassDrum: [0, 0, 0, 0, 0, 0]
         },
         {
-            snareDrum: [1, 0, 1, 0, 1, 0],
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 1, 0, 2],
             bassDrum: [0, 0, 0, 0, 0, 0]
         },
         {
-            snareDrum: [0, 0, 0, 0, 1, 0],
-            bassDrum: [1, 0, 0, 1, 0, 0]
+            oneGroup: false,
+            snareDrum: [1, 0, 2, 1, 0, 2],
+            bassDrum: [0, 0, 0, 0, 0, 0]
+        }
+    ];
+
+    static fourDivisions2 = [
+        // Only bass drum used
+        {
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
         },
         {
-            snareDrum: [0, 0, 0, 0, 1, 0],
-            bassDrum: [1, 0, 1, 1, 0, 0]
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 1, 0, 0, 0]
         },
         {
-            snareDrum: [0, 0, 1, 1, 1, 0],
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 1, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 1, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 1, 1, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 1, 0, 0, 0, 1, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 1, 0, 0, 1, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 1, 1, 1, 0, 0, 0]
+        },
+        // Both drums used
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 1, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 1, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 1, 0, 1, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 0, 0, 1, 0],
+            bassDrum: [1, 0, 1, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 1, 0, 0, 0, 1, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 1, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 1, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 0, 0, 1, 0],
+            bassDrum: [1, 0, 0, 1, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 1, 0, 0, 0],
+            bassDrum: [1, 0, 1, 1, 0, 0, 0, 0]
+        },
+        // Only snare drum used
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0, 1, 0, 0, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0, 0, 0, 1, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0]
+        }
+    ];
+
+    static oneDivision3 = [
+        // Only bass drum used
+        {
+            oneGroup: false,
+            snareDrum: [0, 0, 0],
+            bassDrum: [1, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [0, 0, 0],
+            bassDrum: [1, 0, 1]
+        },
+        // Both drums used
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 1],
+            bassDrum: [1, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 1, 0],
+            bassDrum: [1, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 1, 1],
+            bassDrum: [1, 0, 0]
+        },
+        // Only snare drum used
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0],
+            bassDrum: [0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 1],
+            bassDrum: [0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 1, 1],
+            bassDrum: [0, 0, 0]
+        }
+    ];
+
+    static twoDivisions3 = [
+        // Only bass drum used
+        {
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0]
         },
         {
-            snareDrum: [0, 0, 0, 0, 1, 0],
-            bassDrum: [1, 0, 1, 0, 0, 0]
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 1, 0]
         },
         {
+            oneGroup: false,
+            snareDrum: [0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 1, 0, 0]
+        },
+        // Both drums used
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 1, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
             snareDrum: [0, 0, 0, 1, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0]
         },
         {
+            oneGroup: true,
             snareDrum: [0, 0, 1, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0]
         },
         {
-            snareDrum: [0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 1, 0]
+            oneGroup: true,
+            snareDrum: [0, 0, 1, 0, 1, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0]
         },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 1, 0],
+            bassDrum: [1, 0, 0, 1, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 1, 0],
+            bassDrum: [1, 0, 1, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 1, 0],
+            bassDrum: [1, 0, 1, 1, 0, 0]
+        },
+        // Only snare drum used
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0, 0, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0, 1, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 1, 0, 1, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0]
+        }
     ];
 
     static threeDivisions3 = [
+        // Only bass drum used
         {
+            oneGroup: false,
             snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0]
         },
+        // Both drums used
         {
+            oneGroup: true,
             snareDrum: [0, 0, 0, 0, 0, 0, 1, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 1, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
             snareDrum: [0, 0, 0, 1, 0, 0, 1, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
-            snareDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 0, 0, 0, 0, 1, 0, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 0, 1, 0, 0, 1, 0, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 1, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
+            oneGroup: true,
             snareDrum: [0, 0, 0, 1, 0, 0, 0, 0, 0],
             bassDrum: [1, 1, 1, 0, 0, 0, 0, 0, 0]
         },
         {
+            oneGroup: true,
             snareDrum: [0, 0, 0, 1, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 1, 0, 0, 0, 0, 0, 0]
         },
+        // Only snare drum used
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0, 0, 0, 1, 0, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 1, 0, 0, 1, 0, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }
     ];
 
     static fourDivisions3 = [
+        // Only bass drum used
         {
+            oneGroup: false,
             snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            snareDrum: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
+            oneGroup: false,
             snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
         },
         {
+            oneGroup: false,
             snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             bassDrum: [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
+            oneGroup: false,
             snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
         },
+        // Both drums used
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }, {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0]
+        },
+        {
+            // Tsamikos
+            oneGroup: true,
+            snareDrum: [0, 0, 0, 2, 1, 0, 2, 0, 0, 0, 2, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
+        },
+        // Only snare drum used
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            snareDrum: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+            bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }
     ];
 
 
     static applyHiHatOrRide(groups) {
         let column = 0;
         let groupInfo = null;
-        const instrument = Glob.randomInt(1, 2);
+        let instrument = Glob.randomInt(1, 2);
         let odd = false;
         let pattern = Glob.randomInt(1, 8);
         let row1 = 0;
         let row2 = 0;
+        const useHiHatInput = document.getElementById("randomRhythmUseHiHatSelector").value;
+
+        switch (useHiHatInput) {
+            case "hihat":
+                instrument = 1;
+                break;
+            case "ride":
+                instrument = 2;
+                break;
+            default:
+                break;
+        }
 
         switch (instrument) {
             case 1:
@@ -431,8 +615,8 @@ class RandomRhythm {
                         break;
                     case 4:
                         // Every column
-                        if ((Math.random() > 0.4) && (measure.divisions === 2) && (i === (measure.beats - 1)) && 
-                        (j === 1) && (row1 === Instruments.closedHiHat)) {
+                        if ((Math.random() > 0.4) && (measure.divisions === 2) && (i === (measure.beats - 1)) &&
+                            (j === 1) && (row1 === Instruments.closedHiHat)) {
                             // Last hit open hi-hat
                             Instruments.setCell(column, row2, 1);
                         } else {

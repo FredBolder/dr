@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>DR by Fred Bolder</title>
-  <link rel="stylesheet" href="./main.css?v=29">
+  <link rel="stylesheet" href="./main.css?v=30">
 </head>
 
 <body id="body">
@@ -287,6 +287,14 @@
             <option value="4">4</option>
           </select>
         </div>
+        <div id="randomRhythmUseHiHat">
+          <label for="randomRhythmUseHiHatSelector">Use</label>
+          <select name="randomRhythmUseHiHatSelector" id="randomRhythmUseHiHatSelector" autocomplete="off">
+            <option value="both">Hit-hat or Ride</option>
+            <option value="hihat">Hi-hat</option>
+            <option value="ride">Ride cymbal</option>
+          </select>
+        </div>
         <button type="button" id="randomRhythmButton">Create</button>
       </fieldset>
     </main>
@@ -295,7 +303,7 @@
     <button type="button" id="playScreenToMainScreenButton">Back to main screen</button>
     <canvas id="canvasPlayScreen"></canvas>
   </div>
-  <script type="module" src="./modules/script.js?v=29"></script>
+  <script type="module" src="./modules/script.js?v=30"></script>
 </body>
 
 </html>

@@ -271,12 +271,12 @@ function createRhythm() {
   let divisions = 0;
   let divisionsInput = "";
   let error = false;
+  let groups = null;
   let maxDivisions = 4;
   let maxGroups = 8;
   let maxGroupsInput = "";
   let n1 = 0;
   let tempo = 100;
-  let groups = null;
 
   maxGroups = 8;
   maxGroupsInput = document.getElementById("randomRhythmMaxGroupsSelector").value;
@@ -404,7 +404,9 @@ function createRhythm() {
           break;
       }
     }
-    idx = Glob.randomInt(0, arr.length - 1);
+    do {
+      idx = Glob.randomInt(0, arr.length - 1);
+    } while ((groups.length === 1) && !arr[idx].oneGroup);
     data = arr[idx];
     for (let j = 0; j < data.bassDrum.length; j++) {
       Instruments.setCell(column + j, Instruments.snareDrum, data.snareDrum[j]);
