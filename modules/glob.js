@@ -30,6 +30,15 @@ class Glob {
     }
   }
 
+  static fillChar(n, c) {
+    let result = "";
+
+    for (let i = 0; i < n; i++) {
+      result += c;
+    }
+    return result;
+  }
+
   static getStringFromCommaDelimited(s, idx) {
     const arr = s.split(",");
     let result = "";
@@ -72,7 +81,7 @@ class Glob {
   static isLandscape() {
     return window.innerWidth > window.innerHeight;
   }
-  
+
   static minMax(value, min, max) {
     let result = value;
     if (max >= min) {

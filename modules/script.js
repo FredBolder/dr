@@ -1,5 +1,6 @@
 import { Audio } from "./audio.js";
 import { Distortion } from "./distortion.js";
+import { Files } from "./files.js";
 import { Glob } from "./glob.js";
 import { Instruments } from "./instruments.js";
 import { Measure } from "./measure.js";
@@ -435,6 +436,7 @@ function disableWhilePlaying() {
   Glob.settings.newButton.disabled = Glob.playing;
   Glob.settings.openButton.disabled = Glob.playing;
   Glob.settings.saveButton.disabled = Glob.playing;
+  Glob.settings.exportButton.disabled = Glob.playing;
   Glob.settings.previousMeasureButton.disabled = Glob.playing;
   Glob.settings.nextMeasureButton.disabled = Glob.playing;
   Glob.settings.clearMeasureButton.disabled = Glob.playing;
@@ -767,6 +769,80 @@ function expertClicked() {
   }
 }
 
+async function exportPattern() {
+  const fileVersion = 7;
+  let found = false;
+  let saveMeasures = [];
+  let saveSettings = [];
+  try {
+    const fileHandle = await window.showSaveFilePicker({
+      suggestedName: "myPattern.dr", // Default filename
+      types: [
+        {
+          description: "Text Files",
+          accept: { "text/plain": [".dr"] },
+        },
+      ],
+    });
+    const writable = await fileHandle.createWritable();
+    await writable.write(fileVersion.toString() + "\n");
+    await writable.write(Glob.settings.measuresToPlay + "\n");
+    await writable.write(Glob.settings.tempo.toString() + "\n");
+    await writable.write(Glob.settings.instrumentSet.toString() + "\n");
+    await writable.write(Glob.settings.reverbType.toString() + "\n");
+    await writable.write(Glob.settings.reverbWet.toString() + "\n");
+
+    // Compact saving
+    for (let i = 0; i < Measures.measures.length; i++) {
+      const measure = Measures.measures[i];
+      let saveMeasure = {};
+      saveMeasure.beats = measure.beats;
+      saveMeasure.divisions = measure.divisions;
+      saveMeasure.endsWithFill = measure.endsWithFill;
+      for (const prop in measure) {
+        if (Array.isArray(measure[prop])) {
+          found = false;
+          for (let j = 0; j < measure[prop].length; j++) {
+            if (measure[prop][j] > 0) {
+              found = true;
+            }
+          }
+          if (found) {
+            saveMeasure[prop] = [];
+            for (let j = 0; j < measure[prop].length; j++) {
+              saveMeasure[prop].push(measure[prop][j]);
+            }
+          }
+        }
+      }
+      saveMeasures.push(saveMeasure);
+    }
+    await writable.write(JSON.stringify(saveMeasures) + "\n");
+    for (let i = 0; i < Instruments.instruments.length; i++) {
+      const instrument = Instruments.instruments[i];
+      const instrumentSettings = {
+        property: instrument.property,
+        mute: instrument.mute,
+        solo: instrument.solo,
+        other: instrument.other,
+        volume: instrument.volume,
+        pitch: instrument.pitch,
+        pan: instrument.pan,
+        filterType: instrument.filterType,
+        filterFreq: instrument.filterFreq,
+        filterQ: instrument.filterQ,
+        distortion: instrument.distortion,
+        reverb: instrument.reverb
+      };
+      saveSettings.push(instrumentSettings);
+    }
+    await writable.write(JSON.stringify(saveSettings) + "\n");
+    await writable.close();
+  } catch (err) {
+    console.error("Error saving file:", err);
+  }
+}
+
 function fillPatternInstruments() {
   let selector = document.getElementById("presetPatternInstrument");
   selector.innerHTML = ""; // Remove all options
@@ -895,98 +971,6 @@ function instrumentSetChanged() {
 
 function loopClicked() {
   Glob.settings.loop = document.getElementById("loop").checked;
-}
-
-async function openTextFile() {
-  let fileVersion = 0;
-  // 1 Initial version
-  // 2 Instrument set added
-  // 3 Mute, solo, volume, pitch and pan added
-  // 4 Reverb added
-  // 5 Other (instrument) added
-  // 6 FilterType, FilterFreq and FilterQ added
-  // 7 Distortion added
-  let measurePointer = 0;
-
-  try {
-    const [fileHandle] = await window.showOpenFilePicker({
-      types: [
-        {
-          description: "Text Files",
-          accept: { "text/plain": [".dr"] },
-        },
-      ],
-      multiple: false,
-    });
-    Glob.initSettings();
-    const file = await fileHandle.getFile();
-    if (!file.name.toLowerCase().endsWith(".dr")) {
-      alert("Invalid file type. Please select a .dr file.");
-      return;
-    }
-    Instruments.initSettings();
-    const text = await file.text();
-    const lines = text.split("\n");
-    fileVersion = Glob.tryParseInt(lines[0], 0);
-    Glob.settings.measuresToPlay = lines[1];
-    Glob.settings.tempo = Glob.tryParseInt(lines[2], 0);
-    measurePointer = 3;
-    if (fileVersion >= 2) {
-      Glob.settings.instrumentSet = Glob.tryParseInt(lines[3], 0);
-      measurePointer++;
-    }
-    if (fileVersion >= 4) {
-      Glob.settings.reverbType = Glob.tryParseInt(lines[4], 3);
-      Glob.settings.reverbWet = Glob.tryParseInt(lines[5], 25);
-      measurePointer += 2;
-    }
-    Measures.measures = JSON.parse(lines[measurePointer]);
-    Measures.addMissingProps();
-    if (fileVersion >= 3) {
-      const instrumentSettings = JSON.parse(lines[measurePointer + 1]);
-      for (let i = 0; i < instrumentSettings.length; i++) {
-        const settings = instrumentSettings[i];
-        for (let j = 0; j < Instruments.instruments.length; j++) {
-          const instrument = Instruments.instruments[j];
-          if (instrument.property === settings.property) {
-            instrument.mute = settings.mute;
-            instrument.solo = settings.solo;
-            instrument.volume = settings.volume;
-            instrument.pitch = settings.pitch;
-            instrument.pan = settings.pan;
-            if (fileVersion >= 4) {
-              instrument.reverb = settings.reverb;
-            }
-            if (fileVersion >= 5) {
-              instrument.other = settings.other;
-            }
-            if (fileVersion >= 6) {
-              instrument.filterType = settings.filterType;
-              instrument.filterFreq = settings.filterFreq;
-              instrument.filterQ = settings.filterQ;
-            }
-            if (fileVersion >= 7) {
-              instrument.distortion = settings.distortion;
-            }
-          }
-        }
-      }
-    }
-    Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
-    instrumentSetChanged();
-    if (Glob.settings.reverbTypeSelector.selectedIndex !== Glob.settings.reverbType) {
-      Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
-      reverbTypeChanged();
-    }
-    Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
-    reverbWetChanged();
-    drawPattern();
-    document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
-    document.getElementById("tempoSlider").value = Glob.settings.tempo;
-    tempoChanged();
-  } catch (err) {
-    console.error("Error opening file:", err);
-  }
 }
 
 async function playInstrument(instrument, volumeFactor = 0.7) {
@@ -1616,80 +1600,6 @@ function resizeCanvasIfNeeded(pattern, columns, dx1, rows, dy1) {
 }
 
 
-async function saveTextFile() {
-  const fileVersion = 7;
-  let found = false;
-  let saveMeasures = [];
-  let saveSettings = [];
-  try {
-    const fileHandle = await window.showSaveFilePicker({
-      suggestedName: "myPattern.dr", // Default filename
-      types: [
-        {
-          description: "Text Files",
-          accept: { "text/plain": [".dr"] },
-        },
-      ],
-    });
-    const writable = await fileHandle.createWritable();
-    await writable.write(fileVersion.toString() + "\n");
-    await writable.write(Glob.settings.measuresToPlay + "\n");
-    await writable.write(Glob.settings.tempo.toString() + "\n");
-    await writable.write(Glob.settings.instrumentSet.toString() + "\n");
-    await writable.write(Glob.settings.reverbType.toString() + "\n");
-    await writable.write(Glob.settings.reverbWet.toString() + "\n");
-
-    // Compact saving
-    for (let i = 0; i < Measures.measures.length; i++) {
-      const measure = Measures.measures[i];
-      let saveMeasure = {};
-      saveMeasure.beats = measure.beats;
-      saveMeasure.divisions = measure.divisions;
-      saveMeasure.endsWithFill = measure.endsWithFill;
-      for (const prop in measure) {
-        if (Array.isArray(measure[prop])) {
-          found = false;
-          for (let j = 0; j < measure[prop].length; j++) {
-            if (measure[prop][j] > 0) {
-              found = true;
-            }
-          }
-          if (found) {
-            saveMeasure[prop] = [];
-            for (let j = 0; j < measure[prop].length; j++) {
-              saveMeasure[prop].push(measure[prop][j]);
-            }
-          }
-        }
-      }
-      saveMeasures.push(saveMeasure);
-    }
-    await writable.write(JSON.stringify(saveMeasures) + "\n");
-    for (let i = 0; i < Instruments.instruments.length; i++) {
-      const instrument = Instruments.instruments[i];
-      const instrumentSettings = {
-        property: instrument.property,
-        mute: instrument.mute,
-        solo: instrument.solo,
-        other: instrument.other,
-        volume: instrument.volume,
-        pitch: instrument.pitch,
-        pan: instrument.pan,
-        filterType: instrument.filterType,
-        filterFreq: instrument.filterFreq,
-        filterQ: instrument.filterQ,
-        distortion: instrument.distortion,
-        reverb: instrument.reverb
-      };
-      saveSettings.push(instrumentSettings);
-    }
-    await writable.write(JSON.stringify(saveSettings) + "\n");
-    await writable.close();
-  } catch (err) {
-    console.error("Error saving file:", err);
-  }
-}
-
 function showMessage(msg) {
   Glob.settings.message.innerText = msg;
   Glob.settings.message.style.visibility = "visible";
@@ -2130,15 +2040,35 @@ try {
     }
   });
 
-  document.getElementById("openButton").addEventListener("click", (e) => {
+  document.getElementById("openButton").addEventListener("click", async (e) => {
     if (!Glob.playing) {
-      openTextFile();
+      const ok = await Files.openPattern();
+      if (ok) {
+        Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
+        instrumentSetChanged();
+        if (Glob.settings.reverbTypeSelector.selectedIndex !== Glob.settings.reverbType) {
+          Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+          reverbTypeChanged();
+        }
+        Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
+        reverbWetChanged();
+        document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
+        document.getElementById("tempoSlider").value = Glob.settings.tempo;
+        tempoChanged();
+      }
+      drawPattern();
     }
   });
 
-  document.getElementById("saveButton").addEventListener("click", (e) => {
+  document.getElementById("saveButton").addEventListener("click", async (e) => {
     if (!Glob.playing) {
-      saveTextFile();
+      const ok = await Files.savePattern();
+    }
+  });
+
+  document.getElementById("exportButton").addEventListener("click", async (e) => {
+    if (!Glob.playing) {
+      const ok = await Files.exportPattern();
     }
   });
 
