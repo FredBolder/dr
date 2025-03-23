@@ -46,6 +46,7 @@ class Settings {
     this.applyPresetPatternButton = document.getElementById("applyPresetPatternButton");
     this.multiplyDivisionsByTwo = document.getElementById("multiplyDivisionsByTwo");
     this.divideDivisionsByTwo = document.getElementById("divideDivisionsByTwo");
+    this.randomRhythmButton = document.getElementById("randomRhythmButton");
   }
 
 }

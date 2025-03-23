@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>DR by Fred Bolder</title>
-  <link rel="stylesheet" href="./main.css?v=30">
+  <link rel="stylesheet" href="./main.css?v=31">
 </head>
 
 <body id="body">
@@ -258,7 +258,14 @@
       </fieldset>
       <fieldset>
         <legend>Create random rhythm</legend>
-        <div id="randomRhythmMaxGroups">
+        <div>
+          <label for="randomRhythmAlgorithmSelector">Algorithm</label>
+          <select name="randomRhythmAlgorithmSelector" id="randomRhythmAlgorithmSelector" autocomplete="off">
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select>
+        </div>
+        <div>
           <label for="randomRhythmMaxGroupsSelector">Max groups</label>
           <select name="randomRhythmMaxGroupsSelector" id="randomRhythmMaxGroupsSelector" autocomplete="off">
             <option value="1">1</option>
@@ -271,13 +278,13 @@
             <option value="8">8</option>
           </select>
         </div>
-        <div id="randomRhythmGrouping">
+        <div>
           <label for="randomRhythmGroupingInput">Grouping</label>
           <input type="text" id="randomRhythmGroupingInput" name="randomRhythmGroupingInput" value=""
             autocomplete="off">
           <label for="randomRhythmGroupingInput">Example: 2-2-3 (empty=random)</label>
         </div>
-        <div id="randomRhythmDivisions">
+        <div>
           <label for="randomRhythmDivisionsSelector">Divisions</label>
           <select name="randomRhythmDivisionsSelector" id="randomRhythmDivisionsSelector" autocomplete="off">
             <option value="0">Random</option>
@@ -287,7 +294,7 @@
             <option value="4">4</option>
           </select>
         </div>
-        <div id="randomRhythmUseHiHat">
+        <div>
           <label for="randomRhythmUseHiHatSelector">Use</label>
           <select name="randomRhythmUseHiHatSelector" id="randomRhythmUseHiHatSelector" autocomplete="off">
             <option value="both">Hit-hat or Ride</option>
@@ -303,7 +310,7 @@
     <button type="button" id="playScreenToMainScreenButton">Back to main screen</button>
     <canvas id="canvasPlayScreen"></canvas>
   </div>
-  <script type="module" src="./modules/script.js?v=30"></script>
+  <script type="module" src="./modules/script.js?v=31"></script>
 </body>
 
 </html>

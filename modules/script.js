@@ -264,6 +264,7 @@ function createNewNode(inUse) {
 }
 
 function createRhythm() {
+  let algorithm = 1;
   let column = 0;
   let count = 0;
   let counts = 0;
@@ -274,18 +275,11 @@ function createRhythm() {
   let groups = null;
   let maxDivisions = 4;
   let maxGroups = 8;
-  let maxGroupsInput = "";
   let n1 = 0;
   let tempo = 100;
 
-  maxGroups = 8;
-  maxGroupsInput = document.getElementById("randomRhythmMaxGroupsSelector").value;
-  if (maxGroupsInput === null) {
-    maxGroupsInput = "";
-  }
-  if (maxGroupsInput !== "") {
-    maxGroups = parseInt(maxGroupsInput);
-  }
+  algorithm = Glob.tryParseInt(document.getElementById("randomRhythmAlgorithmSelector").value, 1);
+  maxGroups = Glob.tryParseInt(document.getElementById("randomRhythmMaxGroupsSelector").value, 4);
 
   let groupsInput = document.getElementById("randomRhythmGroupingInput").value;
   if (groupsInput === null) {
@@ -339,6 +333,10 @@ function createRhythm() {
       break;
   }
 
+  if (algorithm === 1) {
+    divisions = 2;
+  }
+
   Glob.initSettings();
   tempo = Math.trunc((counts * 1.5 / divisions) * 10 + 70);
   Glob.settings.tempoSlider.value = tempo;
@@ -360,65 +358,72 @@ function createRhythm() {
   document.getElementById("measuresToPlayInput").value = "";
   Instruments.initSettings();
 
-  RandomRhythm.applyHiHatOrRide(groups);
-
-  column = 0;
-  count = 1;
-  for (let i = 0; i < groups.length; i++) {
-    let arr = null;
-    let data = null;
-    let idx = 0;
-    countsInGroup = groups[i];
-    if (countsInGroup === 2) {
-      switch (divisions) {
-        case 1:
-          arr = RandomRhythm.oneDivision2;
-          break;
-        case 2:
-          arr = RandomRhythm.twoDivisions2;
-          break;
-        case 3:
-          arr = RandomRhythm.threeDivisions2;
-          break;
-        case 4:
-          arr = RandomRhythm.fourDivisions2;
-          break;
-        default:
-          break;
-      }
-    } else {
-      switch (divisions) {
-        case 1:
-          arr = RandomRhythm.oneDivision3;
-          break;
-        case 2:
-          arr = RandomRhythm.twoDivisions3;
-          break;
-        case 3:
-          arr = RandomRhythm.threeDivisions3;
-          break;
-        case 4:
-          arr = RandomRhythm.fourDivisions3;
-          break;
-        default:
-          break;
-      }
-    }
-    do {
-      idx = Glob.randomInt(0, arr.length - 1);
-    } while ((groups.length === 1) && !arr[idx].oneGroup);
-    data = arr[idx];
-    for (let j = 0; j < data.bassDrum.length; j++) {
-      Instruments.setCell(column + j, Instruments.snareDrum, data.snareDrum[j]);
-      Instruments.setCell(column + j, Instruments.bassDrum, data.bassDrum[j]);
-    }
-    count += countsInGroup;
-    column = (count - 1) * divisions;
+  if (algorithm === 1) {
+    RandomRhythm.createPattern(groups);
   }
 
-  // On count 1 alway a bass drum and never a snare drum
-  Instruments.setCell(0, Instruments.snareDrum, 0);
-  Instruments.setCell(0, Instruments.bassDrum, 1);
+  if (algorithm === 2) {
+    RandomRhythm.applyHiHatOrRide(groups);
+
+    column = 0;
+    count = 1;
+    for (let i = 0; i < groups.length; i++) {
+      let arr = null;
+      let data = null;
+      let idx = 0;
+      countsInGroup = groups[i];
+      if (countsInGroup === 2) {
+        switch (divisions) {
+          case 1:
+            arr = RandomRhythm.oneDivision2;
+            break;
+          case 2:
+            arr = RandomRhythm.twoDivisions2;
+            break;
+          case 3:
+            arr = RandomRhythm.threeDivisions2;
+            break;
+          case 4:
+            arr = RandomRhythm.fourDivisions2;
+            break;
+          default:
+            break;
+        }
+      } else {
+        switch (divisions) {
+          case 1:
+            arr = RandomRhythm.oneDivision3;
+            break;
+          case 2:
+            arr = RandomRhythm.twoDivisions3;
+            break;
+          case 3:
+            arr = RandomRhythm.threeDivisions3;
+            break;
+          case 4:
+            arr = RandomRhythm.fourDivisions3;
+            break;
+          default:
+            break;
+        }
+      }
+      do {
+        idx = Glob.randomInt(0, arr.length - 1);
+      } while ((groups.length === 1) && !arr[idx].oneGroup);
+      data = arr[idx];
+      for (let j = 0; j < data.bassDrum.length; j++) {
+        Instruments.setCell(column + j, Instruments.snareDrum, data.snareDrum[j]);
+        Instruments.setCell(column + j, Instruments.bassDrum, data.bassDrum[j]);
+      }
+      count += countsInGroup;
+      column = (count - 1) * divisions;
+    }
+
+    // On count 1 alway a bass drum and never a snare drum
+    Instruments.setCell(0, Instruments.snareDrum, 0);
+    Instruments.setCell(0, Instruments.bassDrum, 1);
+  }
+
 
   drawPattern();
 }
@@ -444,6 +449,7 @@ function disableWhilePlaying() {
   Glob.settings.applyPresetPatternButton.disabled = Glob.playing;
   Glob.settings.multiplyDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.divideDivisionsByTwo.disabled = Glob.playing;
+  Glob.settings.randomRhythmButton.disabled = Glob.playing;
 }
 
 function drawPads() {
