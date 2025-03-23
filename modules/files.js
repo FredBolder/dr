@@ -129,18 +129,26 @@ class Files {
             await writable.write(divisions.toString() + "\n");
             await writable.write(Glob.settings.tempo.toString() + "\n");
 
-            instrumentList = [];
+            arr1 = null;
+            arr1 = [];
             for (let i = 0; i < saveMeasures.length; i++) {
                 const measure = saveMeasures[i];
                 for (const prop in measure) {
                     if (Array.isArray(measure[prop])) {
-                        if (!instrumentList.includes(prop) && (Instruments.getInstrumentByProp(prop).export !== "")) {
-                            instrumentList.push(prop);
+                        if (!arr1.includes(prop) && (Instruments.getInstrumentByProp(prop).export !== "")) {
+                            arr1.push(prop);
                         }
                     }
                 }
             }
-            instrumentList.sort();
+            instrumentList = [];
+            for (let i = 0; i < Instruments.instruments.length; i++) {
+                const instrument = Instruments.instruments[i];
+                if (arr1.includes(instrument.property)) {
+                    instrumentList.push(instrument.property);
+                }
+            }
+
             await writable.write(instrumentList.length.toString() + "\n");
             for (let i = 0; i < instrumentList.length; i++) {
                 await writable.write(Instruments.getInstrumentByProp(instrumentList[i]).export + "\n");
@@ -360,6 +368,7 @@ class Files {
                 // Flam
                 result = "F";
                 break;
+            case 14:
             case 15:
                 // Ruff
                 result = "R";

@@ -2043,19 +2043,21 @@ try {
   document.getElementById("openButton").addEventListener("click", async (e) => {
     if (!Glob.playing) {
       const ok = await Files.openPattern();
-      if (ok) {
-        Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
-        instrumentSetChanged();
-        if (Glob.settings.reverbTypeSelector.selectedIndex !== Glob.settings.reverbType) {
-          Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
-          reverbTypeChanged();
-        }
-        Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
-        reverbWetChanged();
-        document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
-        document.getElementById("tempoSlider").value = Glob.settings.tempo;
-        tempoChanged();
+      if (!ok) {
+        Glob.initSettings();
+        Glob.settings.tempo = 120;
       }
+      Glob.settings.instrumentSetSelector.selectedIndex = Glob.settings.instrumentSet;
+      instrumentSetChanged();
+      if (Glob.settings.reverbTypeSelector.selectedIndex !== Glob.settings.reverbType) {
+        Glob.settings.reverbTypeSelector.selectedIndex = Glob.settings.reverbType;
+        reverbTypeChanged();
+      }
+      Glob.settings.reverbWetSlider.value = Glob.settings.reverbWet;
+      reverbWetChanged();
+      document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
+      document.getElementById("tempoSlider").value = Glob.settings.tempo;
+      tempoChanged();
       drawPattern();
     }
   });
