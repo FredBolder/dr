@@ -628,7 +628,7 @@ class RandomRhythm {
                 patternList = [8];
                 break;
             case 4:
-                patternList = [8, 9];
+                patternList = [8, 9, 10];
                 break;
             default:
                 patternList = null;
@@ -636,7 +636,7 @@ class RandomRhythm {
         }
         pattern = patternList[Glob.randomInt(0, patternList.length - 1)];
 
-        //pattern = 9; // TODO: remove
+        //pattern = 10; // TODO: remove
 
         originalPattern = pattern;
         if (pattern === 5) {
@@ -844,7 +844,7 @@ class RandomRhythm {
                         }
                         break;
                     case 9:
-                        // Based on Tsifteteli and Zeibekiko
+                        // Based on the Tsifteteli and the Zeibekiko
                         if ((j === 0) || (j === 2)) {
                             if (j === 0) {
                                 Instruments.setCell(column, row1, 1);
@@ -884,6 +884,51 @@ class RandomRhythm {
                                 Instruments.setCell(column, Instruments.bassDrum, 1);
                             }
                             if ((Math.random() > 0.6) && (groupInfo.countInGroup === groups[groupInfo.group - 1])) {
+                                Instruments.setCell(column, Instruments.snareDrum, 2);
+                            }
+                        }
+                        break;
+                    case 10:
+                        // Based on the Tsamikos
+                        if (j === 0) {
+                            if ((groupInfo.countInGroup === 1) || (groupInfo.countInGroup === 3)) {
+                                Instruments.setCell(column, Instruments.bassDrum, 1);
+                                Instruments.setCell(column, row1, 1);
+                            }
+                            if (groupInfo.countInGroup === 2) {
+                                if (threeBeatGroup) {
+                                    if (Math.random() > 0.6) {
+                                        Instruments.setCell(column, Instruments.bassDrum, 1);
+                                        Instruments.setCell(column, row1, 1);
+                                    } else {
+                                        Instruments.setCell(column, Instruments.snareDrum, 1);
+                                    }
+                                } else {
+                                    Instruments.setCell(column, Instruments.snareDrum, 1);
+                                }
+                            }
+                        }
+                        if (threeBeatGroup) {
+                            if (((j === 3) && (groupInfo.countInGroup === 1)) || ((j === 2) && (groupInfo.countInGroup === 2)) ||
+                                ((Math.random() > 0.7) && (j === 2) && (groupInfo.countInGroup === 1))) {
+                                Instruments.setCell(column, Instruments.snareDrum, 2);
+                            }
+                            if ((j === 2) && (groupInfo.countInGroup === 3)) {
+                                if (Math.random() > 0.8) {
+                                    Instruments.setCell(column, Instruments.bassDrum, 1);
+                                } else {
+                                    Instruments.setCell(column, Instruments.snareDrum, 2);
+                                }
+                            }
+                        } else {
+                            if ((Math.random() > 0.5) && (groupInfo.countInGroup === 1) && (j === 2)) {
+                                if (Math.random() > 0.5) {
+                                    Instruments.setCell(column + 1, Instruments.bassDrum, 1);
+                                } else {
+                                    Instruments.setCell(column, Instruments.bassDrum, 1);
+                                }
+                            }
+                            if ((Math.random() > 0.5) && (groupInfo.countInGroup === 2) && (j === 3)) {
                                 Instruments.setCell(column, Instruments.snareDrum, 2);
                             }
                         }
