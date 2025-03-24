@@ -78,6 +78,10 @@ class Glob {
     return (i === 1);
   }
 
+  static isEven(n) {
+    return n % 2 == 0;
+  }
+
   static isLandscape() {
     return window.innerWidth > window.innerHeight;
   }

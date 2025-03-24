@@ -334,10 +334,6 @@ function createRhythm() {
       break;
   }
 
-  if (algorithm === 1) {
-    divisions = 2;
-  }
-
   Glob.initSettings();
   tempo = Math.trunc((counts * 1.5 / divisions) * 10 + 70);
   Glob.settings.tempoSlider.value = tempo;
@@ -360,7 +356,7 @@ function createRhythm() {
   Instruments.initSettings();
 
   if (algorithm === 1) {
-    RandomRhythm.createPattern(groups);
+    RandomRhythm.createPattern1(groups);
   }
 
   if (algorithm === 2) {

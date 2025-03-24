@@ -25,7 +25,7 @@ class Instruments {
       { name: "Bendir Doum", shortName: "BED", file: "wav/Bendir_Doum.wav", key: "Q", property: "bendirDoum", export: "" },
       { name: "Daouli Tek", shortName: "DAT", file: "wav/Daouli_Tek.wav", key: "", property: "daouliTek", export: "" },
       { name: "Daouli Doum", shortName: "DAD", file: "wav/Daouli_Doum.wav", key: "", property: "daouliDoum", export: "" },
-      { name: "Wood block", shortName: "WB", file: "wav/Wood_block_1.wav, wav/Pate_1.wav", key: "", property: "woodBlock", export: "" },
+      { name: "Wood block", shortName: "WB", file: "wav/Wood_block_1.wav, wav/Pate_1.wav", key: "", property: "woodBlock", export: "01_Wood_block" },
       { name: "Claves", shortName: "CL", file: "wav/Claves_1.wav, wav/Claves_2.wav", key: "E", property: "claves", export: "01_Claves" },
       { name: "Cowbell", shortName: "CB", file: "wav/Cowbell_1.wav, wav/Cowbell_2.wav", key: "R", property: "cowbell", export: "01_Cowbell" },
       { name: "Crash cymbal 1", shortName: "CC1", file: "wav/Crash_cymbal_1.wav", key: "O", property: "crashCymbal1", export: "01_Crash_cymbal_1" },
