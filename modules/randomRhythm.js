@@ -66,12 +66,6 @@ class RandomRhythm {
             snareDrum: [0, 0, 0, 0],
             bassDrum: [1, 0, 0, 1]
         },
-        {
-            oneGroup: false,
-            closedHiHat: [1, 0, 1, 0],
-            snareDrum: [0, 0, 0, 0],
-            bassDrum: [1, 1, 0, 1]
-        },
         // Both drums used
         {
             oneGroup: true,
@@ -97,24 +91,6 @@ class RandomRhythm {
             snareDrum: [0, 0, 1, 1],
             bassDrum: [1, 0, 0, 0]
         },
-        {
-            oneGroup: true,
-            closedHiHat: [1, 0, 1, 0],
-            snareDrum: [0, 0, 0, 1],
-            bassDrum: [1, 1, 0, 0]
-        },
-        {
-            oneGroup: true,
-            closedHiHat: [1, 0, 1, 0],
-            snareDrum: [0, 1, 0, 1],
-            bassDrum: [1, 0, 0, 0]
-        },
-        {
-            oneGroup: true,
-            closedHiHat: [1, 0, 1, 0],
-            snareDrum: [0, 1, 0, 0],
-            bassDrum: [1, 0, 0, 1]
-        },
         // Only snare drum used
         {
             oneGroup: false,
@@ -134,40 +110,28 @@ class RandomRhythm {
             snareDrum: [1, 0, 0, 1],
             bassDrum: [0, 0, 0, 0]
         },
-        {
-            oneGroup: false,
-            closedHiHat: [1, 0, 1, 0],
-            snareDrum: [1, 1, 1, 1],
-            bassDrum: [0, 0, 0, 0]
-        }
     ];
 
     static threeDivisions2 = [
         // Only bass drum used
         {
             oneGroup: false,
-            closedHiHat: [1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0]
         },
         {
             oneGroup: false,
-            closedHiHat: [1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 1, 0, 0]
         },
         // Both drums used
         {
             oneGroup: true,
-            closedHiHat: [1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 1, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0]
-        },
-        {
-            oneGroup: true,
-            closedHiHat: [1, 0, 0, 0, 2, 0],
-            snareDrum: [1, 0, 0, 0, 0, 0],
-            bassDrum: [0, 0, 1, 0, 1, 0]
         },
         {
             oneGroup: true,
@@ -183,44 +147,56 @@ class RandomRhythm {
         },
         {
             oneGroup: true,
-            closedHiHat: [1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 0, 2, 0],
+            snareDrum: [1, 0, 0, 0, 0, 0],
+            bassDrum: [0, 0, 1, 0, 1, 0]
+        },
+        {
+            oneGroup: true,
+            closedHiHat: [1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 1, 0, 0],
             bassDrum: [1, 0, 1, 0, 0, 0]
         },
         {
             oneGroup: true,
-            closedHiHat: [1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 2],
+            snareDrum: [0, 0, 2, 1, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            closedHiHat: [1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 1, 0, 0],
             bassDrum: [1, 0, 1, 0, 0, 1]
         },
         {
             oneGroup: true,
-            closedHiHat: [1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 1, 0, 0],
             bassDrum: [1, 1, 1, 0, 0, 0]
         },
         // Only snare drum used
         {
             oneGroup: false,
-            closedHiHat: [1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 2],
             snareDrum: [1, 0, 0, 0, 0, 0],
             bassDrum: [0, 0, 0, 0, 0, 0]
         },
         {
             oneGroup: false,
-            closedHiHat: [1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 2],
             snareDrum: [1, 0, 0, 1, 0, 0],
             bassDrum: [0, 0, 0, 0, 0, 0]
         },
         {
             oneGroup: false,
-            closedHiHat: [1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 2],
             snareDrum: [1, 0, 0, 1, 0, 2],
             bassDrum: [0, 0, 0, 0, 0, 0]
         },
         {
             oneGroup: false,
-            closedHiHat: [1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 2],
             snareDrum: [1, 0, 2, 1, 0, 2],
             bassDrum: [0, 0, 0, 0, 0, 0]
         }
@@ -244,19 +220,7 @@ class RandomRhythm {
             oneGroup: false,
             closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0],
             snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 1, 1, 0, 0, 0, 1, 0]
-        },
-        {
-            oneGroup: false,
-            closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0],
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 1, 0, 0, 0, 1, 0]
-        },
-        {
-            oneGroup: false,
-            closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0],
-            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 1, 1, 1, 0, 0, 0]
+            bassDrum: [1, 0, 0, 0, 1, 0, 1, 0]
         },
         // Both drums used
         {
@@ -274,26 +238,14 @@ class RandomRhythm {
         {
             oneGroup: true,
             closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0],
-            snareDrum: [0, 0, 0, 0, 0, 0, 1, 0],
-            bassDrum: [1, 0, 1, 0, 0, 0, 0, 0]
-        },
-        {
-            oneGroup: true,
-            closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0],
-            snareDrum: [0, 0, 1, 0, 0, 0, 1, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            oneGroup: true,
-            closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0],
-            snareDrum: [0, 0, 1, 0, 0, 0, 0, 0],
+            snareDrum: [0, 0, 0, 0, 1, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 1, 0]
         },
         {
             oneGroup: true,
             closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0],
             snareDrum: [0, 0, 0, 0, 1, 0, 0, 0],
-            bassDrum: [1, 0, 1, 1, 0, 0, 0, 0]
+            bassDrum: [1, 0, 0, 0, 0, 0, 0, 1]
         },
         // Only snare drum used
         {
@@ -322,12 +274,6 @@ class RandomRhythm {
             oneGroup: false,
             closedHiHat: [1, 1, 1],
             snareDrum: [0, 0, 0],
-            bassDrum: [1, 1, 0]
-        },
-        {
-            oneGroup: false,
-            closedHiHat: [1, 1, 1],
-            snareDrum: [0, 0, 0],
             bassDrum: [1, 0, 1]
         },
         // Both drums used
@@ -348,6 +294,12 @@ class RandomRhythm {
             closedHiHat: [1, 1, 1],
             snareDrum: [0, 1, 1],
             bassDrum: [1, 0, 0]
+        },
+        {
+            oneGroup: true,
+            closedHiHat: [1, 1, 1],
+            snareDrum: [0, 0, 1],
+            bassDrum: [1, 1, 0]
         },
         // Only snare drum used
         {
@@ -377,12 +329,6 @@ class RandomRhythm {
             closedHiHat: [1, 0, 1, 0, 1, 0],
             snareDrum: [0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0]
-        },
-        {
-            oneGroup: false,
-            closedHiHat: [1, 0, 1, 0, 1, 0],
-            snareDrum: [0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 1, 0, 0, 0]
         },
         {
             oneGroup: false,
@@ -436,6 +382,12 @@ class RandomRhythm {
         {
             oneGroup: true,
             closedHiHat: [1, 0, 1, 0, 1, 0],
+            snareDrum: [0, 0, 1, 1, 1, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: true,
+            closedHiHat: [1, 0, 1, 0, 1, 0],
             snareDrum: [0, 0, 0, 0, 1, 0],
             bassDrum: [1, 0, 1, 1, 0, 0]
         },
@@ -464,57 +416,63 @@ class RandomRhythm {
         // Only bass drum used
         {
             oneGroup: false,
-            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            oneGroup: false,
+            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 2],
+            snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            bassDrum: [1, 0, 0, 0, 0, 0, 1, 0, 0]
         },
         // Both drums used
         {
             oneGroup: true,
-            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 0, 0, 0, 1, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
             oneGroup: true,
-            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 1, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
             oneGroup: true,
-            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 1, 0, 0, 1, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
             oneGroup: true,
-            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 1, 0, 0, 0, 0, 0],
             bassDrum: [1, 1, 1, 0, 0, 0, 0, 0, 0]
         },
         {
             oneGroup: true,
-            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 2],
             snareDrum: [0, 0, 0, 1, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 1, 0, 0, 0, 0, 0, 0]
         },
         // Only snare drum used
         {
             oneGroup: false,
-            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 2],
             snareDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0],
             bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
             oneGroup: false,
-            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 2],
             snareDrum: [1, 0, 0, 0, 0, 0, 1, 0, 0],
             bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
             oneGroup: false,
-            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 0],
+            closedHiHat: [1, 0, 0, 1, 0, 0, 1, 0, 2],
             snareDrum: [1, 0, 0, 1, 0, 0, 1, 0, 0],
             bassDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0]
         }
@@ -532,7 +490,7 @@ class RandomRhythm {
             oneGroup: false,
             closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0],
             snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            bassDrum: [1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
+            bassDrum: [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
         },
         // Both drums used
         {
@@ -552,7 +510,8 @@ class RandomRhythm {
             closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0],
             snareDrum: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        }, {
+        },
+        {
             oneGroup: true,
             closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0],
             snareDrum: [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
@@ -569,13 +528,6 @@ class RandomRhythm {
             closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0],
             snareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
             bassDrum: [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0]
-        },
-        {
-            // Tsamikos
-            oneGroup: true,
-            closedHiHat: [1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0],
-            snareDrum: [0, 0, 0, 2, 1, 0, 2, 0, 0, 0, 2, 0],
-            bassDrum: [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
         },
         // Only snare drum used
         {
