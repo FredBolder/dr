@@ -559,7 +559,6 @@ class RandomRhythm {
         let row = 0;
         let row1 = 0;
         let row2 = 0;
-        let row3 = 0;
         let threeBeatGroup = false;
 
         const measure = Measures.measures[0];
@@ -588,7 +587,7 @@ class RandomRhythm {
         }
         pattern = patternList[Glob.randomInt(0, patternList.length - 1)];
 
-        //pattern = 10; // TODO: remove
+        //pattern = 8; // TODO: remove
 
         originalPattern = pattern;
         if (pattern === 5) {
@@ -716,16 +715,16 @@ class RandomRhythm {
                                     bass = false;
                                 }
                                 if (bass) {
-                                    row3 = Instruments.bassDrum;
+                                    row = Instruments.bassDrum;
                                 } else {
-                                    row3 = Instruments.snareDrum;
+                                    row = Instruments.snareDrum;
                                 }
                                 col = column;
                                 if ((measure.divisions === 2) && (Math.random() > 0.5)) {
                                     // On the & of count 2
                                     col++;
                                 }
-                                Instruments.setCell(col, row3, 1);
+                                Instruments.setCell(col, row, 1);
                             }
                         }
                         break;
@@ -809,7 +808,20 @@ class RandomRhythm {
                                 Instruments.setCell(column, Instruments.bassDrum, 1);
                             }
                             if ((groupInfo.countInGroup === groups[groupInfo.group - 1]) && (Glob.isEven(groupInfo.group) || threeBeatGroup)) {
-                                Instruments.setCell(column, Instruments.snareDrum, 1);
+                                row = Instruments.snareDrum;
+                                if (groupInfo.countInGroup === 3) {
+                                    if ((Instruments.getCell(0, column - 4, Instruments.snareDrum) > 0) && 
+                                    (Instruments.getCell(0, column - 1, Instruments.bassDrum) === 0)) {
+                                        if (Math.random() > 0.7) {
+                                            if (Math.random() > 0.5) {
+                                                row = Instruments.bassDrum;
+                                            } else {
+                                                row = Instruments.lowTom;
+                                            }
+                                        }
+                                    }
+                                }
+                                Instruments.setCell(column, row, 1);
                             }
                             if ((groupInfo.countInGroup === 2) && threeBeatGroup) {
                                 if (Math.random() > 0.5) {
