@@ -576,7 +576,7 @@ class RandomRhythm {
                 patternList = [1, 2, 3, 4, 5, 6, 7];
                 break;
             case 3:
-                patternList = [8];
+                patternList = [8, 11];
                 break;
             case 4:
                 patternList = [8, 9, 10];
@@ -587,7 +587,7 @@ class RandomRhythm {
         }
         pattern = patternList[Glob.randomInt(0, patternList.length - 1)];
 
-        //pattern = 8; // TODO: remove
+        //pattern = 11; // TODO: remove
 
         originalPattern = pattern;
         if (pattern === 5) {
@@ -810,8 +810,8 @@ class RandomRhythm {
                             if ((groupInfo.countInGroup === groups[groupInfo.group - 1]) && (Glob.isEven(groupInfo.group) || threeBeatGroup)) {
                                 row = Instruments.snareDrum;
                                 if (groupInfo.countInGroup === 3) {
-                                    if ((Instruments.getCell(0, column - 4, Instruments.snareDrum) > 0) && 
-                                    (Instruments.getCell(0, column - 1, Instruments.bassDrum) === 0)) {
+                                    if ((Instruments.getCell(0, column - 4, Instruments.snareDrum) > 0) &&
+                                        (Instruments.getCell(0, column - 1, Instruments.bassDrum) === 0)) {
                                         if (Math.random() > 0.7) {
                                             if (Math.random() > 0.5) {
                                                 row = Instruments.bassDrum;
@@ -897,6 +897,33 @@ class RandomRhythm {
                             }
                         }
                         break;
+                    case 11:
+                        if ((j === 0) || ((j === 2) && (groupInfo.countInGroup !== 1))) {
+                            if (j === 0) {
+                                Instruments.setCell(column, row1, 1);
+                            } else {
+                                Instruments.setCell(column, row1, 2);
+                            }
+                        }
+                        if (groupInfo.countInGroup === 1) {
+                            if ((j === 0) || (j === 2) || ((j === 1) && (Math.random() > 0.5))) {
+                                Instruments.setCell(column, Instruments.bassDrum, 1);
+                            }
+                        }
+                        if ((j === 0) && (groupInfo.countInGroup !== 1)) {
+                            Instruments.setCell(column, Instruments.snareDrum, 1);
+                        }
+                        if ((j === 2) && (groupInfo.countInGroup === 2) && threeBeatGroup && (Math.random() > 0.6)) {
+                            if (Math.random() > 0.4) {
+                                Instruments.setCell(column, Instruments.bassDrum, 1);
+                            } else {
+                                Instruments.setCell(column, Instruments.snareDrum, 2);
+                            }
+                        }
+                        if ((j === 2) && (groupInfo.countInGroup === groups[groupInfo.group - 1]) && (Math.random() > 0.7)) {
+                            Instruments.setCell(column, Instruments.snareDrum, 2);
+                        }
+                        break
                     default:
                         break;
                 }
