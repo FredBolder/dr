@@ -1,5 +1,6 @@
 import { Audio } from "./audio.js";
 import { Distortion } from "./distortion.js";
+import { Euclidean } from "./euclidean.js";
 import { Files } from "./files.js";
 import { Glob } from "./glob.js";
 import { Instruments } from "./instruments.js";
@@ -389,6 +390,7 @@ function disableWhilePlaying() {
   Glob.settings.multiplyDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.divideDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.randomRhythmButton.disabled = Glob.playing;
+  Glob.settings.euclideanCreate = Glob.playing;
 }
 
 function drawPads() {
@@ -780,28 +782,31 @@ async function exportPattern() {
   }
 }
 
-function fillPatternInstruments() {
-  let selector = document.getElementById("presetPatternInstrument");
-  selector.innerHTML = ""; // Remove all options
-  Instruments.sets[Glob.settings.instrumentSet].forEach((instrument, index) => {
-    const name = instrument.name;
-    let option = document.createElement("option");
-    option.textContent = name;
-    option.value = index;
-    selector.appendChild(option);
-  });
-  switch (Glob.settings.instrumentSet) {
-    case 0:
-      // Drums
-      selector.selectedIndex = 9;
-      break;
-    case 1:
-      // Greek percussion
-      selector.selectedIndex = 2;
-      break;
-    default:
-      selector.selectedIndex = 0;
-      break;
+function fillInstruments() {
+  const selectors = ["presetPatternInstrument", "euclideanInstrument"];
+  for (let i = 0; i < selectors.length; i++) {
+    const selector = document.getElementById(selectors[i]);
+    selector.innerHTML = ""; // Remove all options
+    Instruments.sets[Glob.settings.instrumentSet].forEach((instrument, index) => {
+      const name = instrument.name;
+      let option = document.createElement("option");
+      option.textContent = name;
+      option.value = index;
+      selector.appendChild(option);
+    });
+    switch (Glob.settings.instrumentSet) {
+      case 0:
+        // Drums
+        selector.selectedIndex = Instruments.closedHiHat;
+        break;
+      case 1:
+        // Greek percussion
+        selector.selectedIndex = Instruments.touberlekiTek;
+        break;
+      default:
+        selector.selectedIndex = 0;
+        break;
+    }
   }
 }
 
@@ -868,7 +873,7 @@ function init() {
     reverbWetChanged();
     document.getElementById("measuresToPlayInput").value = Glob.settings.measuresToPlay;
     document.getElementById("tempoSlider").value = Glob.settings.tempo;
-    fillPatternInstruments();
+    fillInstruments();
     tempoChanged();
     volumeChanged();
     drawPattern();
@@ -904,7 +909,7 @@ function initializeAudioNodes(poolSize = 10) {
 function instrumentSetChanged() {
   Glob.settings.instrumentSet = Glob.tryParseInt(Glob.settings.instrumentSetSelector.value, 0);
   drawPattern();
-  fillPatternInstruments();
+  fillInstruments();
 }
 
 function loopClicked() {
@@ -2336,6 +2341,24 @@ try {
       }
       if (userChoice || Glob.settings.expert) {
         createRhythm();
+      }
+    }
+  });
+
+  document.getElementById("euclideanInstrument").addEventListener("change", (e) => {
+    Euclidean.loadSettings();
+  });
+
+  document.getElementById("euclideanCreate").addEventListener("click", (e) => {
+    let userChoice = false;
+    if (!Glob.playing) {
+      if (!Glob.settings.expert) {
+        userChoice = window.confirm(`Create an Euclidean rhythm for the selected instrument?`);
+      }
+      if (userChoice || Glob.settings.expert) {
+        Euclidean.saveSettings();
+        Euclidean.create();
+        drawPattern();
       }
     }
   });

@@ -24,6 +24,7 @@ class Settings {
     this.deleteBeatButton = document.getElementById("deleteBeatButton");
     this.deleteMeasureButton = document.getElementById("deleteMeasureButton");
     this.divideDivisionsByTwo = document.getElementById("divideDivisionsByTwo");
+    this.euclideanCreate = document.getElementById("euclideanCreate");
     this.expertCheckbox = document.getElementById("expert");
     this.exportButton = document.getElementById("exportButton");
     this.incDivisionButton = document.getElementById("incDivisionButton");

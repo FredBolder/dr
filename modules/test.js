@@ -149,22 +149,43 @@ class Test {
             if (!ok) allOk = false;
         }
 
-        ok = this.test("Euclidean 1A", "10010010", Euclidean.pattern(8, 3));
+        ok = this.test("Euclidean 1A", "10010010", Euclidean.pattern(8, 3, 0));
         if (!ok) allOk = false;
 
-        ok = this.test("Euclidean 1B", "1001010010100", Euclidean.pattern(13, 5));
+        ok = this.test("Euclidean 1B", "1001010010100", Euclidean.pattern(13, 5, 0));
         if (!ok) allOk = false;
 
-        ok = this.test("Euclidean 1C", "111111110", Euclidean.pattern(9, 8));
+        ok = this.test("Euclidean 1C", "101111111", Euclidean.pattern(9, 8, 0));
         if (!ok) allOk = false;
 
-        ok = this.test("Euclidean 2A", "0000", Euclidean.pattern(4, 0));
+        ok = this.test("Euclidean 1D", "1010101", Euclidean.pattern(7, 4, 0));
         if (!ok) allOk = false;
 
-        ok = this.test("Euclidean 2B", "1111", Euclidean.pattern(4, 4));
+        ok = this.test("Euclidean 1E", "101010100", Euclidean.pattern(9, 4, 0));
         if (!ok) allOk = false;
 
-        ok = this.test("Euclidean 2C", "1111", Euclidean.pattern(4, 5));
+        ok = this.test("Euclidean 2A", "0000", Euclidean.pattern(4, 0, 0));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 2B", "1111", Euclidean.pattern(4, 4, 0));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 2C", "1111", Euclidean.pattern(4, 5, 0));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 3A", "01001001", Euclidean.pattern(8, 3, 1));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 3B", "01010010", Euclidean.pattern(8, 3, 3));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 3C", "10010010", Euclidean.pattern(8, 3, 8));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 3D", "00100101", Euclidean.pattern(8, 3, -1));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 3E", "10010100", Euclidean.pattern(8, 3, -3));
         if (!ok) allOk = false;
 
         Measures.measures = JSON.parse(saveMeasures);

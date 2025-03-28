@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>DR by Fred Bolder</title>
-  <link rel="stylesheet" href="./main.css?v=37">
+  <link rel="stylesheet" href="./main.css?v=38">
 </head>
 
 <body id="body">
@@ -113,7 +113,7 @@
         </div>
         <button type="button" id="startStopButton">Start/Stop</button>
         <button type="button" id="playPadsButton">Play pads</button>
-        <button type="button" id="testButton">TEST</button>
+        <button type="button" id="testButton" hidden>TEST</button>
       </div>
 
       <div id="tabs">
@@ -312,6 +312,31 @@
         <button type="button" id="randomRhythmButton">Create</button>
       </div>
       <div class="tabPage" id="tpEuclidean">
+        <select name="euclideanInstrument" id="euclideanInstrument" autocomplete="off">
+          <option value="0">Closed hi-hat</option>
+        </select>
+        <div>
+          <label for="euclideanSteps">Steps</label>
+          <select name="euclideanSteps" id="euclideanSteps" autocomplete="off">
+            <option value="Beats">Beats</option>
+            <option value="Columns">Columns</option>
+          </select>
+        </div>
+        <div>
+          <label for="euclideanOnsets">Onsets</label>
+          <input type="text" class="numberInput" id="euclideanOnsets" name="euclideanOnsets" value="1"
+            autocomplete="off">
+        </div>
+        <div>
+          <label for="euclideanRotation">Rotation</label>
+          <input type="text" class="numberInput" id="euclideanRotation" name="euclideanRotation" value="0"
+            autocomplete="off">
+        </div>
+        <div class="checkboxGroup">
+          <label for="euclideanAllMeasures">All measures</label>
+          <input type="checkbox" id="euclideanAllMeasures" name="euclideanAllMeasures">
+        </div>
+        <button type="button" id="euclideanCreate">Create</button>
       </div>
     </main>
   </div>
@@ -319,7 +344,7 @@
     <button type="button" id="playScreenToMainScreenButton">Back to main screen</button>
     <canvas id="canvasPlayScreen"></canvas>
   </div>
-  <script type="module" src="./modules/script.js?v=37"></script>
+  <script type="module" src="./modules/script.js?v=38"></script>
 </body>
 
 </html>

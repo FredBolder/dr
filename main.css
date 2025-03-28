@@ -115,6 +115,10 @@ body {
     flex-basis: 100%;
 }
 
+.numberInput {
+    width: 3em;
+}
+
 #tabs {
     margin-top: 1em;
     margin-bottom: 0em;
@@ -153,7 +157,7 @@ body {
     padding-bottom: 0.5em;
     width: fit-content;
     height: fit-content;
-    min-width: 90%;
+    min-width: 98%;
     min-height: 10em;
     display: flex;
     flex-direction: row;
