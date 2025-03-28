@@ -855,6 +855,7 @@ function init() {
     Glob.settings.message.style.visibility = "hidden";
     Glob.settings.mainScreen.style.display = "block";
     Glob.settings.playScreen.style.display = "none";
+    showTab("Measure");
     document.getElementById("categorySelector").value = "PopRock";
     Presets.fillRhythmSelect();
     document.getElementById("rhythmSelector").value = "Rock3";
@@ -1854,6 +1855,23 @@ function reverbWetChanged() {
   reverb.setWet(Glob.settings.reverbWet);
 }
 
+function showTab(tab) {
+  const tabs = ["Measure", "Reverb", "Preferences", "Tools", "Random", "Euclidean"];
+
+  for (let i = 0; i < tabs.length; i++) {
+    const t = tabs[i];
+    if (t === tab) {
+      Glob.settings[`tab${t}`].style.backgroundColor = "white";
+      Glob.settings[`tab${t}`].style.color = "black";
+      Glob.settings[`tp${t}`].style.display = "flex";
+    } else {
+      Glob.settings[`tab${t}`].style.backgroundColor = "blue";
+      Glob.settings[`tab${t}`].style.color = "white";
+      Glob.settings[`tp${t}`].style.display = "none";
+    }
+  }
+}
+
 function tempoChanged() {
   Glob.settings.tempo = Glob.settings.tempoSlider.value;
   Glob.settings.tempoValue.innerText = Glob.settings.tempo.toString();
@@ -2321,6 +2339,31 @@ try {
       }
     }
   });
+
+  document.getElementById("tabMeasure").addEventListener("click", (e) => {
+    showTab("Measure");
+  });
+
+  document.getElementById("tabReverb").addEventListener("click", (e) => {
+    showTab("Reverb");
+  });
+
+  document.getElementById("tabPreferences").addEventListener("click", (e) => {
+    showTab("Preferences");
+  });
+
+  document.getElementById("tabTools").addEventListener("click", (e) => {
+    showTab("Tools");
+  });
+
+  document.getElementById("tabRandom").addEventListener("click", (e) => {
+    showTab("Random");
+  });
+
+  document.getElementById("tabEuclidean").addEventListener("click", (e) => {
+    showTab("Euclidean");
+  });
+
 
   document.getElementById("body").addEventListener("keydown", (e) => {
     handleKeyDown(e);

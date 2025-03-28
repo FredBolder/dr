@@ -1,3 +1,4 @@
+import { Euclidean } from "./euclidean.js";
 import { Glob } from "./glob.js";
 import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
@@ -147,6 +148,24 @@ class Test {
             ok = this.test(arrayNames[i], "", msg);
             if (!ok) allOk = false;
         }
+
+        ok = this.test("Euclidean 1A", "10010010", Euclidean.pattern(8, 3));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 1B", "1001010010100", Euclidean.pattern(13, 5));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 1C", "111111110", Euclidean.pattern(9, 8));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 2A", "0000", Euclidean.pattern(4, 0));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 2B", "1111", Euclidean.pattern(4, 4));
+        if (!ok) allOk = false;
+
+        ok = this.test("Euclidean 2C", "1111", Euclidean.pattern(4, 5));
+        if (!ok) allOk = false;
 
         Measures.measures = JSON.parse(saveMeasures);
         if (allOk) {

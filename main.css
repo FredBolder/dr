@@ -2,12 +2,12 @@ body {
     background-color: skyblue;
 }
 
-fieldset {
+.fieldset {
     margin-top: 1em;
     width: fit-content;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     column-gap: 2em;
     row-gap: 1em;
     flex-wrap: wrap;
@@ -78,7 +78,8 @@ fieldset {
     width: 1000px;
 }
 
-#copyMeasureFrom, #copyMeasureTo {
+#copyMeasureFrom,
+#copyMeasureTo {
     width: 3em;
 }
 
@@ -110,3 +111,55 @@ fieldset {
     touch-action: none;
 }
 
+.forceBreak {
+    flex-basis: 100%;
+}
+
+#tabs {
+    margin-top: 1em;
+    margin-bottom: 0em;
+    margin-left: 0em;
+    margin-right: 0em;
+    display: flex;
+    flex-direction: row;
+    column-gap: 0.5em;
+    row-gap: 0em;
+    flex-wrap: wrap;
+}
+
+.tab {
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    margin: 0%;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    background-color: blue;
+    color: white;
+    cursor: pointer;
+}
+
+.tabPage {
+    background-color: white;
+    color: black;
+    margin-top: 0em;
+    margin-bottom: 1em;
+    margin-left: 0%;
+    margin-right: 0%;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 1em;
+    padding-bottom: 0.5em;
+    width: fit-content;
+    height: fit-content;
+    min-width: 90%;
+    min-height: 10em;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    align-content: flex-start;
+    column-gap: 2em;
+    row-gap: 1em;
+    flex-wrap: wrap;
+}

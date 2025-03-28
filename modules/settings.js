@@ -45,8 +45,20 @@ class Settings {
     this.reverbWetSlider = document.getElementById("reverbWetSlider");
     this.reverbWetValue = document.getElementById("reverbWetValue");
     this.saveButton = document.getElementById("saveButton");
+    this.tabEuclidean = document.getElementById("tabEuclidean");
+    this.tabMeasure = document.getElementById("tabMeasure");
+    this.tabPreferences = document.getElementById("tabPreferences");
+    this.tabRandom = document.getElementById("tabRandom");
+    this.tabReverb = document.getElementById("tabReverb");
+    this.tabTools = document.getElementById("tabTools");
     this.tempoSlider = document.getElementById("tempoSlider");
     this.tempoValue = document.getElementById("tempoValue");
+    this.tpEuclidean = document.getElementById("tpEuclidean");
+    this.tpMeasure = document.getElementById("tpMeasure");
+    this.tpPreferences = document.getElementById("tpPreferences");
+    this.tpRandom = document.getElementById("tpRandom");
+    this.tpReverb = document.getElementById("tpReverb");
+    this.tpTools = document.getElementById("tpTools");
     this.volumeSlider = document.getElementById("volumeSlider");
     this.volumeValue = document.getElementById("volumeValue");
   }
