@@ -114,7 +114,6 @@ class Euclidean {
 
         if (pulses === 0) return "0".repeat(steps);
         if (pulses >= steps) return "1".repeat(steps);
-        if (pulses === 1) return "1" + "0".repeat(steps - 1);
 
         for (let i = 0; i < pulses; i++) {
             arr.push("1");
@@ -123,41 +122,45 @@ class Euclidean {
             arr.push("0");
         }
 
-        n = 0;
-        do {
-            stop = false;
-            s1 = arr[arr.length - 1];
-            idx1 = arr.length - 1;
-            idx2 = 0;
+        if (pulses === 1) {
+            result = "1" + "0".repeat(steps - 1);
+        } else {
+            n = 0;
             do {
-                s2 = arr[idx1];
-                if ((s2 === s1) && (arr[idx2] !== s1) && (arr.length > 1)) {
-                    arr[idx2] += s1;
-                    arr.pop();
-                }
-                idx1--;
-                idx2++;
-            } while ((s2 === s1) && (idx1 >= 0) && (idx2 < arr.length));
-            //console.log(arr);
-            n++;
-            if (arr.length === 1) {
-                stop = true;
-            }
-            if (arr.length > 1) {
-                if (arr[arr.length - 1].length > 2) {
+                stop = false;
+                s1 = arr[arr.length - 1];
+                idx1 = arr.length - 1;
+                idx2 = 0;
+                do {
+                    s2 = arr[idx1];
+                    if ((s2 === s1) && (arr[idx2] !== s1) && (arr.length > 1)) {
+                        arr[idx2] += s1;
+                        arr.pop();
+                    }
+                    idx1--;
+                    idx2++;
+                } while ((s2 === s1) && (idx1 >= 0) && (idx2 < arr.length));
+                //console.log(arr);
+                n++;
+                if (arr.length === 1) {
                     stop = true;
                 }
-                if (arr[arr.length - 1] !== arr[arr.length - 2]) {
-                    stop = true;
+                if (arr.length > 1) {
+                    if (arr[arr.length - 1].length > 2) {
+                        stop = true;
+                    }
+                    if (arr[arr.length - 1] !== arr[arr.length - 2]) {
+                        stop = true;
+                    }
+                    if (this.allTheSame(arr)) {
+                        stop = true;
+                    }
                 }
-                if (this.allTheSame(arr)) {
-                    stop = true;
-                }
-            }
-        } while (!stop);
+            } while (!stop);
 
-        for (let i = 0; i < arr.length; i++) {
-            result += arr[i];
+            for (let i = 0; i < arr.length; i++) {
+                result += arr[i];
+            }
         }
 
         result = this.rotate(result, rotation, steps);
@@ -170,17 +173,20 @@ class Euclidean {
 
         if (pulses === 0) return "0".repeat(steps);
         if (pulses >= steps) return "1".repeat(steps);
-        if (pulses === 1) return "1" + "0".repeat(steps - 1);
 
-        for (let i = -1; i < steps; i++) {
-            arr.push(Glob.mod((i * pulses), steps));
-        }
-        // The first number in the array should be the same as the last number
-        for (let i = 0; i < arr.length - 1; i++) {
-            if (arr[i] > arr[i + 1]) {
-                result += "1";
-            } else {
-                result += "0";
+        if (pulses === 1) {
+            result = "1" + "0".repeat(steps - 1);
+        } else {
+            for (let i = -1; i < steps; i++) {
+                arr.push(Glob.mod((i * pulses), steps));
+            }
+            // The first number in the array should be the same as the last number
+            for (let i = 0; i < arr.length - 1; i++) {
+                if (arr[i] > arr[i + 1]) {
+                    result += "1";
+                } else {
+                    result += "0";
+                }
             }
         }
         result = this.rotate(result, rotation, steps);

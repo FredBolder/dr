@@ -237,91 +237,109 @@ class Test {
 
         testName = executeTest("Euclidean 1A");
         if (testName !== "") {
-            ok = this.test(testName, "10010010", Euclidean.pattern(8, 3, 0));
+            ok = this.test(testName, "100000000000000000", Euclidean.pattern1(18, 1, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 1B");
         if (testName !== "") {
-            ok = this.test(testName, "1001010010100", Euclidean.pattern(13, 5, 0));
+            ok = this.test(testName, "1001010010100", Euclidean.pattern1(13, 5, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 1C");
         if (testName !== "") {
-            ok = this.test(testName, "101111111", Euclidean.pattern(9, 8, 0));
+            ok = this.test(testName, "101111111", Euclidean.pattern1(9, 8, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 1D");
         if (testName !== "") {
-            ok = this.test(testName, "1010101", Euclidean.pattern(7, 4, 0));
+            ok = this.test(testName, "1010101", Euclidean.pattern1(7, 4, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 1E");
         if (testName !== "") {
-            ok = this.test(testName, "101010100", Euclidean.pattern(9, 4, 0));
+            ok = this.test(testName, "101010100", Euclidean.pattern1(9, 4, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 1F");
         if (testName !== "") {
-            ok = this.test(testName, "1010100", Euclidean.pattern(7, 3, 0));
+            ok = this.test(testName, "1010100", Euclidean.pattern1(7, 3, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 1G");
         if (testName !== "") {
-            ok = this.test(testName, "1010", Euclidean.pattern(4, 2, 0));
+            ok = this.test(testName, "1010", Euclidean.pattern1(4, 2, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 2A");
         if (testName !== "") {
-            ok = this.test(testName, "0000", Euclidean.pattern(4, 0, 0));
+            ok = this.test(testName, "0000", Euclidean.pattern1(4, 0, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 2B");
         if (testName !== "") {
-            ok = this.test(testName, "1111", Euclidean.pattern(4, 4, 0));
+            ok = this.test(testName, "1111", Euclidean.pattern1(4, 4, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 2C");
         if (testName !== "") {
-            ok = this.test(testName, "1111", Euclidean.pattern(4, 5, 0));
+            ok = this.test(testName, "1111", Euclidean.pattern1(4, 5, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 3A");
         if (testName !== "") {
-            ok = this.test(testName, "01000100", Euclidean.pattern(8, 2, 1));
+            ok = this.test(testName, "01000100", Euclidean.pattern1(8, 2, 1));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 3B");
         if (testName !== "") {
-            ok = this.test(testName, "00010001", Euclidean.pattern(8, 2, 3));
+            ok = this.test(testName, "00010001", Euclidean.pattern1(8, 2, 3));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 3C");
         if (testName !== "") {
-            ok = this.test(testName, "10001000", Euclidean.pattern(8, 2, 8));
+            ok = this.test(testName, "10001000", Euclidean.pattern1(8, 2, 8));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 3D");
         if (testName !== "") {
-            ok = this.test(testName, "00010001", Euclidean.pattern(8, 2, -1));
+            ok = this.test(testName, "00010001", Euclidean.pattern1(8, 2, -1));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 3E");
         if (testName !== "") {
-            ok = this.test(testName, "01000100", Euclidean.pattern(8, 2, -3));
+            ok = this.test(testName, "01000100", Euclidean.pattern1(8, 2, -3));
+            if (!ok) allOk = false;
+        }
+
+        testName = executeTest("Euclidean 3F");
+        if (testName !== "") {
+            ok = this.test(testName, "000000000000000001", Euclidean.pattern1(18, 1, 17));
+            if (!ok) allOk = false;
+        }
+
+        testName = executeTest("Euclidean 3G");
+        if (testName !== "") {
+            ok = this.test(testName, "000000000000000001", Euclidean.pattern2(18, 1, 17));
+            if (!ok) allOk = false;
+        }
+
+        testName = executeTest("Euclidean 3H");
+        if (testName !== "") {
+            ok = this.test(testName, "01000100", Euclidean.pattern2(8, 2, -3));
             if (!ok) allOk = false;
         }
 
@@ -329,91 +347,91 @@ class Test {
 
         testName = executeTest("Euclidean 4A");
         if (testName !== "") {
-            ok = this.test(testName, "1001010010100", Euclidean.pattern(13, 5, 0));
+            ok = this.test(testName, "1001010010100", Euclidean.pattern1(13, 5, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4B");
         if (testName !== "") {
-            ok = this.test(testName, "10010010", Euclidean.pattern(8, 3, 0));
+            ok = this.test(testName, "10010010", Euclidean.pattern1(8, 3, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4C");
         if (testName !== "") {
-            ok = this.test(testName, "10110110", Euclidean.pattern(8, 5, 0));
+            ok = this.test(testName, "10110110", Euclidean.pattern1(8, 5, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4D");
         if (testName !== "") {
-            ok = this.test(testName, "10", Euclidean.pattern(2, 1, 0));
+            ok = this.test(testName, "10", Euclidean.pattern1(2, 1, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4E");
         if (testName !== "") {
-            ok = this.test(testName, "100100100100", Euclidean.pattern(12, 4, 0));
+            ok = this.test(testName, "100100100100", Euclidean.pattern1(12, 4, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4F");
         if (testName !== "") {
-            ok = this.test(testName, "101", Euclidean.pattern(3, 2, 0));
+            ok = this.test(testName, "101", Euclidean.pattern1(3, 2, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4G");
         if (testName !== "") {
-            ok = this.test(testName, "10100", Euclidean.pattern(5, 2, 0));
+            ok = this.test(testName, "10100", Euclidean.pattern1(5, 2, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4H");
         if (testName !== "") {
-            ok = this.test(testName, "1011", Euclidean.pattern(4, 3, 0));
+            ok = this.test(testName, "1011", Euclidean.pattern1(4, 3, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4I");
         if (testName !== "") {
-            ok = this.test(testName, "10101", Euclidean.pattern(5, 3, 0));
+            ok = this.test(testName, "10101", Euclidean.pattern1(5, 3, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4J");
         if (testName !== "") {
-            ok = this.test(testName, "1010100", Euclidean.pattern(7, 3, 0));
+            ok = this.test(testName, "1010100", Euclidean.pattern1(7, 3, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4K");
         if (testName !== "") {
-            ok = this.test(testName, "1010101", Euclidean.pattern(7, 4, 0));
+            ok = this.test(testName, "1010101", Euclidean.pattern1(7, 4, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4L");
         if (testName !== "") {
-            ok = this.test(testName, "101010100", Euclidean.pattern(9, 4, 0));
+            ok = this.test(testName, "101010100", Euclidean.pattern1(9, 4, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4M");
         if (testName !== "") {
-            ok = this.test(testName, "10010010010", Euclidean.pattern(11, 4, 0));
+            ok = this.test(testName, "10010010010", Euclidean.pattern1(11, 4, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4N");
         if (testName !== "") {
-            ok = this.test(testName, "101111", Euclidean.pattern(6, 5, 0));
+            ok = this.test(testName, "101111", Euclidean.pattern1(6, 5, 0));
             if (!ok) allOk = false;
         }
 
         testName = executeTest("Euclidean 4O");
         if (testName !== "") {
-            ok = this.test(testName, "100101010101001010101010", Euclidean.pattern(24, 11, 0));
+            ok = this.test(testName, "100101010101001010101010", Euclidean.pattern1(24, 11, 0));
             if (!ok) allOk = false;
         }
 
