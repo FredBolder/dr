@@ -99,6 +99,10 @@ class Glob {
     return result;
   }
 
+  static mod(n, m) {
+    return ((n % m) + m) % m;
+  }
+
   static percentToFilterFreq(p) {
     return (p / 100) * 5000 + 10;
   }
@@ -158,9 +162,13 @@ class Glob {
   static tryParseInt(str, defaultValue) {
     let result = defaultValue;
     if (str !== null) {
-      if (str.length > 0) {
-        if (!isNaN(str)) {
+      if (typeof str === "string") {
+        str = str.trim();
+        if (str.length > 0) {
           result = parseInt(str);
+          if (isNaN(result)) {
+            result = defaultValue;
+          }
         }
       }
     }

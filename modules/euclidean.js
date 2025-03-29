@@ -14,6 +14,20 @@ class Euclidean {
         return result;
     }
 
+    static allTheSame(arr) {
+        let same = true;
+
+        if (arr.length < 2) {
+            return true;
+        }
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i] !== arr[0]) {
+                same = false;
+            }
+        }
+        return same;
+    }
+
     static create() {
         let column = 0;
         let columnsPerMeasure = 0;
@@ -73,67 +87,114 @@ class Euclidean {
     }
 
     static pattern(steps, pulses, rotation = 0) {
+        let result = "";
+        const method = Glob.tryParseInt(document.getElementById("euclideanMethod").value, 1);
+        switch (method) {
+            case 1:
+                result = this.pattern1(steps, pulses, rotation);
+                break;
+            case 2:
+                result = this.pattern2(steps, pulses, rotation);
+                break;
+            default:
+                break;
+        }
+        return result;
+    }
+
+    static pattern1(steps, pulses, rotation = 0) {
+        let result = "";
+        let idx1 = 0;
+        let idx2 = 0;
+        let n = 0;
+        let s1 = "";
+        let s2 = "";
+        let stop = false;
+        const arr = [];
+
         if (pulses === 0) return "0".repeat(steps);
         if (pulses >= steps) return "1".repeat(steps);
         if (pulses === 1) return "1" + "0".repeat(steps - 1);
 
-        // For nearly full patterns, use the complement of the pattern for (steps, steps - pulses)
-        if (pulses > steps / 2) {
-            // Compute pattern for the complementary case without user rotation.
-            let comp = this.pattern(steps, steps - pulses, 0);
-            // Invert the bits: 0 -> 1 and 1 -> 0.
-            let inverted = comp.split('').map(bit => bit === '0' ? '1' : '0').join('');
-            // For proper alignment in the near-full case, right-rotate by one.
-            inverted = inverted.slice(-1) + inverted.slice(0, -1);
-            return inverted;
+        for (let i = 0; i < pulses; i++) {
+            arr.push("1");
+        }
+        for (let i = 0; i < steps - pulses; i++) {
+            arr.push("0");
         }
 
-        // Build the counts and remainders arrays
-        let counts = [];
-        let remainders = [];
-        remainders.push(pulses);
-        let divisor = steps - pulses;
-        let level = 0;
-        while (true) {
-            counts.push(Math.floor(divisor / remainders[level]));
-            let r = divisor % remainders[level];
-            remainders.push(r);
-            level++;
-            if (remainders[level] <= 1) break;
-            divisor = remainders[level - 1];
-        }
-        counts.push(divisor);
-
-        // Recursive build function
-        function build(lvl) {
-            if (lvl === -1) return [0];
-            if (lvl === -2) return [1];
-            let seq = [];
-            for (let i = 0; i < counts[lvl]; i++) {
-                seq = seq.concat(build(lvl - 1));
+        n = 0;
+        do {
+            stop = false;
+            s1 = arr[arr.length - 1];
+            idx1 = arr.length - 1;
+            idx2 = 0;
+            do {
+                s2 = arr[idx1];
+                if ((s2 === s1) && (arr[idx2] !== s1) && (arr.length > 1)) {
+                    arr[idx2] += s1;
+                    arr.pop();
+                }
+                idx1--;
+                idx2++;
+            } while ((s2 === s1) && (idx1 >= 0) && (idx2 < arr.length));
+            //console.log(arr);
+            n++;
+            if (arr.length === 1) {
+                stop = true;
             }
-            if (remainders[lvl] > 0) {
-                seq = seq.concat(build(lvl - 2));
+            if (arr.length > 1) {
+                if (arr[arr.length - 1].length > 2) {
+                    stop = true;
+                }
+                if (arr[arr.length - 1] !== arr[arr.length - 2]) {
+                    stop = true;
+                }
+                if (this.allTheSame(arr)) {
+                    stop = true;
+                }
             }
-            return seq;
+        } while (!stop);
+
+        for (let i = 0; i < arr.length; i++) {
+            result += arr[i];
         }
 
-        let patternArr = build(level);
-        patternArr = patternArr.slice(0, steps);
+        result = this.rotate(result, rotation, steps);
+        return result;
+    }
 
-        // Apply a base rotation so that the pattern appears in canonical form.
-        // Heuristic: if pulses <= steps/2, use a left rotation of 1; else use steps - (steps mod pulses)
-        let baseRotation = pulses <= (steps / 2) ? 1 : steps - (steps % pulses);
-        baseRotation = ((baseRotation % steps) + steps) % steps;
-        patternArr = patternArr.slice(baseRotation).concat(patternArr.slice(0, baseRotation));
+    static pattern2(steps, pulses, rotation = 0) {
+        let result = "";
+        const arr = [];
 
-        // Then apply any user-specified rotation.
-        if (rotation) {
-            rotation = ((rotation % steps) + steps) % steps;
-            patternArr = patternArr.slice(-rotation).concat(patternArr.slice(0, -rotation));
+        if (pulses === 0) return "0".repeat(steps);
+        if (pulses >= steps) return "1".repeat(steps);
+        if (pulses === 1) return "1" + "0".repeat(steps - 1);
+
+        for (let i = -1; i < steps; i++) {
+            arr.push(Glob.mod((i * pulses), steps));
         }
+        // The first number in the array should be the same as the last number
+        for (let i = 0; i < arr.length - 1; i++) {
+            if (arr[i] > arr[i + 1]) {
+                result += "1";
+            } else {
+                result += "0";
+            }
+        }
+        result = this.rotate(result, rotation, steps);
+        return result;
+    }
 
-        return patternArr.join('');
+    static rotate(s, rotation, steps) {
+        let result = s;
+
+        if ((rotation !== 0) && (s.length === steps)) {
+            rotation = Glob.mod(rotation, steps);
+            result = result.slice(-rotation).concat(result.slice(0, -rotation));
+        }
+        return result;
     }
 
     static loadSettings() {

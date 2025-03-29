@@ -2,13 +2,13 @@ body {
     background-color: skyblue;
 }
 
-.fieldset {
-    margin-top: 1em;
+fieldset {
+    margin-top: 0%;
     width: fit-content;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    column-gap: 2em;
+    column-gap: 1em;
     row-gap: 1em;
     flex-wrap: wrap;
 }

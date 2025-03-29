@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>DR by Fred Bolder</title>
-  <link rel="stylesheet" href="./main.css?v=38">
+  <link rel="stylesheet" href="./main.css?v=39">
 </head>
 
 <body id="body">
@@ -45,8 +45,23 @@
           </select>
           <button type="button" id="loadRhythmButton">Load</button>
         </div>
+
+        <fieldset>
+          <legend>New pattern</legend>
+          <div>
+            <label for="newBeats">Beats</label>
+            <input type="text" class="numberInput" id="newBeats" name="newBeats" value="4"
+              autocomplete="off">
+          </div>
+          <div>
+            <label for="newDivisions">Divs</label>
+            <input type="text" class="numberInput" id="newDivisions" name="newDivisions" value="2"
+              autocomplete="off">
+          </div>
+          <button type="button" id="newButton">Create</button>
+        </fieldset>
+
         <div>
-          <button type="button" id="newButton">New</button>
           <button type="button" id="openButton">Open</button>
           <button type="button" id="saveButton">Save</button>
           <button type="button" id="exportButton">Export</button>
@@ -316,6 +331,13 @@
           <option value="0">Closed hi-hat</option>
         </select>
         <div>
+          <label for="euclideanMethod">Method</label>
+          <select name="euclideanMethod" id="euclideanMethod" autocomplete="off">
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select>
+        </div>
+        <div>
           <label for="euclideanSteps">Steps</label>
           <select name="euclideanSteps" id="euclideanSteps" autocomplete="off">
             <option value="Beats">Beats</option>
@@ -344,7 +366,7 @@
     <button type="button" id="playScreenToMainScreenButton">Back to main screen</button>
     <canvas id="canvasPlayScreen"></canvas>
   </div>
-  <script type="module" src="./modules/script.js?v=38"></script>
+  <script type="module" src="./modules/script.js?v=39"></script>
 </body>
 
 </html>

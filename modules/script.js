@@ -1979,8 +1979,16 @@ try {
         Glob.initSettings();
         Glob.settings.tempoSlider.value = 120;
         const measure1 = new Measure();
-        measure1.beats = 4;
-        measure1.divisions = 4;
+        let beats = Glob.tryParseInt(document.getElementById("newBeats").value, 0);
+        let divisions = Glob.tryParseInt(document.getElementById("newDivisions").value, 0);
+        if ((beats < 1) || (beats > 50)) {
+          beats = 4;
+        }
+        if ((divisions < 1) || (divisions > 25)) {
+          divisions = 2;
+        }
+        measure1.beats = beats;
+        measure1.divisions = divisions;
         Measure.fixMeasure(measure1);
         Measures.measures = [];
         Measures.measures.push(measure1);
