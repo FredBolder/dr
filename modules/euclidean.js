@@ -31,14 +31,20 @@ class Euclidean {
     static create() {
         let column = 0;
         let columnsPerMeasure = 0;
+        let combine = "";
         let euclideanSteps = "Beats";
+        let found = 0;
         let nStart = 0;
         let nStop = 0;
         let steps = 0;
 
+        combine = document.getElementById("euclideanCombine").value;
+        if ((combine !== "AND") && (combine !== "XOR") && (combine !== "INV")) {
+            combine = "OR";
+        }
         const row = Glob.tryParseInt(document.getElementById("euclideanInstrument").value, 0);
-        const euclideanOnsets = Glob.tryParseInt(document.getElementById("euclideanOnsets").value, 1);
-        const euclideanRotation = Glob.tryParseInt(document.getElementById("euclideanRotation").value, 0);
+        const euclideanOnsets = Glob.getPositiveIntList(document.getElementById("euclideanOnsets").value);
+        const euclideanRotation = Glob.getPositiveIntList(document.getElementById("euclideanRotation").value);
         const allMeasures = document.getElementById("euclideanAllMeasures").checked;
 
         euclideanSteps = document.getElementById("euclideanSteps").value;
@@ -65,18 +71,41 @@ class Euclidean {
                     steps = measure.beats;
                     break;
             }
-            const pattern = this.pattern(steps, euclideanOnsets, euclideanRotation);
+            const patterns = [];
+            for (let i = 0; i < euclideanOnsets.length; i++) {
+                let rotation = 0;
+                if (i < euclideanRotation.length) {
+                    rotation = euclideanRotation[i];
+                }
+                patterns.push(this.pattern(steps, euclideanOnsets[i], rotation));
+            }
             for (let i = 0; i < measure.beats; i++) {
                 for (let j = 0; j < measure.divisions; j++) {
                     column = (i * measure.divisions) + j;
                     Instruments.setCell(column, row, 0);
                     if (euclideanSteps === "Beats") {
-                        if ((j === 0) && (pattern[i] === "1")) {
-                            Instruments.setCell(column, row, 1);
+                        if (j === 0) {
+                            found = 0;
+                            for (let p = 0; p < patterns.length; p++) {
+                                if (patterns[p][i] === "1") {
+                                    found++;
+                                }
+                            }
+                            if (((combine === "OR") && (found > 0)) || ((combine === "AND") && (found === patterns.length)) ||
+                                ((combine === "XOR") && (found === 1) || ((combine === "INV") && (found === 0)))) {
+                                Instruments.setCell(column, row, 1);
+                            }
                         }
                     }
                     if (euclideanSteps === "Columns") {
-                        if (pattern[column] === "1") {
+                        found = 0;
+                        for (let p = 0; p < patterns.length; p++) {
+                            if (patterns[p][column] === "1") {
+                                found++;
+                            }
+                        }
+                        if (((combine === "OR") && (found > 0)) || ((combine === "AND") && (found === patterns.length)) ||
+                            ((combine === "XOR") && (found === 1) || ((combine === "INV") && (found === 0)))) {
                             Instruments.setCell(column, row, 1);
                         }
                     }

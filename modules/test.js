@@ -442,7 +442,7 @@ class Test {
             ok = this.test(testName, 123, Glob.tryParseInt("123", 5));
             if (!ok) allOk = false;
         }
-       
+
         testName = executeTest("tryParseInt 1B");
         if (testName !== "") {
             ok = this.test(testName, -35, Glob.tryParseInt("-35", 5));
@@ -476,6 +476,26 @@ class Test {
         testName = executeTest("tryParseInt 2D");
         if (testName !== "") {
             ok = this.test(testName, 5, Glob.tryParseInt("  ", 5));
+            if (!ok) allOk = false;
+        }
+
+        // getPositiveIntList
+
+        testName = executeTest("getPositiveIntList 1A");
+        if (testName !== "") {
+            ok = this.test(testName, JSON.stringify([9, 2, 3]), JSON.stringify(Glob.getPositiveIntList(" 9,2  ,3")));
+            if (!ok) allOk = false;
+        }
+
+        testName = executeTest("getPositiveIntList 1B");
+        if (testName !== "") {
+            ok = this.test(testName, JSON.stringify([9, 2]), JSON.stringify(Glob.getPositiveIntList(" 9,2  ,abc")));
+            if (!ok) allOk = false;
+        }
+
+        testName = executeTest("getPositiveIntList 1C");
+        if (testName !== "") {
+            ok = this.test(testName, JSON.stringify([]), JSON.stringify(Glob.getPositiveIntList(null)));
             if (!ok) allOk = false;
         }
 

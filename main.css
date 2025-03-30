@@ -167,3 +167,9 @@ fieldset {
     row-gap: 1em;
     flex-wrap: wrap;
 }
+
+#euclideanInfo {
+    width: 95%;
+    height: fit-content;
+    text-align: left;
+}

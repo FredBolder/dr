@@ -39,6 +39,20 @@ class Glob {
     return result;
   }
 
+  static getPositiveIntList(s) {
+    let result = [];
+    if ((s !== null) && (typeof s === "string")) {
+      const arr = s.split(",");
+      for (let i = 0; i < arr.length; i++) {
+        const value = this.tryParseInt(arr[i], -1);
+        if (value >= 0) {
+          result.push(value);
+        }
+      }
+    }
+    return result;
+  }
+
   static getStringFromCommaDelimited(s, idx) {
     const arr = s.split(",");
     let result = "";

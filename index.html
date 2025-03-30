@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>DR by Fred Bolder</title>
-  <link rel="stylesheet" href="./main.css?v=40">
+  <link rel="stylesheet" href="./main.css?v=41">
 </head>
 
 <body id="body">
@@ -50,13 +50,11 @@
           <legend>New pattern</legend>
           <div>
             <label for="newBeats">Beats</label>
-            <input type="text" class="numberInput" id="newBeats" name="newBeats" value="4"
-              autocomplete="off">
+            <input type="text" class="numberInput" id="newBeats" name="newBeats" value="4" autocomplete="off">
           </div>
           <div>
             <label for="newDivisions">Divs</label>
-            <input type="text" class="numberInput" id="newDivisions" name="newDivisions" value="2"
-              autocomplete="off">
+            <input type="text" class="numberInput" id="newDivisions" name="newDivisions" value="2" autocomplete="off">
           </div>
           <button type="button" id="newButton">Create</button>
         </fieldset>
@@ -354,11 +352,23 @@
           <input type="text" class="numberInput" id="euclideanRotation" name="euclideanRotation" value="0"
             autocomplete="off">
         </div>
+        <div>
+          <label for="euclideanCombine">Combine</label>
+          <select name="euclideanCombine" id="euclideanCombine" autocomplete="off">
+            <option value="OR">OR</option>
+            <option value="AND">AND</option>
+            <option value="XOR">XOR</option>
+            <option value="INV">INV</option>
+          </select>
+        </div>
         <div class="checkboxGroup">
           <label for="euclideanAllMeasures">All measures</label>
           <input type="checkbox" id="euclideanAllMeasures" name="euclideanAllMeasures">
         </div>
         <button type="button" id="euclideanCreate">Create</button>
+        <div class="forceBreak">
+          <div id="euclideanInfo">info</div>
+        </div>
       </div>
     </main>
   </div>
@@ -366,7 +376,7 @@
     <button type="button" id="playScreenToMainScreenButton">Back to main screen</button>
     <canvas id="canvasPlayScreen"></canvas>
   </div>
-  <script type="module" src="./modules/script.js?v=40"></script>
+  <script type="module" src="./modules/script.js?v=41"></script>
 </body>
 
 </html>

@@ -390,7 +390,7 @@ function disableWhilePlaying() {
   Glob.settings.multiplyDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.divideDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.randomRhythmButton.disabled = Glob.playing;
-  Glob.settings.euclideanCreate = Glob.playing;
+  Glob.settings.euclideanCreate.disabled = Glob.playing;
 }
 
 function drawPads() {
@@ -860,6 +860,11 @@ function init() {
     Glob.settings.message.style.visibility = "hidden";
     Glob.settings.mainScreen.style.display = "block";
     Glob.settings.playScreen.style.display = "none";
+    document.getElementById("euclideanInfo").innerHTML = `
+      You can combine more rhythms for one instrument
+      by entering more values (separated by commas) for Onsets and Rotation
+      and choosing a combine method.
+    `;
     showTab("Measure");
     document.getElementById("categorySelector").value = "PopRock";
     Presets.fillRhythmSelect();
@@ -2065,6 +2070,9 @@ try {
 
   document.getElementById('measuresToPlayInput').addEventListener('input', function () {
     Glob.settings.measuresToPlay = document.getElementById('measuresToPlayInput').value;
+    if (Glob.settings.measuresToPlay === null) {
+      Glob.settings.measuresToPlay = "";
+    }
   });
 
   document.getElementById("loop").addEventListener("click", (e) => {
