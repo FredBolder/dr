@@ -9,7 +9,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>DR by Fred Bolder</title>
-  <link rel="stylesheet" href="./main.css?v=41">
+  <link rel="stylesheet" href="./main.css?v=42">
 </head>
 
 <body id="body">
@@ -331,8 +331,9 @@
         <div>
           <label for="euclideanMethod">Method</label>
           <select name="euclideanMethod" id="euclideanMethod" autocomplete="off">
-            <option value="1">1</option>
-            <option value="2">2</option>
+            <option value="1">Euclidean 1</option>
+            <option value="2">Euclidean 2</option>
+            <option value="3">Quadratic</option>
           </select>
         </div>
         <div>
@@ -362,6 +363,10 @@
           </select>
         </div>
         <div class="checkboxGroup">
+          <label for="euclideanReverse">Reverse</label>
+          <input type="checkbox" id="euclideanReverse" name="euclideanReverse">
+        </div>
+        <div class="checkboxGroup">
           <label for="euclideanAllMeasures">All measures</label>
           <input type="checkbox" id="euclideanAllMeasures" name="euclideanAllMeasures">
         </div>
@@ -376,7 +381,7 @@
     <button type="button" id="playScreenToMainScreenButton">Back to main screen</button>
     <canvas id="canvasPlayScreen"></canvas>
   </div>
-  <script type="module" src="./modules/script.js?v=41"></script>
+  <script type="module" src="./modules/script.js?v=42"></script>
 </body>
 
 </html>

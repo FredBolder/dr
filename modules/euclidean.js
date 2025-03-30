@@ -118,6 +118,7 @@ class Euclidean {
     static pattern(steps, pulses, rotation = 0) {
         let result = "";
         const method = Glob.tryParseInt(document.getElementById("euclideanMethod").value, 1);
+        const reverse = document.getElementById("euclideanReverse").checked;
         switch (method) {
             case 1:
                 result = this.pattern1(steps, pulses, rotation);
@@ -125,8 +126,15 @@ class Euclidean {
             case 2:
                 result = this.pattern2(steps, pulses, rotation);
                 break;
+            case 3:
+                // Quadratic
+                result = this.pattern3(steps, pulses, rotation);
+                break;
             default:
                 break;
+        }
+        if (reverse) {
+            result = Glob.reverse(result);
         }
         return result;
     }
@@ -222,6 +230,33 @@ class Euclidean {
         return result;
     }
 
+    static pattern3(steps, pulses, rotation = 0) {
+        let n = 0;
+        let result = "";
+
+        if (pulses === 0) return "0".repeat(steps);
+        if (pulses >= steps) return "1".repeat(steps);
+
+        let arr = [];
+        for (let i = 0; i < steps; i++) {
+            arr.push("0");
+        }
+        for (let i = 0; i < pulses; i++) {
+            n = Math.round(Math.pow(i / pulses, 2) * steps);
+            if (n > (steps - 1)) {
+                n = steps - 1;
+            }
+            arr[n] = "1";
+        }
+
+        for (let i = 0; i < arr.length; i++) {
+            result += arr[i];
+        }
+
+        result = this.rotate(result, rotation, steps);
+        return result;
+    }
+
     static rotate(s, rotation, steps) {
         let result = s;
 
@@ -235,6 +270,9 @@ class Euclidean {
     static loadSettings() {
         const row = Glob.tryParseInt(document.getElementById("euclideanInstrument").value, 0);
 
+        if (Instruments.sets[Glob.settings.instrumentSet][row].euclidean.hasOwnProperty("method")) {
+            document.getElementById("euclideanMethod").value = Instruments.sets[Glob.settings.instrumentSet][row].euclidean.method;
+        }
         if (Instruments.sets[Glob.settings.instrumentSet][row].euclidean.hasOwnProperty("steps")) {
             document.getElementById("euclideanSteps").value = Instruments.sets[Glob.settings.instrumentSet][row].euclidean.steps;
         }
@@ -244,13 +282,18 @@ class Euclidean {
         if (Instruments.sets[Glob.settings.instrumentSet][row].euclidean.hasOwnProperty("rotation")) {
             document.getElementById("euclideanRotation").value = Instruments.sets[Glob.settings.instrumentSet][row].euclidean.rotation;
         }
+        if (Instruments.sets[Glob.settings.instrumentSet][row].euclidean.hasOwnProperty("reverse")) {
+            document.getElementById("euclideanReverse").checked = Instruments.sets[Glob.settings.instrumentSet][row].euclidean.reverse;
+        }
     }
 
     static saveSettings() {
         const row = Glob.tryParseInt(document.getElementById("euclideanInstrument").value, 0);
+        Instruments.sets[Glob.settings.instrumentSet][row].euclidean.method = document.getElementById("euclideanMethod").value;
         Instruments.sets[Glob.settings.instrumentSet][row].euclidean.steps = document.getElementById("euclideanSteps").value;
         Instruments.sets[Glob.settings.instrumentSet][row].euclidean.onsets = document.getElementById("euclideanOnsets").value;
         Instruments.sets[Glob.settings.instrumentSet][row].euclidean.rotation = document.getElementById("euclideanRotation").value;
+        Instruments.sets[Glob.settings.instrumentSet][row].euclidean.reverse = document.getElementById("euclideanReverse").checked;
     }
 
 }

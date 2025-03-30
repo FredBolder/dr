@@ -157,6 +157,17 @@ class Glob {
     return result;
   }
 
+  static reverse(s) {
+    let result = "";
+
+    if (s.length > 0) {
+      for (let i = s.length - 1; i >= 0; i--) {
+        result += s[i];
+      }
+    }
+    return result;
+  }
+
   static spacesToUnderscore(input) {
     let result = "";
     for (let i = 0; i < input.length; i++) {
