@@ -157,6 +157,18 @@ class Glob {
     return result;
   }
 
+  static retrieveSettings() {
+    let expert = localStorage.getItem("expert");
+    if (this.settings !== null) {
+      if (expert === "1") {
+        this.settings.expert = true;
+      }
+      if (expert === "0") {
+        this.settings.expert = false;
+      }
+    }
+  }
+
   static reverse(s) {
     let result = "";
 
@@ -182,6 +194,12 @@ class Glob {
 
   static sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  static storeSettings() {
+    if (this.settings !== null) {
+      localStorage.setItem("expert", this.boolToInt(this.settings.expert).toString());
+    }
   }
 
   static tryParseInt(str, defaultValue) {

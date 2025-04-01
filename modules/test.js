@@ -391,6 +391,17 @@ class Test {
             if (!ok) allOk = false;
         }
 
+        for (let steps = 1; steps <= 16; steps++) {
+            for (let onsets = 1; onsets <= 16; onsets++) {
+                testName = executeTest(`Euclidean (steps=${steps}, onsets=${onsets})`);
+                if (testName !== "") {
+                    ok = this.test(testName, Euclidean.euclidean3(steps, onsets), Euclidean.euclidean2(steps, onsets));
+                    if (!ok) allOk = false;
+                }
+            }
+        }
+
+
         // Rotate
 
         testName = executeTest("Rotate 1A");

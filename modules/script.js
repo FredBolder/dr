@@ -703,6 +703,7 @@ function drawPattern(currentColumn = -1) {
 
 function expertClicked() {
   Glob.settings.expert = document.getElementById("expert").checked;
+  Glob.storeSettings();
   if (Glob.settings.expert) {
     alert("Be careful, you are now in Expert mode!!");
   }
@@ -848,6 +849,7 @@ function init() {
     if (Glob.settings) Glob.settings = null;
     Glob.settings = new Settings();
     Glob.initSettings();
+    Glob.retrieveSettings();
 
     // Create an offscreen canvas
     if (dbPattern) {
@@ -886,6 +888,7 @@ function init() {
     humanizeVolumesChanged();
     humanizeTimingChanged();
     initializeAudioNodes();
+    document.getElementById("expert").checked = Glob.settings.expert;
   }
 }
 
