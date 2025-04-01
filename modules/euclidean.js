@@ -115,31 +115,35 @@ class Euclidean {
 
     }
 
-    static pattern(steps, pulses, rotation = 0) {
+    static pattern(steps, onsets, rotation = 0) {
         let result = "";
-        const method = Glob.tryParseInt(document.getElementById("euclideanMethod").value, 1);
+        const method = document.getElementById("euclideanMethod").value;
         const reverse = document.getElementById("euclideanReverse").checked;
         switch (method) {
-            case 1:
-                result = this.pattern1(steps, pulses, rotation);
+            case "Euclidean1":
+                result = this.euclidean1(steps, onsets);
                 break;
-            case 2:
-                result = this.pattern2(steps, pulses, rotation);
+            case "Euclidean2":
+                result = this.euclidean2(steps, onsets);
                 break;
-            case 3:
-                // Quadratic
-                result = this.pattern3(steps, pulses, rotation);
+            case "Euclidean3":
+                result = this.euclidean3(steps, onsets);
+                break;
+            case "Quadratic":
+                result = this.quadratic(steps, onsets);
                 break;
             default:
+                result = this.euclidean1(steps, onsets);
                 break;
         }
+        result = this.rotate(result, rotation);
         if (reverse) {
             result = Glob.reverse(result);
         }
         return result;
     }
 
-    static pattern1(steps, pulses, rotation = 0) {
+    static euclidean1(steps, onsets) {
         let result = "";
         let idx1 = 0;
         let idx2 = 0;
@@ -149,119 +153,127 @@ class Euclidean {
         let stop = false;
         const arr = [];
 
-        if (pulses === 0) return "0".repeat(steps);
-        if (pulses >= steps) return "1".repeat(steps);
+        if (onsets === 0) return "0".repeat(steps);
+        if (onsets >= steps) return "1".repeat(steps);
+        if (onsets === 1) return "1" + "0".repeat(steps - 1);
 
-        for (let i = 0; i < pulses; i++) {
+        for (let i = 0; i < onsets; i++) {
             arr.push("1");
         }
-        for (let i = 0; i < steps - pulses; i++) {
+        for (let i = 0; i < steps - onsets; i++) {
             arr.push("0");
         }
 
-        if (pulses === 1) {
-            result = "1" + "0".repeat(steps - 1);
-        } else {
-            n = 0;
+        n = 0;
+        do {
+            stop = false;
+            s1 = arr[arr.length - 1];
+            idx1 = arr.length - 1;
+            idx2 = 0;
             do {
-                stop = false;
-                s1 = arr[arr.length - 1];
-                idx1 = arr.length - 1;
-                idx2 = 0;
-                do {
-                    s2 = arr[idx1];
-                    if ((s2 === s1) && (arr[idx2] !== s1) && (arr.length > 1)) {
-                        arr[idx2] += s1;
-                        arr.pop();
-                    }
-                    idx1--;
-                    idx2++;
-                } while ((s2 === s1) && (idx1 >= 0) && (idx2 < arr.length));
-                //console.log(arr);
-                n++;
-                if (arr.length === 1) {
+                s2 = arr[idx1];
+                if ((s2 === s1) && (arr[idx2] !== s1) && (arr.length > 1)) {
+                    arr[idx2] += s1;
+                    arr.pop();
+                }
+                idx1--;
+                idx2++;
+            } while ((s2 === s1) && (idx1 >= 0) && (idx2 < arr.length));
+            n++;
+            if (arr.length === 1) {
+                stop = true;
+            }
+            if (arr.length > 1) {
+                if (arr[arr.length - 1] !== arr[arr.length - 2]) {
                     stop = true;
                 }
-                if (arr.length > 1) {
-                    if (arr[arr.length - 1].length > 2) {
-                        stop = true;
-                    }
-                    if (arr[arr.length - 1] !== arr[arr.length - 2]) {
-                        stop = true;
-                    }
-                    if (this.allTheSame(arr)) {
-                        stop = true;
-                    }
+                if (this.allTheSame(arr)) {
+                    stop = true;
                 }
-            } while (!stop);
-
-            for (let i = 0; i < arr.length; i++) {
-                result += arr[i];
             }
+        } while (!stop);
+
+        for (let i = 0; i < arr.length; i++) {
+            result += arr[i];
         }
 
-        result = this.rotate(result, rotation, steps);
         return result;
     }
 
-    static pattern2(steps, pulses, rotation = 0) {
+    static euclidean2(steps, onsets) {
         let result = "";
         const arr = [];
 
-        if (pulses === 0) return "0".repeat(steps);
-        if (pulses >= steps) return "1".repeat(steps);
+        if (onsets === 0) return "0".repeat(steps);
+        if (onsets >= steps) return "1".repeat(steps);
+        if (onsets === 1) return "1" + "0".repeat(steps - 1);
 
-        if (pulses === 1) {
-            result = "1" + "0".repeat(steps - 1);
-        } else {
-            for (let i = -1; i < steps; i++) {
-                arr.push(Glob.mod((i * pulses), steps));
-            }
-            // The first number in the array should be the same as the last number
-            for (let i = 0; i < arr.length - 1; i++) {
-                if (arr[i] > arr[i + 1]) {
-                    result += "1";
-                } else {
-                    result += "0";
-                }
+        for (let i = -1; i < steps; i++) {
+            arr.push(Glob.mod((i * onsets), steps));
+        }
+        // The first number in the array should be the same as the last number
+        for (let i = 0; i < arr.length - 1; i++) {
+            if (arr[i] > arr[i + 1]) {
+                result += "1";
+            } else {
+                result += "0";
             }
         }
-        result = this.rotate(result, rotation, steps);
         return result;
     }
 
-    static pattern3(steps, pulses, rotation = 0) {
-        let n = 0;
+    static euclidean3(steps, onsets) {
+        let result = "";
+        let slope = onsets / steps;
+        let current = -1;
+        let previous = -1;
+
+        if (onsets === 0) return "0".repeat(steps);
+        if (onsets >= steps) return "1".repeat(steps);
+
+        for (let i = 0; i < steps; i++) {
+            current = Math.floor(i * slope);
+            if (current !== previous) {
+                result += "1";
+            } else {
+                result += "0";
+            }
+            previous = current;
+        }
+        return result;
+    }
+
+    static quadratic(steps, onsets) {
+        let index = 0;
         let result = "";
 
-        if (pulses === 0) return "0".repeat(steps);
-        if (pulses >= steps) return "1".repeat(steps);
+        if (onsets === 0) return "0".repeat(steps);
+        if (onsets >= steps) return "1".repeat(steps);
 
         let arr = [];
         for (let i = 0; i < steps; i++) {
             arr.push("0");
         }
-        for (let i = 0; i < pulses; i++) {
-            n = Math.round(Math.pow(i / pulses, 2) * steps);
-            if (n > (steps - 1)) {
-                n = steps - 1;
+        for (let i = 0; i < onsets; i++) {
+            index = Math.round(Math.pow(i / onsets, 2) * steps);
+            if (index > (steps - 1)) {
+                index = steps - 1;
             }
-            arr[n] = "1";
+            arr[index] = "1";
         }
 
         for (let i = 0; i < arr.length; i++) {
             result += arr[i];
         }
 
-        result = this.rotate(result, rotation, steps);
         return result;
     }
 
-    static rotate(s, rotation, steps) {
+    static rotate(s, rotation) {
         let result = s;
 
-        if ((rotation !== 0) && (s.length === steps)) {
-            rotation = Glob.mod(rotation, steps);
+        if ((rotation !== 0) && (s.length > 0)) {
+            rotation = Glob.mod(rotation, s.length);
             result = result.slice(-rotation).concat(result.slice(0, -rotation));
         }
         return result;
