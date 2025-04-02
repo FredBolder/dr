@@ -28,6 +28,7 @@ class Settings {
     this.euclideanOnsetsInc = document.getElementById("euclideanOnsetsInc");
     this.expertCheckbox = document.getElementById("expert");
     this.exportButton = document.getElementById("exportButton");
+    this.golombInfo = document.getElementById("golombInfo");
     this.incDivisionButton = document.getElementById("incDivisionButton");
     this.instrumentSetSelector = document.getElementById("instrumentSetSelector");
     this.loadRhythmButton = document.getElementById("loadRhythmButton");

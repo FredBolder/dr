@@ -3,6 +3,7 @@ import { Distortion } from "./distortion.js";
 import { Euclidean } from "./euclidean.js";
 import { Files } from "./files.js";
 import { Glob } from "./glob.js";
+import { Golomb } from "./golomb.js";
 import { Instruments } from "./instruments.js";
 import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
@@ -391,6 +392,7 @@ function disableWhilePlaying() {
   Glob.settings.divideDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.randomRhythmButton.disabled = Glob.playing;
   Glob.settings.euclideanOnsetsInc.disabled = Glob.playing;
+  Glob.settings.golombInfo.disabled = Glob.playing;
   Glob.settings.euclideanCreate.disabled = Glob.playing;
 }
 
@@ -2386,7 +2388,7 @@ try {
   document.getElementById("euclideanMethod").addEventListener("change", (e) => {
     Euclidean.updateEuclideanOnsets();
   });
-  
+
   document.getElementById("euclideanOnsetsInc").addEventListener("click", (e) => {
     if (!Glob.playing) {
       let euclideanOnsets = Glob.tryParseInt(document.getElementById("euclideanOnsets").value, 0);
@@ -2397,6 +2399,27 @@ try {
 
   document.getElementById("euclideanCreate").addEventListener("click", (e) => {
     handleEuclideanCreate();
+  });
+
+  document.getElementById("golombInfo").addEventListener("click", (e) => {
+    if (!Glob.playing) {
+      const row = Glob.tryParseInt(document.getElementById("euclideanInstrument").value, 0);
+      const measure = Measures.measures[Glob.currentMeasure];
+      const ruler = [];
+      const length = measure.beats * measure.divisions;
+      for (let i = 0; i < length; i++) {
+        const value = Instruments.getCell(Glob.currentMeasure, i, row);
+        if (value > 0) {
+          ruler.push(i);
+        }
+      }
+      ruler.push(length);
+      if (Golomb.isValidGolombRuler(ruler)) {
+        alert(`YES, the selected instrument in the current measure has a Golomb rule rhythm.\n${JSON.stringify(ruler)}`);
+      } else {
+        alert("NO, the selected instrument in the current measure has no Golomb rule rhythm.");
+      }
+    }
   });
 
   document.getElementById("tabMeasure").addEventListener("click", (e) => {
