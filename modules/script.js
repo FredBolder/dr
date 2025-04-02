@@ -390,6 +390,7 @@ function disableWhilePlaying() {
   Glob.settings.multiplyDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.divideDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.randomRhythmButton.disabled = Glob.playing;
+  Glob.settings.euclideanOnsetsInc.disabled = Glob.playing;
   Glob.settings.euclideanCreate.disabled = Glob.playing;
 }
 
@@ -820,6 +821,20 @@ function getAvailableNode() {
   }
   // Create a new node if there is no free one
   return createNewNode(true);
+}
+
+function handleEuclideanCreate() {
+  let userChoice = false;
+  if (!Glob.playing) {
+    if (!Glob.settings.expert) {
+      userChoice = window.confirm(`Create a rhythm for the selected instrument?`);
+    }
+    if (userChoice || Glob.settings.expert) {
+      Euclidean.saveSettings();
+      Euclidean.create();
+      drawPattern();
+    }
+  }
 }
 
 function handleKeyDown(e) {
@@ -2372,18 +2387,16 @@ try {
     Euclidean.updateEuclideanOnsets();
   });
   
-  document.getElementById("euclideanCreate").addEventListener("click", (e) => {
-    let userChoice = false;
+  document.getElementById("euclideanOnsetsInc").addEventListener("click", (e) => {
     if (!Glob.playing) {
-      if (!Glob.settings.expert) {
-        userChoice = window.confirm(`Create an Euclidean rhythm for the selected instrument?`);
-      }
-      if (userChoice || Glob.settings.expert) {
-        Euclidean.saveSettings();
-        Euclidean.create();
-        drawPattern();
-      }
+      let euclideanOnsets = Glob.tryParseInt(document.getElementById("euclideanOnsets").value, 0);
+      document.getElementById("euclideanOnsets").value = euclideanOnsets + 1;
+      handleEuclideanCreate();
     }
+  });
+
+  document.getElementById("euclideanCreate").addEventListener("click", (e) => {
+    handleEuclideanCreate();
   });
 
   document.getElementById("tabMeasure").addEventListener("click", (e) => {
