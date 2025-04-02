@@ -1,5 +1,6 @@
 import { Euclidean } from "./euclidean.js";
 import { Glob } from "./glob.js";
+import { Golomb } from "./golomb.js";
 import { Measure } from "./measure.js";
 import { Measures } from "./measures.js";
 import { RandomRhythm } from "./randomRhythm.js";
@@ -504,6 +505,52 @@ class Test {
             if (!ok) allOk = false;
         }
 
+        // findAllGolombRulersByLength
+
+        testName = executeTest("findAllGolombRulersByLength (length = 1) 01A");
+        if (testName !== "") {
+            ok = this.test(testName, JSON.stringify([[0, 1]].sort()), JSON.stringify(Golomb.findAllGolombRulersByLength(1).sort()));
+            if (!ok) allOk = false;
+        }
+
+        testName = executeTest("findAllGolombRulersByLength (length = 2) 01B");
+        if (testName !== "") {
+            ok = this.test(testName, JSON.stringify([[0, 2]].sort()), JSON.stringify(Golomb.findAllGolombRulersByLength(2).sort()));
+            if (!ok) allOk = false;
+        }
+
+        testName = executeTest("findAllGolombRulersByLength (length = 3) 01C");
+        if (testName !== "") {
+            ok = this.test(testName, JSON.stringify([[0, 3], [0, 1, 3], [0, 2, 3]].sort()), JSON.stringify(Golomb.findAllGolombRulersByLength(3).sort()));
+            if (!ok) allOk = false;
+        }
+
+        testName = executeTest("findAllGolombRulersByLength (length = 4) 01D");
+        if (testName !== "") {
+            ok = this.test(testName, JSON.stringify([[0, 4], [0, 1, 4], [0, 3, 4]].sort()), JSON.stringify(Golomb.findAllGolombRulersByLength(4).sort()));
+            if (!ok) allOk = false;
+        }
+
+        // Golumb lookup table
+        for (let i = 0; i < Golomb.rulers.length; i++) {
+            testName = executeTest(`Golumb lookup table unique(length = ${i + 1})`);
+            if (testName !== "") {
+                ok = this.test(testName, true, (Glob.isUnique(Golomb.rulers[i])));
+                if (!ok) allOk = false;
+            }
+        }
+
+        for (let i = 0; i < Golomb.rulers.length; i++) {
+            for (let j = 0; j < Golomb.rulers[i].length; j++) {
+                const ruler = Golomb.rulers[i][j];
+                testName = executeTest(`Golumb lookup table (length = ${i + 1}, variation = ${j + 1})`);
+                if (testName !== "") {
+                    ok = this.test(testName, true, (Golomb.isValidGolombRuler(ruler) && (ruler[ruler.length - 1] === (i + 1))));
+                    if (!ok) allOk = false;
+                }
+            }            
+        }
+        
         Measures.measures = JSON.parse(saveMeasures);
         if (allOk) {
             console.log("No problems");

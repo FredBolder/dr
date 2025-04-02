@@ -1,4 +1,5 @@
 import { Glob } from "./glob.js";
+import { Golomb } from "./golomb.js";
 import { Instruments } from "./instruments.js";
 import { Measures } from "./measures.js";
 
@@ -131,6 +132,9 @@ class Euclidean {
                 break;
             case "Quadratic":
                 result = this.quadratic(steps, onsets);
+                break;
+            case "GolombRuler":
+                result = Golomb.golombRuler(steps, onsets);
                 break;
             default:
                 result = this.euclidean1(steps, onsets);
@@ -297,6 +301,7 @@ class Euclidean {
         if (Instruments.sets[Glob.settings.instrumentSet][row].euclidean.hasOwnProperty("reverse")) {
             document.getElementById("euclideanReverse").checked = Instruments.sets[Glob.settings.instrumentSet][row].euclidean.reverse;
         }
+        this.updateEuclideanOnsets();
     }
 
     static saveSettings() {
@@ -308,6 +313,15 @@ class Euclidean {
         Instruments.sets[Glob.settings.instrumentSet][row].euclidean.reverse = document.getElementById("euclideanReverse").checked;
     }
 
+    static updateEuclideanOnsets() {
+        let text = "Onsets";
+      
+        if (document.getElementById("euclideanMethod").value === "GolombRuler") {
+          text = "Variation";
+        }
+        document.getElementById("euclideanOnsetsLabel").innerHTML = text;
+      }
+      
 }
 
 export { Euclidean };

@@ -2368,6 +2368,10 @@ try {
     Euclidean.loadSettings();
   });
 
+  document.getElementById("euclideanMethod").addEventListener("change", (e) => {
+    Euclidean.updateEuclideanOnsets();
+  });
+  
   document.getElementById("euclideanCreate").addEventListener("click", (e) => {
     let userChoice = false;
     if (!Glob.playing) {

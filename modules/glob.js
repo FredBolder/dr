@@ -100,6 +100,24 @@ class Glob {
     return window.innerWidth > window.innerHeight;
   }
 
+  static isUnique(arr) {
+    let unique = true;
+
+    if (arr.length < 2) {
+      return true;
+    }
+    for (let i = 0; i < arr.length; i++) {
+      const value1 = JSON.stringify(arr[i]);
+      for (let j = 0; j < arr.length; j++) {
+        const value2 = JSON.stringify(arr[j]);
+        if ((value1 === value2) && (i !== j)) {
+          unique = false;
+        }
+      }
+    }
+    return unique;
+  }
+
   static minMax(value, min, max) {
     let result = value;
     if (max >= min) {
