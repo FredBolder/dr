@@ -84,6 +84,9 @@ class Golomb {
 
     static isValidGolombRuler(ruler) {
         let distances = new Set();
+        if (ruler.length < 2) {
+            return false;
+        }
         for (let i = 0; i < ruler.length; i++) {
             for (let j = i + 1; j < ruler.length; j++) {
                 let distance = ruler[j] - ruler[i];

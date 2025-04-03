@@ -391,8 +391,9 @@ function disableWhilePlaying() {
   Glob.settings.multiplyDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.divideDivisionsByTwo.disabled = Glob.playing;
   Glob.settings.randomRhythmButton.disabled = Glob.playing;
-  Glob.settings.euclideanOnsetsInc.disabled = Glob.playing;
-  Glob.settings.golombInfo.disabled = Glob.playing;
+  Glob.settings.euclideanOnsetsIncButton.disabled = Glob.playing;
+  Glob.settings.euclideanRotationIncButton.disabled = Glob.playing;
+  Glob.settings.golombInfoButton.disabled = Glob.playing;
   Glob.settings.euclideanCreate.disabled = Glob.playing;
 }
 
@@ -2389,10 +2390,18 @@ try {
     Euclidean.updateEuclideanOnsets();
   });
 
-  document.getElementById("euclideanOnsetsInc").addEventListener("click", (e) => {
+  document.getElementById("euclideanOnsetsIncButton").addEventListener("click", (e) => {
     if (!Glob.playing) {
       let euclideanOnsets = Glob.tryParseInt(document.getElementById("euclideanOnsets").value, 0);
       document.getElementById("euclideanOnsets").value = euclideanOnsets + 1;
+      handleEuclideanCreate();
+    }
+  });
+
+  document.getElementById("euclideanRotationIncButton").addEventListener("click", (e) => {
+    if (!Glob.playing) {
+      let euclideanRotation = Glob.tryParseInt(document.getElementById("euclideanRotation").value, 0);
+      document.getElementById("euclideanRotation").value = euclideanRotation + 1;
       handleEuclideanCreate();
     }
   });
@@ -2401,7 +2410,7 @@ try {
     handleEuclideanCreate();
   });
 
-  document.getElementById("golombInfo").addEventListener("click", (e) => {
+  document.getElementById("golombInfoButton").addEventListener("click", (e) => {
     if (!Glob.playing) {
       const row = Glob.tryParseInt(document.getElementById("euclideanInstrument").value, 0);
       const measure = Measures.measures[Glob.currentMeasure];

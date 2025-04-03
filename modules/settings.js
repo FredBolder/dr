@@ -25,10 +25,11 @@ class Settings {
     this.deleteMeasureButton = document.getElementById("deleteMeasureButton");
     this.divideDivisionsByTwo = document.getElementById("divideDivisionsByTwo");
     this.euclideanCreate = document.getElementById("euclideanCreate");
-    this.euclideanOnsetsInc = document.getElementById("euclideanOnsetsInc");
+    this.euclideanOnsetsIncButton = document.getElementById("euclideanOnsetsIncButton");
+    this.euclideanRotationIncButton = document.getElementById("euclideanRotationIncButton");
     this.expertCheckbox = document.getElementById("expert");
     this.exportButton = document.getElementById("exportButton");
-    this.golombInfo = document.getElementById("golombInfo");
+    this.golombInfoButton = document.getElementById("golombInfoButton");
     this.incDivisionButton = document.getElementById("incDivisionButton");
     this.instrumentSetSelector = document.getElementById("instrumentSetSelector");
     this.loadRhythmButton = document.getElementById("loadRhythmButton");
