@@ -25,7 +25,9 @@ class Settings {
     this.deleteMeasureButton = document.getElementById("deleteMeasureButton");
     this.divideDivisionsByTwo = document.getElementById("divideDivisionsByTwo");
     this.euclideanCreate = document.getElementById("euclideanCreate");
+    this.euclideanOnsetsDecButton = document.getElementById("euclideanOnsetsDecButton");
     this.euclideanOnsetsIncButton = document.getElementById("euclideanOnsetsIncButton");
+    this.euclideanRotationDecButton = document.getElementById("euclideanRotationDecButton");
     this.euclideanRotationIncButton = document.getElementById("euclideanRotationIncButton");
     this.expertCheckbox = document.getElementById("expert");
     this.exportButton = document.getElementById("exportButton");
